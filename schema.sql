@@ -121,3 +121,9 @@ create policy "relations: milik sendiri" on public.relations
     and exists (select 1 from public.nodes n where n.id = from_id and n.user_id = auth.uid())
     and exists (select 1 from public.nodes n where n.id = to_id   and n.user_id = auth.uid())
   );
+
+-- ───────────────────── Izin Data API ─────────────────────
+-- Proyek Supabase baru tidak selalu memberi izin tabel ke role "authenticated".
+-- RLS di atas tetap membatasi setiap akun ke barisnya sendiri.
+grant usage on schema public to authenticated;
+grant select, insert, update, delete on public.nodes, public.relations to authenticated;

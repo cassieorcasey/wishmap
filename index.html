@@ -1198,7 +1198,14 @@ function toast(msg, kind = '') {
 }
 function failed(err) {
   console.error(err);
-  toast(`Belum tersimpan: ${err.message || err}. Cek koneksi lalu coba lagi.`, 'error');
+  const m = String(err.message || err);
+  let hint = 'Cek koneksi lalu coba lagi.';
+  if (/row-level security|null value in column "user_id"|JWT|not authenticated/i.test(m)) {
+    hint = 'Sesi masuk tidak aktif. Masuk lagi lewat link email.';
+    if (store?.mode === 'supabase') openLogin();
+  } else if (/does not exist|schema cache/i.test(m)) hint = 'Tabel belum dibuat. Jalankan schema.sql di Supabase.';
+  else if (/permission denied/i.test(m)) hint = 'Izin tabel belum diberikan. Jalankan ulang schema.sql versi terbaru.';
+  toast(`Belum tersimpan: ${m}. ${hint}`, 'error');
 }
 
 function refresh(heat = 0.3) {
@@ -1500,6 +1507,8 @@ $('#form-clear').addEventListener('submit', async e => {
 /* ───────────── Masuk (Supabase) ───────────── */
 const dlgL = $('#dlg-login');
 function openLogin() { if (!dlgL.open) dlgL.showModal(); }
+// Tanpa sesi, app tidak bisa menyimpan apa pun: dialog masuk tidak boleh ditutup dengan Esc
+dlgL.addEventListener('cancel', e => e.preventDefault());
 $('#form-login').addEventListener('submit', async e => {
   e.preventDefault();
   const email = $('#fl-email').value.trim();
