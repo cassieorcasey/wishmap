@@ -7,6 +7,7 @@
 --     'anggota'    produk  → kategori/tujuan   (berarah)
 --     'alternatif' produk ↔ produk             (simetris: pilih salah satu)
 --     'pelengkap'  produk ↔ produk             (simetris: dipakai bersama)
+--     'induk'      kategori → kategori         (subkategori → induknya; pohon)
 
 create extension if not exists pgcrypto;
 
@@ -74,12 +75,20 @@ create table if not exists public.relations (
   user_id     uuid not null default auth.uid() references auth.users(id) on delete cascade,
   from_id     uuid not null references public.nodes(id) on delete cascade,
   to_id       uuid not null references public.nodes(id) on delete cascade,
-  type        text not null check (type in ('anggota', 'alternatif', 'pelengkap')),
+  type        text not null,
   created_at  timestamptz not null default now(),
   constraint no_self_loop check (from_id <> to_id)
 );
 
 create index if not exists relations_user_idx on public.relations (user_id);
+
+alter table public.relations drop constraint if exists relations_type_check;
+alter table public.relations add constraint relations_type_check
+  check (type in ('anggota', 'alternatif', 'pelengkap', 'induk'));
+
+-- Pohon: setiap kategori paling banyak punya satu induk
+create unique index if not exists relations_one_parent
+  on public.relations (from_id) where type = 'induk';
 
 -- Relasi simetris disimpan sekali saja: {A,B} = {B,A}
 create unique index if not exists relations_unique_pair
@@ -98,6 +107,23 @@ begin
   if new.type = 'anggota' then
     if k_from <> 'produk' or k_to not in ('kategori', 'tujuan') then
       raise exception 'anggota harus produk → kategori/tujuan (dapat % → %)', k_from, k_to;
+    end if;
+  elsif new.type = 'induk' then
+    if k_from <> 'kategori' or k_to <> 'kategori' then
+      raise exception 'induk hanya boleh kategori → kategori (dapat % → %)', k_from, k_to;
+    end if;
+    -- Tolak siklus: telusuri leluhur dari calon induk; kalau ketemu dirinya sendiri, tolak
+    if exists (
+      with recursive leluhur(id, langkah) as (
+        select new.to_id, 0
+        union all
+        select r.to_id, l.langkah + 1
+        from public.relations r join leluhur l on r.from_id = l.id
+        where r.type = 'induk' and l.langkah < 64
+      )
+      select 1 from leluhur where id = new.from_id
+    ) then
+      raise exception 'kategori tidak boleh menjadi induk dari leluhurnya sendiri';
     end if;
   else
     if k_from <> 'produk' or k_to <> 'produk' then

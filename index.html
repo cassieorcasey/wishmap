@@ -115,6 +115,7 @@ button { cursor: pointer; }
 .link.anggota { stroke-opacity: .5; }
 .link.alternatif { stroke: var(--fg-3); stroke-dasharray: 5 5; stroke-width: 1.5; }
 .link.pelengkap { stroke: var(--accent); stroke-opacity: .65; stroke-width: 2; }
+.link.induk { stroke-width: 2.4; stroke-opacity: .55; }
 
 .glyph rect { fill: var(--glass-solid); stroke: var(--hair); vector-effect: non-scaling-stroke; }
 .glyph text { fill: var(--fg-2); font: 700 10px var(--font-ui); text-anchor: middle; dominant-baseline: central; }
@@ -312,6 +313,10 @@ button { cursor: pointer; }
 }
 .rowbtn:hover { background: var(--fill); }
 .rowbtn .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rowbtn .sub { color: var(--fg-3); font-size: 13px; }
+.field select { width: 100%; box-sizing: border-box; font-size: 16px; padding: 11px 14px; border: 1px solid var(--hair); border-radius: 12px; background: var(--field); }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-row .btn { flex: 1 1 140px; }
 .rowbtn .pr { font-variant-numeric: tabular-nums; color: var(--fg-2); font-weight: 600; font-size: 13.5px; }
 .rowbtn.off .nm { color: var(--fg-3); text-decoration: line-through; }
 .rowbtn.bought .pr { color: var(--ok); }
@@ -548,6 +553,10 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
         </div>
         <p class="help" id="fg-kind-help">Kelompok barang sejenis, misalnya Skincare atau Setup Meja.</p>
       </fieldset>
+      <label class="field" id="fg-parent-field"><span>Di dalam kategori</span>
+        <select id="fg-parent"></select>
+        <p class="help">Pilih induk untuk menjadikannya subkategori, misalnya Sunscreen di dalam Skincare.</p>
+      </label>
       <label class="field"><span>Nama</span>
         <input type="text" id="fg-nama" autocomplete="off" placeholder="Contoh: Skincare">
         <p class="err" id="fg-nama-err" hidden>Nama wajib diisi.</p>
@@ -632,8 +641,8 @@ function inkOf(c) {
 const ccStyle = c => `--cc: ${cssColor(c)}; --ink: ${inkOf(c)}`;
 const TOKO = { shopee: 'Shopee', tiktok: 'TikTok Shop', lainnya: 'Toko lain' };
 const STATUS = { ingin: 'Ingin', dibeli: 'Dibeli', batal: 'Batal' };
-const LINK_DIST = { anggota: 74, alternatif: 48, pelengkap: 62 };
-const LINK_STR = { anggota: 0.45, alternatif: 0.7, pelengkap: 0.35 };
+const LINK_DIST = { anggota: 74, alternatif: 48, pelengkap: 62, induk: 96 };
+const LINK_STR = { anggota: 0.45, alternatif: 0.7, pelengkap: 0.35, induk: 0.6 };
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const canHover = matchMedia('(hover: hover)').matches;
 
@@ -716,6 +725,8 @@ function seedData() {
   G('skin', 'kategori', 'Skincare', 'pink');
   G('meja', 'kategori', 'Setup Meja', 'indigo');
   G('fash', 'kategori', 'Fashion', 'orange');
+  G('sun', 'kategori', 'Sunscreen', 'pink');
+  G('pel', 'kategori', 'Pelembap & Toner', 'pink');
   G('pagi', 'tujuan', 'Rutinitas Pagi', 'teal');
   G('trav', 'tujuan', 'Travel Kit', 'green');
 
@@ -734,7 +745,11 @@ function seedData() {
   P('botl', 'Botol Travel Silikon Set', 35000, 'shopee', null, { status: 'batal' });
   P('pouch', 'Pouch Skincare Transparan', null, 'tiktok', null);
 
-  ['aqua', 'azar', 'cera', 'hada', 'niac'].forEach(k => R('anggota', k, 'skin'));
+  R('induk', 'sun', 'skin');
+  R('induk', 'pel', 'skin');
+  ['aqua', 'azar'].forEach(k => R('anggota', k, 'sun'));
+  ['cera', 'hada'].forEach(k => R('anggota', k, 'pel'));
+  R('anggota', 'niac', 'skin');
   ['arm', 'kchr', 'rexs', 'lamp', 'mat'].forEach(k => R('anggota', k, 'meja'));
   ['tote', 'sand'].forEach(k => R('anggota', k, 'fash'));
   ['aqua', 'azar', 'cera'].forEach(k => R('anggota', k, 'pagi'));
@@ -808,17 +823,26 @@ function derive() {
   const d = {
     color: new Map(), memberOf: new Map(), members: new Map(),
     alt: new Map(), pel: new Map(), comp: new Map(), compBought: new Map(),
+    parent: new Map(), children: new Map(), depth: new Map(),
     tergeser: new Set(), stale: new Set(),
   };
   for (const n of nodes) {
     if (n.kind === 'produk') { d.memberOf.set(n.id, []); d.alt.set(n.id, []); d.pel.set(n.id, []); }
-    else d.members.set(n.id, []);
+    else { d.members.set(n.id, []); d.children.set(n.id, []); }
   }
   for (const r of relations) {
     const a = byId.get(r.from_id), b = byId.get(r.to_id);
     if (!a || !b) continue;
     if (r.type === 'anggota') { d.memberOf.get(a.id)?.push(b.id); d.members.get(b.id)?.push(a.id); }
+    else if (r.type === 'induk') { d.parent.set(a.id, b.id); d.children.get(b.id)?.push(a.id); }
     else { const m = r.type === 'alternatif' ? d.alt : d.pel; m.get(a.id)?.push(b.id); m.get(b.id)?.push(a.id); }
+  }
+  // Kedalaman tiap kategori di pohon (akar = 0); penjaga 32 langkah untuk data rusak
+  for (const n of nodes) {
+    if (n.kind === 'produk') continue;
+    let k = 0, cur = d.parent.get(n.id);
+    while (cur && k < 32) { k++; cur = d.parent.get(cur); }
+    d.depth.set(n.id, k);
   }
   // Komponen terhubung pada sisi "alternatif" (union-find) → satu keputusan beli per komponen
   const products = nodes.filter(n => n.kind === 'produk' && n.status !== 'batal');
@@ -833,7 +857,7 @@ function derive() {
   for (const n of nodes) {
     if (n.kind !== 'produk') { d.color.set(n.id, n.warna || 'none'); continue; }
     const groups = d.memberOf.get(n.id).map(id => byId.get(id));
-    const home = groups.find(g => g.kind === 'kategori') || groups[0];
+    const home = groups.filter(g => g.kind === 'kategori').sort((a, b) => d.depth.get(b.id) - d.depth.get(a.id))[0] || groups[0];
     d.color.set(n.id, home?.warna || 'none');
     if (n.status === 'ingin') {
       if (d.compBought.has(d.comp.get(n.id))) d.tergeser.add(n.id);
@@ -843,6 +867,28 @@ function derive() {
   }
   return d;
 }
+
+/** Semua kategori di bawah id (termasuk id), BFS. */
+function subtree(id) {
+  const out = [id], seen = new Set(out);
+  for (let i = 0; i < out.length; i++) {
+    for (const c of D.children.get(out[i]) || []) if (!seen.has(c)) { seen.add(c); out.push(c); }
+  }
+  return out;
+}
+/** Barang unik di seluruh subpohon kategori. */
+function productsIn(id) {
+  const set = new Set();
+  for (const g of subtree(id)) for (const p of D.members.get(g) || []) set.add(p);
+  return [...set];
+}
+function pathOf(id) {
+  const names = [];
+  let cur = id, k = 0;
+  while (cur && k++ < 32) { names.unshift(byId.get(cur)?.nama ?? '?'); cur = D.parent.get(cur); }
+  return names.join(' › ');
+}
+const labelOf = n => (n.kind === 'kategori' ? pathOf(n.id) : n.nama);
 
 /** Perkiraan sisa belanja: tiap komponen alternatif dihitung sekali dengan harga termurah. */
 function estimate(ids) {
@@ -875,7 +921,7 @@ const sim = d3.forceSimulation()
   .velocityDecay(0.28)
   .alphaDecay(0.028)
   .force('link', d3.forceLink().id(d => d.id).distance(l => LINK_DIST[l.type]).strength(l => LINK_STR[l.type]))
-  .force('charge', d3.forceManyBody().strength(d => (d.kind === 'produk' ? -150 : -620)).distanceMax(700))
+  .force('charge', d3.forceManyBody().strength(d => (d.kind === 'produk' ? -150 : d.depth ? -380 : -620)).distanceMax(700))
   .force('collide', d3.forceCollide().radius(d => d.r + (d.kind === 'produk' ? 7 : 18)).iterations(2))
   .force('x', d3.forceX(0).strength(0.035))
   .force('y', d3.forceY(0).strength(0.035))
@@ -884,7 +930,8 @@ const sim = d3.forceSimulation()
 
 function radiusOf(n) {
   if (n.kind === 'produk') return n.harga == null ? 10 : rScale(n.harga);
-  return 20 + Math.min(14, Math.sqrt(D.members.get(n.id).length) * 4.5);
+  const base = 20 + Math.min(14, Math.sqrt(productsIn(n.id).length) * 4.5);
+  return (D.depth.get(n.id) || 0) > 0 ? base * 0.72 : base;
 }
 function viewCenter() {
   const [x, y] = T.invert([svgEl.clientWidth / 2, svgEl.clientHeight / 2]);
@@ -896,8 +943,15 @@ function rebuild() {
   const maxH = d3.max(nodes, n => (n.kind === 'produk' ? n.harga : null)) || 1;
   rScale = d3.scaleSqrt().domain([0, maxH]).range([9, 24]);
   const groups = nodes.filter(n => n.kind !== 'produk');
-  const fresh = groups.filter(g => !pos.has(g.id));
   const c0 = viewCenter();
+  // subkategori baru muncul di dekat induknya (induk diproses lebih dulu)
+  groups.filter(g => !pos.has(g.id) && D.depth.get(g.id) > 0)
+    .sort((a, b) => D.depth.get(a.id) - D.depth.get(b.id))
+    .forEach(g => {
+      const par = pos.get(D.parent.get(g.id));
+      if (par) pos.set(g.id, { x: par.x + (Math.random() - 0.5) * 90, y: par.y + (Math.random() - 0.5) * 90 });
+    });
+  const fresh = groups.filter(g => !pos.has(g.id));
   fresh.forEach((g, i) => {
     const a = (i / Math.max(fresh.length, 1)) * Math.PI * 2 - Math.PI / 2;
     const R = fresh.length > 1 ? 150 + fresh.length * 32 : 60;
@@ -912,7 +966,7 @@ function rebuild() {
 
   simNodes = [...nodes]
     .sort((a, b) => (a.kind === 'produk') - (b.kind === 'produk'))
-    .map(n => Object.assign(pos.get(n.id), { id: n.id, kind: n.kind, r: radiusOf(n) }));
+    .map(n => Object.assign(pos.get(n.id), { id: n.id, kind: n.kind, depth: D.depth.get(n.id) || 0, r: radiusOf(n) }));
   simLinks = relations
     .filter(r => byId.has(r.from_id) && byId.has(r.to_id))
     .map(r => ({ id: r.id, type: r.type, source: r.from_id, target: r.to_id }));
@@ -933,9 +987,9 @@ function draw() {
   ls.exit().remove();
   ls.enter().append('line').merge(ls)
     .attr('class', d => `link ${d.type}`)
-    .style('stroke', d => (d.type === 'anggota' ? cssColor(D.color.get(idOf(d.target))) : null));
+    .style('stroke', d => (d.type === 'anggota' || d.type === 'induk' ? cssColor(D.color.get(idOf(d.target))) : null));
 
-  const gs = gG.selectAll('g.glyph').data(simLinks.filter(l => l.type !== 'anggota'), d => d.id);
+  const gs = gG.selectAll('g.glyph').data(simLinks.filter(l => l.type === 'alternatif' || l.type === 'pelengkap'), d => d.id);
   gs.exit().remove();
   const ge = gs.enter().append('g');
   ge.append('rect').attr('y', -9).attr('height', 18).attr('rx', 9);
@@ -995,8 +1049,8 @@ function paintNode(el, d) {
     t.append('tspan').attr('class', 'price').attr('x', 0).attr('dy', '1.3em')
       .text(n.status === 'dibeli' ? 'Dibeli' : n.harga == null ? 'Tanpa harga' : rpShort(n.harga));
   } else {
-    const count = D.members.get(n.id).length;
-    g.attr('aria-label', `${n.kind === 'kategori' ? 'Kategori' : 'Tujuan'} ${n.nama}, ${count} barang`);
+    const count = n.kind === 'kategori' ? productsIn(n.id).length : D.members.get(n.id).length;
+    g.attr('aria-label', `${n.kind === 'kategori' ? 'Kategori' : 'Tujuan'} ${labelOf(n)}, ${count} barang`);
     let bottom = d.r;
     if (n.kind === 'kategori') {
       g.append('circle').attr('class', 'shape').attr('r', d.r);
@@ -1076,6 +1130,12 @@ function applyHighlight() {
   const nb = new Set();
   if (focus) {
     nb.add(focus);
+    // kategori: sorot seluruh cabangnya, termasuk barang di subkategori
+    if (byId.get(focus)?.kind === 'kategori') {
+      const tree = subtree(focus);
+      tree.forEach(id => nb.add(id));
+      productsIn(focus).forEach(id => nb.add(id));
+    }
     for (const r of relations) {
       if (r.from_id === focus) nb.add(r.to_id);
       if (r.to_id === focus) nb.add(r.from_id);
@@ -1085,7 +1145,7 @@ function applyHighlight() {
     .classed('faded', d => !!focus && !nb.has(d.id))
     .classed('hot', d => !!focus && nb.has(d.id))
     .classed('selected', d => d.id === selectedId);
-  const linkFaded = l => !!focus && idOf(l.source) !== focus && idOf(l.target) !== focus;
+  const linkFaded = l => !!focus && !(nb.has(idOf(l.source)) && nb.has(idOf(l.target)) && (idOf(l.source) === focus || idOf(l.target) === focus || byId.get(focus)?.kind === 'kategori'));
   gL.selectAll('line').classed('faded', linkFaded);
   gG.selectAll('g.glyph').classed('faded', linkFaded);
 }
@@ -1116,16 +1176,16 @@ function renderMode() {
 /* ───────────── Kartu ───────────── */
 const xIcon = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>';
 
-function relChips(ids) {
+function relChips(ids, label = labelOf) {
   return ids.map(id => byId.get(id)).filter(Boolean).map(o => {
     const off = o.status === 'batal' || D.tergeser.has(o.id);
     const tag = o.status === 'dibeli' ? '<span class="tag">✓ Dibeli</span>' : '';
-    return `<button type="button" class="chip${off ? ' is-off' : ''}" data-act="goto" data-id="${o.id}" style="${ccStyle(D.color.get(o.id))}"><span class="dot"></span><span class="nm">${esc(o.nama)}</span>${tag}</button>`;
+    return `<button type="button" class="chip${off ? ' is-off' : ''}" data-act="goto" data-id="${o.id}" style="${ccStyle(D.color.get(o.id))}"><span class="dot"></span><span class="nm">${esc(label(o))}</span>${tag}</button>`;
   }).join('');
 }
-function relSection(title, ids) {
+function relSection(title, ids, label) {
   if (!ids.length) return '';
-  return `<section class="rel"><h3>${title}</h3><div class="chips">${relChips(ids)}</div></section>`;
+  return `<section class="rel"><h3>${title}</h3><div class="chips">${relChips(ids, label)}</div></section>`;
 }
 
 function productCard(n) {
@@ -1146,7 +1206,7 @@ function productCard(n) {
       ${foto ? `<img src="${esc(foto)}" alt="">` : ''}
     </div>
     <div class="card-body">
-      <div class="eyebrow">${esc(toko || 'Toko belum diisi')} · ${esc(groups.map(g => g.nama).join(', ') || 'Tanpa kategori')}</div>
+      <div class="eyebrow">${esc(toko || 'Toko belum diisi')} · ${esc(groups.map(labelOf).join(', ') || 'Tanpa kategori')}</div>
       <h2>${esc(n.nama)}</h2>
       <div class="price">${n.harga == null ? 'Belum ada harga' : rp(n.harga)}</div>
       ${n.harga == null ? '' : `<div class="checked${stale ? ' is-stale' : ''}"><span>${agoText(ds)}</span><button type="button" class="mini" data-act="fresh">Harga masih sama</button></div>`}
@@ -1167,15 +1227,26 @@ function productCard(n) {
 }
 
 function groupCard(n) {
-  const ids = D.members.get(n.id);
+  const isKat = n.kind === 'kategori';
+  const tree = isKat ? new Set(subtree(n.id)) : new Set([n.id]);
+  const ids = isKat ? productsIn(n.id) : D.members.get(n.id);
   const est = estimate(ids);
+  const kids = D.children.get(n.id) || [];
+  const parentId = D.parent.get(n.id);
+  // nama subkategori tempat barang berada, kalau bukan langsung di kategori ini
+  const whereIn = p => {
+    if (!isKat || D.memberOf.get(p.id).includes(n.id)) return '';
+    const g = D.memberOf.get(p.id).map(id => byId.get(id)).filter(g => tree.has(g.id))
+      .sort((a, b) => D.depth.get(b.id) - D.depth.get(a.id))[0];
+    return g ? ` <span class="sub">· ${esc(g.nama)}</span>` : '';
+  };
   const order = p => (p.status === 'ingin' && !D.tergeser.has(p.id) ? 0 : p.status === 'dibeli' ? 1 : 2);
   const rows = ids.map(id => byId.get(id)).sort((a, b) => order(a) - order(b) || (b.harga ?? 0) - (a.harga ?? 0)).map(p => {
     const off = p.status === 'batal' || D.tergeser.has(p.id);
     const pr = p.status === 'dibeli' ? '✓ Dibeli' : p.harga == null ? '—' : rpShort(p.harga);
-    return `<button type="button" class="rowbtn${off ? ' off' : ''}${p.status === 'dibeli' ? ' bought' : ''}" data-act="goto" data-id="${p.id}" style="${ccStyle(D.color.get(p.id))}"><span class="dot"></span><span class="nm">${esc(p.nama)}</span><span class="pr">${pr}</span></button>`;
+    return `<button type="button" class="rowbtn${off ? ' off' : ''}${p.status === 'dibeli' ? ' bought' : ''}" data-act="goto" data-id="${p.id}" style="${ccStyle(D.color.get(p.id))}"><span class="dot"></span><span class="nm">${esc(p.nama)}${whereIn(p)}</span><span class="pr">${pr}</span></button>`;
   }).join('');
-  const label = n.kind === 'kategori' ? 'Kategori' : 'Tujuan';
+  const label = !isKat ? 'Tujuan' : parentId ? 'Subkategori' : 'Kategori';
   return `
     <button type="button" class="close" data-act="close" aria-label="Tutup kartu">${xIcon}</button>
     <div class="card-body" style="${ccStyle(n.warna)}">
@@ -1186,8 +1257,13 @@ function groupCard(n) {
         <div><span class="k">Perkiraan sisa</span><span class="v">±${rpShort(est.total)}</span></div>
       </div>
       ${est.unpriced ? `<p class="hint">${est.unpriced} rencana belum ada harganya.</p>` : ''}
+      ${parentId ? relSection('Di dalam', [parentId]) : ''}
+      ${relSection('Subkategori', kids, o => o.nama)}
       ${ids.length ? `<div class="rows">${rows}</div>` : '<p class="hint">Belum ada barang di sini.</p>'}
-      <button type="button" class="btn wide" data-act="add-here">Tambah barang ke ${esc(n.nama)}</button>
+      <div class="btn-row">
+        <button type="button" class="btn" data-act="add-here">Tambah barang</button>
+        ${isKat ? '<button type="button" class="btn" data-act="add-sub">Tambah subkategori</button>' : ''}
+      </div>
       <div class="card-foot">
         <button type="button" class="btn" data-act="edit">Edit</button>
         <button type="button" class="btn danger-text" data-act="delete">Hapus ${label.toLowerCase()}</button>
@@ -1257,9 +1333,15 @@ async function saveNode(row) {
   return saved;
 }
 async function removeNode(id) {
+  const kids = [...(D.children.get(id) || [])], grand = D.parent.get(id) || null;
   await store.deleteNode(id);
   nodes = nodes.filter(n => n.id !== id);
   relations = relations.filter(r => r.from_id !== id && r.to_id !== id);
+  // Anak-anaknya tidak ikut terhapus: naik satu tingkat ke induk dari yang dihapus
+  if (grand) {
+    for (const c of kids) relations.push(await store.addRelation({ id: uuid(), type: 'induk', from_id: c, to_id: grand }));
+  }
+  return { kids: kids.length, grand };
 }
 const relKey = (type, a, b) => (type === 'anggota' ? `${type}|${a}>${b}` : `${type}|${[a, b].sort().join('~')}`);
 
@@ -1294,6 +1376,7 @@ $('#card').addEventListener('click', async e => {
     if (act === 'close') return select(null, { focus: false });
     if (act === 'goto') return select(b.dataset.id);
     if (act === 'add-here') return openProductForm(null, { groupId: n.id });
+    if (act === 'add-sub') return openGroupForm(null, { parentId: n.id });
     if (act === 'edit') return n.kind === 'produk' ? openProductForm(n.id) : openGroupForm(n.id);
     if (act === 'status') {
       const v = b.dataset.v;
@@ -1318,10 +1401,12 @@ $('#card').addEventListener('click', async e => {
         setTimeout(() => { if (b.isConnected) { delete b.dataset.armed; b.textContent = original; } }, 3500);
         return;
       }
-      await removeNode(n.id);
+      const res = await removeNode(n.id);
       select(null, { focus: false });
       refresh(0.4);
-      toast(n.kind === 'produk' ? 'Barang dihapus' : 'Dihapus. Barang di dalamnya tetap ada.');
+      if (n.kind === 'produk') toast('Barang dihapus');
+      else if (res.kids) toast(`Dihapus. ${res.kids} subkategori pindah ke ${res.grand ? byId.get(res.grand).nama : 'kategori utama'}.`);
+      else toast('Dihapus. Barang di dalamnya tetap ada.');
     }
   } catch (err) { failed(err); }
 });
@@ -1331,13 +1416,13 @@ const dlgP = $('#dlg-product');
 let fctx = null;
 
 function chipToggle(container, kind, set) {
-  const groups = nodes.filter(n => n.kind === kind).sort((a, b) => a.nama.localeCompare(b.nama, 'id'));
+  const groups = nodes.filter(n => n.kind === kind).sort((a, b) => labelOf(a).localeCompare(labelOf(b), 'id'));
   if (!groups.length) {
     container.innerHTML = `<p class="help">Belum ada ${kind}. Buat lewat tombol “Kategori” di atas.</p>`;
     return;
   }
   container.innerHTML = groups.map(g =>
-    `<button type="button" class="chip toggle" data-id="${g.id}" aria-pressed="${set.has(g.id)}" style="${ccStyle(g.warna)}"><span class="dot"></span><span class="nm">${esc(g.nama)}</span></button>`).join('');
+    `<button type="button" class="chip toggle" data-id="${g.id}" aria-pressed="${set.has(g.id)}" style="${ccStyle(g.warna)}"><span class="dot"></span><span class="nm">${esc(labelOf(g))}</span></button>`).join('');
 }
 function renderPicker(which) {
   const root = $(`#fp-${which}`), set = fctx[which], other = fctx[which === 'alt' ? 'pel' : 'alt'];
@@ -1470,6 +1555,7 @@ $('#fg-w-custom').addEventListener('change', () => {
 function syncKindUI() {
   const kind = document.querySelector('#form-group input[name="kind"]:checked').value;
   $('#fg-amplop-field').hidden = kind !== 'kategori';
+  $('#fg-parent-field').hidden = kind !== 'kategori' || $('#fg-parent').options.length < 2;
   $('#fg-kind-help').textContent = kind === 'kategori'
     ? 'Kelompok barang sejenis, misalnya Skincare atau Setup Meja.'
     : 'Satu keperluan yang butuh beberapa barang, misalnya Rutinitas Pagi atau Kado Ulang Tahun.';
@@ -1477,19 +1563,43 @@ function syncKindUI() {
 }
 document.querySelectorAll('#form-group input[name="kind"]').forEach(i => i.addEventListener('change', syncKindUI));
 
-function openGroupForm(id = null) {
-  const n = id ? byId.get(id) : null;
-  gctxId = id;
-  const used = new Set(nodes.filter(x => x.kind !== 'produk').map(x => x.warna));
-  const warna = n?.warna || COLORS.find(c => !used.has(c)) || COLORS[nodes.length % COLORS.length];
-  $(`#fg-kind-${n?.kind || 'kategori'}`).checked = true;
-  $('#fg-hex-err').hidden = true;
+let colorTouched = false;
+function fillParentSelect(selfId, current) {
+  // kategori itu sendiri dan keturunannya tidak boleh jadi induk (mencegah siklus)
+  const banned = new Set(selfId ? subtree(selfId) : []);
+  const opts = nodes.filter(x => x.kind === 'kategori' && !banned.has(x.id))
+    .map(x => ({ id: x.id, label: pathOf(x.id) }))
+    .sort((a, b) => a.label.localeCompare(b.label, 'id'));
+  $('#fg-parent').innerHTML = '<option value="">Tidak ada (kategori utama)</option>'
+    + opts.map(o => `<option value="${o.id}"${o.id === current ? ' selected' : ''}>${esc(o.label)}</option>`).join('');
+}
+function setWarna(warna) {
   if (HEX.test(warna)) setCustom(warna);
   else { $(`#fg-w-${warna}`).checked = true; $('#fg-hex').value = ''; }
+}
+$('#fg-parent').addEventListener('change', e => {
+  // subkategori baru ikut warna induk, kecuali warnanya sudah dipilih sendiri
+  const par = byId.get(e.target.value);
+  if (!gctxId && !colorTouched && par?.warna) setWarna(par.warna);
+});
+['#fg-warna', '#fg-picker', '#fg-hex'].forEach(sel => $(sel).addEventListener('input', () => { colorTouched = true; }));
+$('#fg-warna').addEventListener('change', () => { colorTouched = true; });
+
+function openGroupForm(id = null, preset = {}) {
+  const n = id ? byId.get(id) : null;
+  gctxId = id;
+  colorTouched = false;
+  const parentId = n ? D.parent.get(id) || '' : preset.parentId || '';
+  fillParentSelect(id, parentId);
+  const used = new Set(nodes.filter(x => x.kind !== 'produk').map(x => x.warna));
+  const warna = n?.warna || byId.get(parentId)?.warna || COLORS.find(c => !used.has(c)) || COLORS[nodes.length % COLORS.length];
+  $(`#fg-kind-${n?.kind || 'kategori'}`).checked = true;
+  $('#fg-hex-err').hidden = true;
+  setWarna(warna);
   $('#fg-nama').value = n?.nama || '';
   $('#fg-amplop').value = n?.amplop || '';
   $('#fg-nama-err').hidden = true;
-  $('#fg-title').textContent = n ? 'Edit' : 'Kategori atau tujuan baru';
+  $('#fg-title').textContent = n ? 'Edit' : parentId ? `Subkategori baru di ${byId.get(parentId).nama}` : 'Kategori atau tujuan baru';
   syncKindUI();
   dlgG.showModal();
   if (canHover) $('#fg-nama').focus();
@@ -1518,10 +1628,20 @@ $('#form-group').addEventListener('submit', async e => {
   btn.disabled = true;
   try {
     const saved = await saveNode(row);
+    // relasi induk: kategori → kategori, paling banyak satu induk
+    const wantParent = kind === 'kategori' ? $('#fg-parent').value || null : null;
+    for (const r of relations.filter(r => r.type === 'induk' && (r.from_id === saved.id || (kind !== 'kategori' && r.to_id === saved.id)))) {
+      if (r.from_id === saved.id && r.to_id === wantParent) continue;
+      await store.deleteRelation(r.id);
+      relations = relations.filter(x => x.id !== r.id);
+    }
+    if (wantParent && !relations.some(r => r.type === 'induk' && r.from_id === saved.id)) {
+      relations.push(await store.addRelation({ id: uuid(), type: 'induk', from_id: saved.id, to_id: wantParent }));
+    }
     dlgG.close();
     refresh(old ? 0.2 : 0.6);
     select(saved.id);
-    toast(old ? 'Perubahan disimpan' : `${kind === 'kategori' ? 'Kategori' : 'Tujuan'} dibuat`);
+    toast(old ? 'Perubahan disimpan' : wantParent ? 'Subkategori dibuat' : `${kind === 'kategori' ? 'Kategori' : 'Tujuan'} dibuat`);
   } catch (err) { failed(err); }
   finally { btn.disabled = false; }
 });
