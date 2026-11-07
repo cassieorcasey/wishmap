@@ -1,42 +1,26 @@
 # Wishmap
 
-Wishlist belanja dalam bentuk peta graf yang bergerak. Gelembung saat dilihat dari jauh, kartu produk saat diklik.
+Wishmap is a wishlist that looks like a map instead of a list. Every item you want to buy is a bubble, and bubbles are pulled toward the categories they belong to, much like the graph view in Obsidian. Zoom out and you see colored clusters. Click a bubble and a product card opens with the photo, price, and a link to the shop.
 
-## File
+## Who it is for
 
-- `index.html` — seluruh app (D3-force, tanpa build step). Siap untuk GitHub Pages.
-- `schema.sql` — tabel `nodes` dan `relations`, validasi, dan RLS untuk Supabase.
+Wishmap is for people who keep a long, messy list of things to buy and want to see how the items relate to each other. It works best if you:
 
-## Menyambungkan ke Supabase
+- shop on Shopee or TikTok Shop and want your links and prices in one place;
+- compare options before buying, such as three sunscreens when you only need one;
+- think in groups, like a skincare routine or a desk setup, rather than in a flat checklist;
+- use both a laptop and an iPhone and want the list to stay in sync.
 
-1. Buat proyek Supabase baru (terpisah dari Strata).
-2. Buka **SQL Editor**, tempel isi `schema.sql`, jalankan.
-3. **Authentication → URL Configuration**: isi *Site URL* dan *Redirect URLs* dengan alamat GitHub Pages kamu (misalnya `https://<username>.github.io/wishmap/`).
-4. **Project Settings → API**: salin *Project URL* dan *anon public key*, lalu isi di `index.html`:
+It is built for personal use: one person, one private wishlist. It is not a store, it does not track prices automatically, and it does not share lists between users.
 
-   ```js
-   const CONFIG = {
-     SUPABASE_URL: 'https://xxxx.supabase.co',
-     SUPABASE_ANON_KEY: 'eyJ...',
-   };
-   ```
+## What it does
 
-   Anon key memang dirancang untuk publik; datamu tetap terlindungi oleh RLS.
-5. Push ke GitHub, aktifkan Pages dari branch `main`.
+- Categories can contain subcategories, for example Skincare › Sunscreen and Skincare › Facial Wash.
+- Each item stores a shop link, a price, and the date the price was last checked. Prices older than 30 days are marked as stale.
+- Items can be linked as alternatives (pick one) or complements (used together). Once one alternative is marked as bought, the others fade out and drop from the estimated total.
+- Zoom changes what you see: bubbles from far away, names at medium range, prices and photos up close.
+- Categories can use one of eight preset colors or any color you pick.
 
-Kalau `CONFIG` dibiarkan kosong, app berjalan dalam mode contoh dengan data di browser saja.
+## Running your own copy
 
-## Model data
-
-| Tabel | Isi |
-|---|---|
-| `nodes` | `kind` = `produk` / `kategori` / `tujuan` |
-| `relations` | `anggota` (produk → kategori/tujuan), `alternatif` dan `pelengkap` (produk ↔ produk, disimpan sekali per pasangan) |
-
-Perkiraan total di header menghitung tiap grup alternatif sekali, dengan harga termurahnya. Grup yang salah satu anggotanya sudah dibeli tidak dihitung lagi.
-
-## Cara pakai singkat
-
-- **Jauh**: gelembung saja. **Sedang**: nama. **Dekat**: harga, foto, tanda "atau" dan "+".
-- Seret simpul di laptop untuk melihatnya membal. Di iPhone, ketuk untuk membuka kartu.
-- Lingkaran putus-putus oranye = harga belum dicek lebih dari 30 hari. Tombol "harga perlu dicek" melompat ke barang-barang itu satu per satu.
+Wishmap is a single `index.html` with no build step, so it runs on GitHub Pages. Without any setup it stores data in your browser. To sync between devices, connect it to a Supabase project by running `schema.sql` and filling in `CONFIG` at the top of the script in `index.html`.
