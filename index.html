@@ -144,6 +144,8 @@ button { cursor: pointer; }
 .node.grp .target { fill: none; stroke: var(--cc); stroke-width: 2; vector-effect: non-scaling-stroke; }
 .node.grp .target-dot { fill: var(--cc); }
 .node.grp .label { font-family: var(--font-round); font-weight: 800; font-size: calc(14px * var(--inv, 1)); }
+.node.custom .bubble { stroke: color-mix(in srgb, var(--cc), var(--fg) 35%); stroke-width: 1.5; }
+.node.grp.custom .shape { stroke: color-mix(in srgb, var(--cc), var(--fg) 35%); fill-opacity: .3; }
 .node.selected .bubble, .node.selected .shape { stroke: var(--fg); stroke-width: 3; }
 .node:focus-visible .bubble, .node:focus-visible .shape { stroke: var(--accent); stroke-width: 3.5; }
 
@@ -639,6 +641,8 @@ function inkOf(c) {
   return 1.05 / (L + 0.05) >= (L + 0.05) / 0.062 ? '#FFFFFF' : '#1C1C1E';
 }
 const ccStyle = c => `--cc: ${cssColor(c)}; --ink: ${inkOf(c)}`;
+/** Garis untuk warna bebas: dicampur dengan warna teks agar warna sangat terang/gelap tetap terlihat. */
+const lineColor = c => (HEX.test(c || '') ? `color-mix(in srgb, ${c}, var(--fg) 40%)` : cssColor(c));
 const TOKO = { shopee: 'Shopee', tiktok: 'TikTok Shop', lainnya: 'Toko lain' };
 const STATUS = { ingin: 'Ingin', dibeli: 'Dibeli', batal: 'Batal' };
 const LINK_DIST = { anggota: 74, alternatif: 48, pelengkap: 62, induk: 96 };
@@ -987,7 +991,7 @@ function draw() {
   ls.exit().remove();
   ls.enter().append('line').merge(ls)
     .attr('class', d => `link ${d.type}`)
-    .style('stroke', d => (d.type === 'anggota' || d.type === 'induk' ? cssColor(D.color.get(idOf(d.target))) : null));
+    .style('stroke', d => (d.type === 'anggota' || d.type === 'induk' ? lineColor(D.color.get(idOf(d.target))) : null));
 
   const gs = gG.selectAll('g.glyph').data(simLinks.filter(l => l.type === 'alternatif' || l.type === 'pelengkap'), d => d.id);
   gs.exit().remove();
@@ -1025,6 +1029,7 @@ function paintNode(el, d) {
     if (D.stale.has(n.id)) cls.push('stale');
   }
   if (n.id === selectedId) cls.push('selected');
+  if (HEX.test(D.color.get(n.id) || '')) cls.push('custom');
   g.attr('class', cls.join(' ')).style('--cc', cssColor(D.color.get(n.id))).style('--ink', inkOf(D.color.get(n.id)));
 
   if (n.kind === 'produk') {
