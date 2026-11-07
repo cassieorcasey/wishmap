@@ -27,7 +27,7 @@ create table if not exists public.nodes (
   status            text not null default 'ingin' check (status in ('ingin', 'dibeli', 'batal')),
 
   -- khusus kategori/tujuan
-  warna             text check (warna is null or warna in ('pink','orange','yellow','green','teal','blue','indigo','purple')),
+  warna             text,   -- nama preset atau hex bebas #RRGGBB (lihat constraint nodes_warna_check)
   amplop            text,   -- colokan v2: nama amplop di sheet budget
 
   created_at        timestamptz not null default now(),
@@ -39,6 +39,15 @@ create table if not exists public.nodes (
 );
 
 create index if not exists nodes_user_idx on public.nodes (user_id);
+
+-- Warna: 8 preset yang ikut tema terang/gelap, atau hex bebas #RRGGBB.
+-- drop + add supaya aman dijalankan ulang di database yang sudah ada.
+alter table public.nodes drop constraint if exists nodes_warna_check;
+alter table public.nodes add constraint nodes_warna_check check (
+  warna is null
+  or warna in ('pink','orange','yellow','green','teal','blue','indigo','purple')
+  or warna ~ '^#[0-9A-Fa-f]{6}$'
+);
 
 -- updated_at otomatis + harga_dicek_pada ikut maju saat harga berubah
 create or replace function public.nodes_touch() returns trigger

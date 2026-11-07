@@ -125,7 +125,7 @@ button { cursor: pointer; }
 .node .bubble { fill: var(--cc); stroke: var(--bg); stroke-width: 2; vector-effect: non-scaling-stroke; }
 .node.stale .bubble { filter: saturate(.35); }
 .stale-ring { fill: none; stroke: var(--stale); stroke-width: 1.7; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
-.node .initial { fill: var(--on-bubble); font-family: var(--font-round); font-weight: 800; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.node .initial { fill: var(--ink, var(--on-bubble)); font-family: var(--font-round); font-weight: 800; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .node .photo { pointer-events: none; }
 .node .badge circle { fill: var(--ok); stroke: var(--bg); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .node .badge path { fill: none; stroke: var(--on-bubble); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -139,7 +139,7 @@ button { cursor: pointer; }
 .node.batal .label .name { text-decoration: line-through; }
 .node.batal, .node.tergeser { opacity: .3; }
 .node.grp .shape { fill: var(--cc); fill-opacity: .16; stroke: var(--cc); stroke-width: 2; vector-effect: non-scaling-stroke; }
-.node.grp .count { fill: var(--cc); font-family: var(--font-round); font-weight: 800; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.node.grp .count { fill: color-mix(in srgb, var(--cc), var(--fg) 28%); font-family: var(--font-round); font-weight: 800; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .node.grp .target { fill: none; stroke: var(--cc); stroke-width: 2; vector-effect: non-scaling-stroke; }
 .node.grp .target-dot { fill: var(--cc); }
 .node.grp .label { font-family: var(--font-round); font-weight: 800; font-size: calc(14px * var(--inv, 1)); }
@@ -251,7 +251,7 @@ button { cursor: pointer; }
   position: relative; margin: 10px 10px 0; aspect-ratio: 4 / 3; max-width: 100%;
   border-radius: 18px; overflow: hidden; display: grid; place-items: center;
   background: linear-gradient(140deg, color-mix(in srgb, var(--cc) 70%, var(--glass-solid)), var(--cc));
-  color: var(--on-bubble); font: 800 64px/1 var(--font-round);
+  color: var(--ink, var(--on-bubble)); font: 800 64px/1 var(--font-round);
 }
 .card-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .card-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 14px; }
@@ -297,8 +297,8 @@ button { cursor: pointer; }
 .chip.is-off { color: var(--fg-3); }
 .chip.is-off .nm { text-decoration: line-through; }
 .chip .tag { font-size: 11px; font-weight: 700; color: var(--ok); }
-.chip.toggle[aria-pressed="true"] { background: var(--cc); color: var(--on-bubble); }
-.chip.toggle[aria-pressed="true"] .dot { background: var(--on-bubble); }
+.chip.toggle[aria-pressed="true"] { background: var(--cc); color: var(--ink, var(--on-bubble)); }
+.chip.toggle[aria-pressed="true"] .dot { background: var(--ink, var(--on-bubble)); }
 .chip .x { font-size: 15px; line-height: 1; opacity: .7; }
 
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -363,6 +363,16 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
 .swatches span { display: block; width: 30px; height: 30px; border-radius: 50%; background: var(--cc); cursor: pointer; box-shadow: inset 0 0 0 2px var(--glass-solid); border: 2px solid transparent; }
 .swatches input:checked + span { border-color: var(--fg); }
 .swatches input:focus-visible + span { outline: 2.5px solid var(--accent); outline-offset: 2px; }
+.swatches .rainbow { background: conic-gradient(#FF3B30, #FFCC00, #34C759, #30B0C7, #007AFF, #AF52DE, #FF2D55, #FF3B30); }
+.custom-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.custom-row input[type="color"] {
+  width: 46px; height: 44px; padding: 3px; border: 1px solid var(--hair); border-radius: 12px;
+  background: var(--field); cursor: pointer;
+}
+.custom-row input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.custom-row input[type="color"]::-webkit-color-swatch { border: 0; border-radius: 8px; }
+.custom-row input[type="color"]::-moz-color-swatch { border: 0; border-radius: 8px; }
+.field .custom-row input[type="text"] { width: 9.5em; font-family: ui-monospace, "SF Mono", Menlo, monospace; text-transform: uppercase; }
 
 @media (max-width: 760px) { .legend { display: none; } }
 @media (max-width: 640px) {
@@ -542,7 +552,15 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
         <input type="text" id="fg-nama" autocomplete="off" placeholder="Contoh: Skincare">
         <p class="err" id="fg-nama-err" hidden>Nama wajib diisi.</p>
       </label>
-      <fieldset class="field"><legend>Warna</legend><div class="swatches" id="fg-warna"></div></fieldset>
+      <fieldset class="field"><legend>Warna</legend>
+        <div class="swatches" id="fg-warna"></div>
+        <div class="custom-row">
+          <input type="color" id="fg-picker" value="#ff6b9d" aria-label="Pilih warna bebas">
+          <input type="text" id="fg-hex" maxlength="7" placeholder="#FF6B9D" spellcheck="false" autocomplete="off" aria-label="Kode warna hex">
+          <span class="help">Atau ketik kode hex</span>
+        </div>
+        <p class="err" id="fg-hex-err" hidden>Format kode warna: # lalu 6 karakter, misalnya #FF6B9D.</p>
+      </fieldset>
       <label class="field" id="fg-amplop-field"><span>Amplop budget (opsional)</span>
         <input type="text" id="fg-amplop" autocomplete="off" placeholder="Contoh: Personal Care">
         <p class="help">Belum tersambung ke sheet budget. Disimpan untuk versi berikutnya.</p>
@@ -600,6 +618,18 @@ const CONFIG = {
 };
 const STALE_DAYS = 30;
 const COLORS = ['pink', 'orange', 'yellow', 'green', 'teal', 'blue', 'indigo', 'purple'];
+const HEX = /^#[0-9a-f]{6}$/i;
+/** Warna simpul: nama preset (ikut tema terang/gelap) atau hex bebas #RRGGBB. */
+const cssColor = c => (HEX.test(c || '') ? c : `var(--c-${COLORS.includes(c) ? c : 'none'})`);
+/** Teks di atas warna bebas: pilih putih atau gelap, mana yang kontrasnya lebih tinggi (WCAG). */
+function inkOf(c) {
+  if (!HEX.test(c || '')) return 'var(--on-bubble)';
+  const [r, g, b] = [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16) / 255)
+    .map(v => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  const L = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return 1.05 / (L + 0.05) >= (L + 0.05) / 0.062 ? '#FFFFFF' : '#1C1C1E';
+}
+const ccStyle = c => `--cc: ${cssColor(c)}; --ink: ${inkOf(c)}`;
 const TOKO = { shopee: 'Shopee', tiktok: 'TikTok Shop', lainnya: 'Toko lain' };
 const STATUS = { ingin: 'Ingin', dibeli: 'Dibeli', batal: 'Batal' };
 const LINK_DIST = { anggota: 74, alternatif: 48, pelengkap: 62 };
@@ -903,7 +933,7 @@ function draw() {
   ls.exit().remove();
   ls.enter().append('line').merge(ls)
     .attr('class', d => `link ${d.type}`)
-    .style('stroke', d => (d.type === 'anggota' ? `var(--c-${D.color.get(idOf(d.target)) || 'none'})` : null));
+    .style('stroke', d => (d.type === 'anggota' ? cssColor(D.color.get(idOf(d.target))) : null));
 
   const gs = gG.selectAll('g.glyph').data(simLinks.filter(l => l.type !== 'anggota'), d => d.id);
   gs.exit().remove();
@@ -941,7 +971,7 @@ function paintNode(el, d) {
     if (D.stale.has(n.id)) cls.push('stale');
   }
   if (n.id === selectedId) cls.push('selected');
-  g.attr('class', cls.join(' ')).style('--cc', `var(--c-${D.color.get(n.id) || 'none'})`);
+  g.attr('class', cls.join(' ')).style('--cc', cssColor(D.color.get(n.id))).style('--ink', inkOf(D.color.get(n.id)));
 
   if (n.kind === 'produk') {
     g.attr('aria-label', `${n.nama}, ${n.harga == null ? 'tanpa harga' : rp(n.harga)}, ${STATUS[n.status]}`);
@@ -1090,7 +1120,7 @@ function relChips(ids) {
   return ids.map(id => byId.get(id)).filter(Boolean).map(o => {
     const off = o.status === 'batal' || D.tergeser.has(o.id);
     const tag = o.status === 'dibeli' ? '<span class="tag">✓ Dibeli</span>' : '';
-    return `<button type="button" class="chip${off ? ' is-off' : ''}" data-act="goto" data-id="${o.id}" style="--cc: var(--c-${D.color.get(o.id) || 'none'})"><span class="dot"></span><span class="nm">${esc(o.nama)}</span>${tag}</button>`;
+    return `<button type="button" class="chip${off ? ' is-off' : ''}" data-act="goto" data-id="${o.id}" style="${ccStyle(D.color.get(o.id))}"><span class="dot"></span><span class="nm">${esc(o.nama)}</span>${tag}</button>`;
   }).join('');
 }
 function relSection(title, ids) {
@@ -1111,7 +1141,7 @@ function productCard(n) {
   }
   return `
     <button type="button" class="close" data-act="close" aria-label="Tutup kartu">${xIcon}</button>
-    <div class="card-photo" style="--cc: var(--c-${D.color.get(n.id) || 'none'})">
+    <div class="card-photo" style="${ccStyle(D.color.get(n.id))}">
       <span aria-hidden="true">${esc(initialOf(n.nama))}</span>
       ${foto ? `<img src="${esc(foto)}" alt="">` : ''}
     </div>
@@ -1143,12 +1173,12 @@ function groupCard(n) {
   const rows = ids.map(id => byId.get(id)).sort((a, b) => order(a) - order(b) || (b.harga ?? 0) - (a.harga ?? 0)).map(p => {
     const off = p.status === 'batal' || D.tergeser.has(p.id);
     const pr = p.status === 'dibeli' ? '✓ Dibeli' : p.harga == null ? '—' : rpShort(p.harga);
-    return `<button type="button" class="rowbtn${off ? ' off' : ''}${p.status === 'dibeli' ? ' bought' : ''}" data-act="goto" data-id="${p.id}" style="--cc: var(--c-${D.color.get(p.id) || 'none'})"><span class="dot"></span><span class="nm">${esc(p.nama)}</span><span class="pr">${pr}</span></button>`;
+    return `<button type="button" class="rowbtn${off ? ' off' : ''}${p.status === 'dibeli' ? ' bought' : ''}" data-act="goto" data-id="${p.id}" style="${ccStyle(D.color.get(p.id))}"><span class="dot"></span><span class="nm">${esc(p.nama)}</span><span class="pr">${pr}</span></button>`;
   }).join('');
   const label = n.kind === 'kategori' ? 'Kategori' : 'Tujuan';
   return `
     <button type="button" class="close" data-act="close" aria-label="Tutup kartu">${xIcon}</button>
-    <div class="card-body" style="--cc: var(--c-${n.warna || 'none'})">
+    <div class="card-body" style="${ccStyle(n.warna)}">
       <div class="eyebrow"><span class="dot"></span>${label}${n.amplop ? ` · Amplop ${esc(n.amplop)}` : ''}</div>
       <h2>${esc(n.nama)}</h2>
       <div class="stats">
@@ -1307,17 +1337,17 @@ function chipToggle(container, kind, set) {
     return;
   }
   container.innerHTML = groups.map(g =>
-    `<button type="button" class="chip toggle" data-id="${g.id}" aria-pressed="${set.has(g.id)}" style="--cc: var(--c-${g.warna || 'none'})"><span class="dot"></span><span class="nm">${esc(g.nama)}</span></button>`).join('');
+    `<button type="button" class="chip toggle" data-id="${g.id}" aria-pressed="${set.has(g.id)}" style="${ccStyle(g.warna)}"><span class="dot"></span><span class="nm">${esc(g.nama)}</span></button>`).join('');
 }
 function renderPicker(which) {
   const root = $(`#fp-${which}`), set = fctx[which], other = fctx[which === 'alt' ? 'pel' : 'alt'];
   const q = $(`#fp-${which}-q`).value.trim().toLowerCase();
   root.querySelector('.sel').innerHTML = [...set].map(id => byId.get(id)).filter(Boolean).map(o =>
-    `<button type="button" class="chip toggle" aria-pressed="true" data-rm="${o.id}" style="--cc: var(--c-${D.color.get(o.id) || 'none'})" aria-label="Lepas ${esc(o.nama)}"><span class="nm">${esc(o.nama)}</span><span class="x" aria-hidden="true">×</span></button>`).join('');
+    `<button type="button" class="chip toggle" aria-pressed="true" data-rm="${o.id}" style="${ccStyle(D.color.get(o.id))}" aria-label="Lepas ${esc(o.nama)}"><span class="nm">${esc(o.nama)}</span><span class="x" aria-hidden="true">×</span></button>`).join('');
   const pool = nodes.filter(n => n.kind === 'produk' && n.id !== fctx.id && !set.has(n.id) && !other.has(n.id)
     && (!q || n.nama.toLowerCase().includes(q)));
   root.querySelector('.res').innerHTML = (q || set.size === 0 ? pool : []).slice(0, 6).map(o =>
-    `<button type="button" class="chip" data-add="${o.id}" style="--cc: var(--c-${D.color.get(o.id) || 'none'})"><span class="dot"></span><span class="nm">${esc(o.nama)}</span></button>`).join('');
+    `<button type="button" class="chip" data-add="${o.id}" style="${ccStyle(D.color.get(o.id))}"><span class="dot"></span><span class="nm">${esc(o.nama)}</span></button>`).join('');
 }
 for (const which of ['alt', 'pel']) {
   $(`#fp-${which}`).addEventListener('click', e => {
@@ -1418,7 +1448,24 @@ $('#form-product').addEventListener('submit', async e => {
 const dlgG = $('#dlg-group');
 let gctxId = null;
 $('#fg-warna').innerHTML = COLORS.map(c =>
-  `<label><input type="radio" name="warna" value="${c}" id="fg-w-${c}" aria-label="${c}"><span style="--cc: var(--c-${c})"></span></label>`).join('');
+  `<label><input type="radio" name="warna" value="${c}" id="fg-w-${c}" aria-label="${c}"><span style="--cc: var(--c-${c})"></span></label>`).join('')
+  + `<label title="Warna bebas"><input type="radio" name="warna" value="custom" id="fg-w-custom" aria-label="Warna bebas"><span class="rainbow"></span></label>`;
+const normHex = v => { v = v.trim(); return v && v[0] !== '#' ? '#' + v : v; };
+function setCustom(hex) {
+  $('#fg-picker').value = hex.toLowerCase();
+  $('#fg-hex').value = hex.toUpperCase();
+  $('#fg-w-custom').checked = true;
+  $('#fg-hex-err').hidden = true;
+}
+$('#fg-picker').addEventListener('input', e => setCustom(e.target.value));
+$('#fg-hex').addEventListener('input', e => {
+  const v = normHex(e.target.value);
+  if (HEX.test(v)) { $('#fg-picker').value = v.toLowerCase(); $('#fg-w-custom').checked = true; $('#fg-hex-err').hidden = true; }
+});
+$('#fg-w-custom').addEventListener('change', () => {
+  if (!HEX.test(normHex($('#fg-hex').value))) $('#fg-hex').value = $('#fg-picker').value.toUpperCase();
+  try { $('#fg-picker').showPicker(); } catch { /* browser lama: klik kotak warna di bawah */ }
+});
 
 function syncKindUI() {
   const kind = document.querySelector('#form-group input[name="kind"]:checked').value;
@@ -1436,7 +1483,9 @@ function openGroupForm(id = null) {
   const used = new Set(nodes.filter(x => x.kind !== 'produk').map(x => x.warna));
   const warna = n?.warna || COLORS.find(c => !used.has(c)) || COLORS[nodes.length % COLORS.length];
   $(`#fg-kind-${n?.kind || 'kategori'}`).checked = true;
-  $(`#fg-w-${warna}`).checked = true;
+  $('#fg-hex-err').hidden = true;
+  if (HEX.test(warna)) setCustom(warna);
+  else { $(`#fg-w-${warna}`).checked = true; $('#fg-hex').value = ''; }
   $('#fg-nama').value = n?.nama || '';
   $('#fg-amplop').value = n?.amplop || '';
   $('#fg-nama-err').hidden = true;
@@ -1451,11 +1500,17 @@ $('#form-group').addEventListener('submit', async e => {
   const nama = $('#fg-nama').value.trim();
   if (!nama) { $('#fg-nama-err').hidden = false; $('#fg-nama').focus(); return; }
   const kind = document.querySelector('#form-group input[name="kind"]:checked').value;
+  let warna = document.querySelector('#fg-warna input:checked')?.value || 'blue';
+  if (warna === 'custom') {
+    const typed = normHex($('#fg-hex').value);
+    if ($('#fg-hex').value.trim() && !HEX.test(typed)) { $('#fg-hex-err').hidden = false; $('#fg-hex').focus(); return; }
+    warna = (HEX.test(typed) ? typed : $('#fg-picker').value).toUpperCase();
+  }
   const old = gctxId ? byId.get(gctxId) : null;
   const row = {
     ...(old || {}),
     id: old?.id || uuid(), kind, nama,
-    warna: document.querySelector('#fg-warna input:checked')?.value || 'blue',
+    warna,
     amplop: kind === 'kategori' ? ($('#fg-amplop').value.trim() || null) : null,
     status: 'ingin', link: null, harga: null, toko: null, harga_dicek_pada: null,
   };
