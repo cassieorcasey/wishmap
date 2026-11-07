@@ -1,0 +1,123 @@
+-- Wishmap · skema Supabase v1
+-- Jalankan sekali di Supabase → SQL Editor (proyek baru, terpisah dari Strata).
+--
+-- Model: graf berlabel.
+--   nodes     : simpul. kind = 'produk' | 'kategori' | 'tujuan'
+--   relations : sisi bertipe.
+--     'anggota'    produk  → kategori/tujuan   (berarah)
+--     'alternatif' produk ↔ produk             (simetris: pilih salah satu)
+--     'pelengkap'  produk ↔ produk             (simetris: dipakai bersama)
+
+create extension if not exists pgcrypto;
+
+-- ───────────────────────── nodes ─────────────────────────
+create table if not exists public.nodes (
+  id                uuid primary key default gen_random_uuid(),
+  user_id           uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  kind              text not null check (kind in ('produk', 'kategori', 'tujuan')),
+  nama              text not null check (length(trim(nama)) > 0),
+
+  -- khusus produk
+  link              text,
+  harga             bigint check (harga is null or harga >= 0),
+  harga_dicek_pada  date,
+  toko              text check (toko is null or toko in ('shopee', 'tiktok', 'lainnya')),
+  foto_url          text,
+  catatan           text,
+  status            text not null default 'ingin' check (status in ('ingin', 'dibeli', 'batal')),
+
+  -- khusus kategori/tujuan
+  warna             text check (warna is null or warna in ('pink','orange','yellow','green','teal','blue','indigo','purple')),
+  amplop            text,   -- colokan v2: nama amplop di sheet budget
+
+  created_at        timestamptz not null default now(),
+  updated_at        timestamptz not null default now(),
+
+  -- kolom harga/link hanya bermakna untuk produk, amplop hanya untuk kategori
+  constraint produk_only check (kind = 'produk' or (link is null and harga is null and toko is null)),
+  constraint amplop_only check (amplop is null or kind = 'kategori')
+);
+
+create index if not exists nodes_user_idx on public.nodes (user_id);
+
+-- updated_at otomatis + harga_dicek_pada ikut maju saat harga berubah
+create or replace function public.nodes_touch() returns trigger
+language plpgsql as $$
+begin
+  new.updated_at := now();
+  if new.kind = 'produk' and new.harga is not null then
+    if tg_op = 'INSERT' and new.harga_dicek_pada is null then
+      new.harga_dicek_pada := current_date;
+    elsif tg_op = 'UPDATE' and new.harga is distinct from old.harga then
+      new.harga_dicek_pada := current_date;
+    end if;
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists nodes_touch on public.nodes;
+create trigger nodes_touch before insert or update on public.nodes
+for each row execute function public.nodes_touch();
+
+-- ─────────────────────── relations ───────────────────────
+create table if not exists public.relations (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  from_id     uuid not null references public.nodes(id) on delete cascade,
+  to_id       uuid not null references public.nodes(id) on delete cascade,
+  type        text not null check (type in ('anggota', 'alternatif', 'pelengkap')),
+  created_at  timestamptz not null default now(),
+  constraint no_self_loop check (from_id <> to_id)
+);
+
+create index if not exists relations_user_idx on public.relations (user_id);
+
+-- Relasi simetris disimpan sekali saja: {A,B} = {B,A}
+create unique index if not exists relations_unique_pair
+  on public.relations (least(from_id, to_id), greatest(from_id, to_id), type);
+
+-- Validasi jenis simpul di kedua ujung sisi
+create or replace function public.relations_check() returns trigger
+language plpgsql as $$
+declare
+  k_from text;
+  k_to   text;
+begin
+  select kind into k_from from public.nodes where id = new.from_id;
+  select kind into k_to   from public.nodes where id = new.to_id;
+
+  if new.type = 'anggota' then
+    if k_from <> 'produk' or k_to not in ('kategori', 'tujuan') then
+      raise exception 'anggota harus produk → kategori/tujuan (dapat % → %)', k_from, k_to;
+    end if;
+  else
+    if k_from <> 'produk' or k_to <> 'produk' then
+      raise exception '% hanya boleh antar produk (dapat % ↔ %)', new.type, k_from, k_to;
+    end if;
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists relations_check on public.relations;
+create trigger relations_check before insert or update on public.relations
+for each row execute function public.relations_check();
+
+-- ─────────────────── Row Level Security ───────────────────
+alter table public.nodes     enable row level security;
+alter table public.relations enable row level security;
+
+drop policy if exists "nodes: milik sendiri" on public.nodes;
+create policy "nodes: milik sendiri" on public.nodes
+  for all to authenticated
+  using (user_id = auth.uid())
+  with check (user_id = auth.uid());
+
+drop policy if exists "relations: milik sendiri" on public.relations;
+create policy "relations: milik sendiri" on public.relations
+  for all to authenticated
+  using (user_id = auth.uid())
+  with check (
+    user_id = auth.uid()
+    and exists (select 1 from public.nodes n where n.id = from_id and n.user_id = auth.uid())
+    and exists (select 1 from public.nodes n where n.id = to_id   and n.user_id = auth.uid())
+  );
