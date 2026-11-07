@@ -188,6 +188,9 @@ button { cursor: pointer; }
 .btn.glass { background: var(--glass); }
 .btn.wide { width: 100%; }
 .btn.danger-text { background: transparent; color: var(--danger); }
+.btn.danger { background: var(--danger); color: var(--on-accent); }
+.btn.danger:hover { filter: brightness(1.08); background: var(--danger); }
+.chip-btn.danger-chip { color: var(--danger); }
 .btn.danger-text:hover { background: var(--fill); }
 .btn[disabled] { opacity: .5; cursor: progress; }
 .btn svg { width: 16px; height: 16px; }
@@ -417,6 +420,7 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
     <div class="mode-row">
       <button type="button" class="chip-btn glass stale-chip" id="stale-btn" hidden><span class="ring"></span><span id="stale-text"></span></button>
       <span class="chip-btn glass" id="mode-chip" hidden></span>
+      <button type="button" class="chip-btn glass danger-chip" id="clear-btn" hidden>Hapus semua</button>
     </div>
   </div>
   <div class="actions">
@@ -545,6 +549,24 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
     <footer>
       <button type="button" class="btn" data-close>Tutup</button>
       <button type="submit" class="btn primary" id="fg-submit">Simpan</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- Hapus semua -->
+<dialog class="sheet" id="dlg-clear" aria-labelledby="fc-title">
+  <form id="form-clear" novalidate>
+    <header>
+      <h2 id="fc-title">Hapus semua isi peta?</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Tutup"><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
+    </header>
+    <div class="fields">
+      <p class="hint" id="fc-summary"></p>
+      <p class="note" id="fc-note"></p>
+    </div>
+    <footer>
+      <button type="button" class="btn" data-close>Tutup</button>
+      <button type="submit" class="btn danger" id="fc-submit">Hapus semua</button>
     </footer>
   </form>
 </dialog>
@@ -717,6 +739,7 @@ const LocalStore = {
   },
   async addRelation(r) { memDB.relations.push(clone(r)); lsWrite(); return clone(r); },
   async deleteRelation(id) { memDB.relations = memDB.relations.filter(r => r.id !== id); lsWrite(); },
+  async deleteAll() { memDB = { nodes: [], relations: [] }; lsWrite(); },
   async reset() { memDB = seedData(); lsWrite(); return clone(memDB); },
 };
 
@@ -736,6 +759,7 @@ async function makeSupabaseStore() {
     async deleteNode(id) { must(await sb.from('nodes').delete().eq('id', id)); },
     async addRelation(r) { return must(await sb.from('relations').insert(pick(r, ['id', 'from_id', 'to_id', 'type'])).select().single()); },
     async deleteRelation(id) { must(await sb.from('relations').delete().eq('id', id)); },
+    async deleteAll() { must(await sb.from('nodes').delete().not('id', 'is', null)); },
   };
 }
 
@@ -1044,6 +1068,7 @@ function renderHeader() {
   const btn = $('#stale-btn');
   btn.hidden = D.stale.size === 0;
   $('#stale-text').textContent = `${D.stale.size} harga perlu dicek`;
+  $('#clear-btn').hidden = nodes.length === 0;
 }
 function renderMode() {
   const chip = $('#mode-chip');
@@ -1442,6 +1467,31 @@ document.querySelectorAll('dialog.sheet').forEach(dlg => {
     if (e.target.closest('[data-close]')) dlg.close();
     else if (e.target === dlg && dlg.id !== 'dlg-login') dlg.close();
   });
+});
+
+/* ───────────── Hapus semua ───────────── */
+const dlgC = $('#dlg-clear');
+$('#clear-btn').addEventListener('click', () => {
+  const p = nodes.filter(n => n.kind === 'produk').length;
+  $('#fc-summary').textContent = `${p} barang, ${nodes.length - p} kategori/tujuan, dan ${relations.length} relasi akan dihapus.`;
+  $('#fc-note').textContent = store.mode === 'local'
+    ? 'Data contoh bisa dipulihkan lagi lewat tombol Reset.'
+    : 'Data terhapus permanen dari Supabase dan tidak bisa dikembalikan.';
+  dlgC.showModal();
+  $('#fc-submit').focus();
+});
+$('#form-clear').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = $('#fc-submit');
+  btn.disabled = true;
+  try {
+    await store.deleteAll();
+    nodes = []; relations = []; pos.clear(); selectedId = null;
+    dlgC.close();
+    layoutFresh();
+    toast('Semua isi peta dihapus');
+  } catch (err) { failed(err); }
+  finally { btn.disabled = false; }
 });
 
 /* ───────────── Masuk (Supabase) ───────────── */
