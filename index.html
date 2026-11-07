@@ -595,8 +595,8 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
    Kosong  → mode contoh, data di localStorage browser ini.
    Terisi  → data di Supabase (jalankan schema.sql dulu). Anon key aman di publik selama RLS aktif. */
 const CONFIG = {
-  SUPABASE_URL: '',
-  SUPABASE_ANON_KEY: '',
+  SUPABASE_URL: 'https://aximlqkibnjljxvibepm.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_e37Bam7MnUn0XlGL4UXBNA_gtnpC8Dn',
 };
 const STALE_DAYS = 30;
 const COLORS = ['pink', 'orange', 'yellow', 'green', 'teal', 'blue', 'indigo', 'purple'];
@@ -748,8 +748,9 @@ const LocalStore = {
 const NODE_COLS = ['id', 'kind', 'nama', 'link', 'harga', 'harga_dicek_pada', 'toko', 'foto_url', 'catatan', 'status', 'warna', 'amplop'];
 const pick = (o, keys) => Object.fromEntries(keys.map(k => [k, o[k] ?? null]));
 async function makeSupabaseStore() {
-  await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4');
-  const sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+  await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.1');
+  const baseUrl = CONFIG.SUPABASE_URL.replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
+  const sb = window.supabase.createClient(baseUrl, CONFIG.SUPABASE_ANON_KEY);
   const must = ({ data, error }) => { if (error) throw new Error(error.message); return data; };
   return {
     mode: 'supabase', sb,
