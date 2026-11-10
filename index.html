@@ -143,6 +143,23 @@ button { cursor: pointer; }
 .node.grp .count { fill: color-mix(in srgb, var(--cc), var(--fg) 28%); font-family: var(--font-round); font-weight: 800; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .node.grp .target { fill: none; stroke: var(--cc); stroke-width: 2; vector-effect: non-scaling-stroke; }
 .node.grp .target-dot { fill: var(--cc); }
+/* Kategori/tujuan beremoji: permukaan pastel buram supaya garis tidak menembus, jumlah pindah ke badge */
+.node.grp.has-emoji .shape { fill: color-mix(in srgb, var(--cc) 18%, var(--glass-solid)); fill-opacity: 1; }
+.node.grp .emoji {
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  text-anchor: middle; dominant-baseline: central; pointer-events: none;
+}
+.node.grp .cbadge rect { fill: var(--cc); stroke: var(--bg); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.node.grp .cbadge text { fill: var(--ink, var(--on-bubble)); font-family: var(--font-ui); font-weight: 700; text-anchor: middle; dominant-baseline: central; font-variant-numeric: tabular-nums; }
+.emoji-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.field .emoji-row input[type="text"] { width: 3.2em; text-align: center; font-size: 24px; padding: 6px 8px; }
+.emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.emoji-grid button {
+  width: 40px; height: 40px; border: 0; border-radius: 12px; background: var(--fill);
+  font: 21px/1 "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+.emoji-grid button:hover { background: var(--fill-2); }
+.emoji-grid button[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--accent); background: var(--glass-solid); }
 .node.grp .label { font-family: var(--font-round); font-weight: 800; font-size: calc(14px * var(--inv, 1)); }
 .node.custom .bubble { stroke: color-mix(in srgb, var(--cc), var(--fg) 35%); stroke-width: 1.5; }
 .node.grp.custom .shape { stroke: color-mix(in srgb, var(--cc), var(--fg) 35%); fill-opacity: .3; }
@@ -563,6 +580,14 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
         <input type="text" id="fg-nama" autocomplete="off" placeholder="Contoh: Skincare">
         <p class="err" id="fg-nama-err" hidden>Nama wajib diisi.</p>
       </label>
+      <fieldset class="field"><legend>Emoji</legend>
+        <div class="emoji-row">
+          <input type="text" id="fg-emoji" autocomplete="off" spellcheck="false" placeholder="🙂" aria-label="Emoji">
+          <button type="button" class="mini" id="fg-emoji-none">Tanpa emoji</button>
+          <span class="help">Ketik atau tempel emoji apa saja, atau pilih di bawah.</span>
+        </div>
+        <div class="emoji-grid" id="fg-emoji-grid" role="group" aria-label="Pilihan emoji"></div>
+      </fieldset>
       <fieldset class="field"><legend>Warna</legend>
         <div class="swatches" id="fg-warna"></div>
         <div class="custom-row">
@@ -628,6 +653,58 @@ const CONFIG = {
   SUPABASE_ANON_KEY: 'sb_publishable_e37Bam7MnUn0XlGL4UXBNA_gtnpC8Dn',
 };
 const STALE_DAYS = 30;
+const EMOJI_PICKS = ['🧴', '☀️', '🫧', '💧', '🧪', '💄', '🪞', '🧖', '💇', '🌸', '👗', '👟', '👜', '💍', '🖥️', '⌨️', '🎧', '📱', '📚', '✏️', '🧳', '🎁', '🏠', '🛏️', '🪴', '🍳', '☕', '🎮', '🧶', '🏋️'];
+/** Tebakan emoji dari nama kategori; yang lebih spesifik dicek lebih dulu. */
+const EMOJI_GUESS = [
+  [/sunscreen|sunblock|tabir surya|\bspf\b/i, '☀️'],
+  [/facial wash|face wash|cleanser|sabun muka|cuci muka/i, '🫧'],
+  [/toner|essence/i, '💦'],
+  [/moistur|pelembap|pelembab|krim|cream/i, '💧'],
+  [/serum|ampoule/i, '🧪'],
+  [/masker|sheet mask|\bmask\b/i, '🧖'],
+  [/lip|lipstik|lipstick|bibir/i, '💄'],
+  [/powder|bedak|cushion|foundation/i, '🪞'],
+  [/make ?up|kosmetik|cosmetic/i, '💄'],
+  [/skin ?care|perawatan wajah/i, '🧴'],
+  [/rambut|hair|shampo|sampo|conditioner/i, '💇'],
+  [/parfum|perfume|fragrance|wewangian/i, '🌸'],
+  [/body|mandi|bath/i, '🛁'],
+  [/sepatu|shoe|sneaker|sandal/i, '👟'],
+  [/\btas\b|\bbag\b|dompet|wallet/i, '👜'],
+  [/aksesoris|accessor|perhiasan|jewel|cincin|kalung/i, '💍'],
+  [/fashion|baju|pakaian|outfit|clothes|kaos|celana/i, '👗'],
+  [/keyboard|mouse/i, '⌨️'],
+  [/meja|desk|setup|monitor/i, '🖥️'],
+  [/headphone|earphone|earbud|audio|speaker/i, '🎧'],
+  [/kamera|camera/i, '📷'],
+  [/laptop|komputer|computer/i, '💻'],
+  [/\bhp\b|ponsel|phone|gadget|elektronik/i, '📱'],
+  [/buku|book|novel/i, '📚'],
+  [/alat tulis|stationery|pulpen|pena/i, '✏️'],
+  [/travel|liburan|perjalanan|trip/i, '🧳'],
+  [/pagi|morning/i, '🌅'],
+  [/malam|night/i, '🌙'],
+  [/olahraga|gym|fitness|sport/i, '🏋️'],
+  [/dapur|kitchen|masak|cook/i, '🍳'],
+  [/kopi|coffee|teh|minuman|drink/i, '☕'],
+  [/makanan|snack|food|camilan/i, '🍪'],
+  [/kamar|bedroom|kasur/i, '🛏️'],
+  [/rumah|home|dekor|decor/i, '🏠'],
+  [/tanaman|plant/i, '🪴'],
+  [/game|gaming|konsol/i, '🎮'],
+  [/kado|hadiah|gift|ulang tahun|birthday/i, '🎁'],
+  [/rajut|craft|hobi|hobby|benang/i, '🧶'],
+  [/vitamin|suplemen|supplement/i, '💊'],
+];
+const guessEmoji = name => (EMOJI_GUESS.find(([re]) => re.test(name || '')) || [])[1] || null;
+/** null/undefined = tebak dari nama, '' = sengaja tanpa emoji. */
+const emojiOf = n => (n.kind === 'produk' ? null : n.emoji != null ? n.emoji || null : guessEmoji(n.nama));
+function firstGrapheme(v) {
+  v = String(v || '').trim();
+  if (!v) return '';
+  try { return [...new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(v)][0].segment; }
+  catch { return [...v][0]; }
+}
 const COLORS = ['pink', 'orange', 'yellow', 'green', 'teal', 'blue', 'indigo', 'purple'];
 const HEX = /^#[0-9a-f]{6}$/i;
 /** Warna simpul: nama preset (ikut tema terang/gelap) atau hex bebas #RRGGBB. */
@@ -804,7 +881,7 @@ const LocalStore = {
   async reset() { memDB = seedData(); lsWrite(); return clone(memDB); },
 };
 
-const NODE_COLS = ['id', 'kind', 'nama', 'link', 'harga', 'harga_dicek_pada', 'toko', 'foto_url', 'catatan', 'status', 'warna', 'amplop'];
+const NODE_COLS = ['id', 'kind', 'nama', 'link', 'harga', 'harga_dicek_pada', 'toko', 'foto_url', 'catatan', 'status', 'warna', 'amplop', 'emoji'];
 const pick = (o, keys) => Object.fromEntries(keys.map(k => [k, o[k] ?? null]));
 async function makeSupabaseStore() {
   await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.1');
@@ -817,7 +894,11 @@ async function makeSupabaseStore() {
       const [n, r] = await Promise.all([sb.from('nodes').select('*'), sb.from('relations').select('*')]);
       return { nodes: must(n), relations: must(r) };
     },
-    async saveNode(n) { return must(await sb.from('nodes').upsert(pick(n, NODE_COLS)).select().single()); },
+    async saveNode(n) {
+      const row = pick(n, NODE_COLS);
+      if (row.emoji == null) delete row.emoji; // barang tidak memakai emoji; tetap jalan sebelum kolomnya ada
+      return must(await sb.from('nodes').upsert(row).select().single());
+    },
     async deleteNode(id) { must(await sb.from('nodes').delete().eq('id', id)); },
     async addRelation(r) { return must(await sb.from('relations').insert(pick(r, ['id', 'from_id', 'to_id', 'type'])).select().single()); },
     async deleteRelation(id) { must(await sb.from('relations').delete().eq('id', id)); },
@@ -1067,15 +1148,31 @@ function paintNode(el, d) {
     const count = n.kind === 'kategori' ? productsIn(n.id).length : D.members.get(n.id).length;
     g.attr('aria-label', `${n.kind === 'kategori' ? 'Kategori' : 'Tujuan'} ${labelOf(n)}, ${count} barang`);
     let bottom = d.r;
+    const emo = emojiOf(n);
+    g.classed('has-emoji', !!emo);
+    // titik pojok kanan atas bentuk, tempat badge jumlah
+    let corner;
     if (n.kind === 'kategori') {
       g.append('circle').attr('class', 'shape').attr('r', d.r);
-      g.append('text').attr('class', 'count').attr('font-size', d.r * 0.72).text(count);
+      corner = [d.r * 0.74, -d.r * 0.74];
+      if (emo) g.append('text').attr('class', 'emoji').attr('font-size', d.r * 0.92).attr('y', d.r * 0.04).text(emo);
+      else g.append('text').attr('class', 'count').attr('font-size', d.r * 0.72).text(count);
     } else {
       const s = d.r * 1.72;
       bottom = s / 2;
+      corner = [s / 2 - 2, -s / 2 + 2];
       g.append('rect').attr('class', 'shape').attr('x', -s / 2).attr('y', -s / 2).attr('width', s).attr('height', s).attr('rx', s * 0.3);
-      g.append('circle').attr('class', 'target').attr('r', s * 0.22);
-      g.append('circle').attr('class', 'target-dot').attr('r', s * 0.07);
+      if (emo) g.append('text').attr('class', 'emoji').attr('font-size', s * 0.5).attr('y', s * 0.02).text(emo);
+      else {
+        g.append('circle').attr('class', 'target').attr('r', s * 0.22);
+        g.append('circle').attr('class', 'target-dot').attr('r', s * 0.07);
+      }
+    }
+    if (emo) {
+      const h = Math.max(15, d.r * 0.56), w = Math.max(h, String(count).length * h * 0.5 + h * 0.5);
+      const b = g.append('g').attr('class', 'cbadge').attr('transform', `translate(${corner[0]},${corner[1]})`);
+      b.append('rect').attr('x', -w / 2).attr('y', -h / 2).attr('width', w).attr('height', h).attr('rx', h / 2);
+      b.append('text').attr('font-size', h * 0.64).attr('y', h * 0.03).text(count);
     }
     g.append('text').attr('class', 'label').attr('y', bottom + 6).append('tspan').attr('class', 'name').attr('x', 0).text(n.nama);
   }
@@ -1195,7 +1292,7 @@ function relChips(ids, label = labelOf) {
   return ids.map(id => byId.get(id)).filter(Boolean).map(o => {
     const off = o.status === 'batal' || D.tergeser.has(o.id);
     const tag = o.status === 'dibeli' ? '<span class="tag">✓ Dibeli</span>' : '';
-    return `<button type="button" class="chip${off ? ' is-off' : ''}" data-act="goto" data-id="${o.id}" style="${ccStyle(D.color.get(o.id))}"><span class="dot"></span><span class="nm">${esc(label(o))}</span>${tag}</button>`;
+    return `<button type="button" class="chip${off ? ' is-off' : ''}" data-act="goto" data-id="${o.id}" style="${ccStyle(D.color.get(o.id))}"><span class="dot"></span><span class="nm">${emojiOf(o) ? `${esc(emojiOf(o))} ` : ''}${esc(label(o))}</span>${tag}</button>`;
   }).join('');
 }
 function relSection(title, ids, label) {
@@ -1266,7 +1363,7 @@ function groupCard(n) {
     <button type="button" class="close" data-act="close" aria-label="Tutup kartu">${xIcon}</button>
     <div class="card-body" style="${ccStyle(n.warna)}">
       <div class="eyebrow"><span class="dot"></span>${label}${n.amplop ? ` · Amplop ${esc(n.amplop)}` : ''}</div>
-      <h2>${esc(n.nama)}</h2>
+      <h2>${emojiOf(n) ? `${esc(emojiOf(n))} ` : ''}${esc(n.nama)}</h2>
       <div class="stats">
         <div><span class="k">Rencana beli</span><span class="v">${est.items}</span></div>
         <div><span class="k">Perkiraan sisa</span><span class="v">±${rpShort(est.total)}</span></div>
@@ -1321,7 +1418,8 @@ function failed(err) {
   console.error(err);
   const m = String(err.message || err);
   let hint = 'Cek koneksi lalu coba lagi.';
-  if (/row-level security|null value in column "user_id"|JWT|not authenticated/i.test(m)) {
+  if (/emoji/i.test(m) && /column/i.test(m)) hint = 'Kolom emoji belum ada. Jalankan ulang schema.sql terbaru di Supabase.';
+  else if (/row-level security|null value in column "user_id"|JWT|not authenticated/i.test(m)) {
     hint = 'Sesi masuk tidak aktif. Masuk lagi lewat link email.';
     if (store?.mode === 'supabase') openLogin();
   } else if (/does not exist|schema cache/i.test(m)) hint = 'Tabel belum dibuat. Jalankan schema.sql di Supabase.';
@@ -1437,7 +1535,7 @@ function chipToggle(container, kind, set) {
     return;
   }
   container.innerHTML = groups.map(g =>
-    `<button type="button" class="chip toggle" data-id="${g.id}" aria-pressed="${set.has(g.id)}" style="${ccStyle(g.warna)}"><span class="dot"></span><span class="nm">${esc(labelOf(g))}</span></button>`).join('');
+    `<button type="button" class="chip toggle" data-id="${g.id}" aria-pressed="${set.has(g.id)}" style="${ccStyle(g.warna)}"><span class="dot"></span><span class="nm">${emojiOf(g) ? `${esc(emojiOf(g))} ` : ''}${esc(labelOf(g))}</span></button>`).join('');
 }
 function renderPicker(which) {
   const root = $(`#fp-${which}`), set = fctx[which], other = fctx[which === 'alt' ? 'pel' : 'alt'];
@@ -1600,6 +1698,18 @@ $('#fg-parent').addEventListener('change', e => {
 ['#fg-warna', '#fg-picker', '#fg-hex'].forEach(sel => $(sel).addEventListener('input', () => { colorTouched = true; }));
 $('#fg-warna').addEventListener('change', () => { colorTouched = true; });
 
+let emojiTouched = false;
+$('#fg-emoji-grid').innerHTML = EMOJI_PICKS.map(e => `<button type="button" data-e="${e}" aria-label="${e}" aria-pressed="false">${e}</button>`).join('');
+function setEmoji(v, touched) {
+  $('#fg-emoji').value = v;
+  if (touched) emojiTouched = true;
+  document.querySelectorAll('#fg-emoji-grid button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.e === v)));
+}
+$('#fg-emoji-grid').addEventListener('click', e => { const b = e.target.closest('[data-e]'); if (b) setEmoji(b.dataset.e, true); });
+$('#fg-emoji-none').addEventListener('click', () => setEmoji('', true));
+$('#fg-emoji').addEventListener('input', e => setEmoji(firstGrapheme(e.target.value), true));
+$('#fg-nama').addEventListener('input', e => { if (!emojiTouched) setEmoji(guessEmoji(e.target.value) || '', false); });
+
 function openGroupForm(id = null, preset = {}) {
   const n = id ? byId.get(id) : null;
   gctxId = id;
@@ -1612,6 +1722,8 @@ function openGroupForm(id = null, preset = {}) {
   $('#fg-hex-err').hidden = true;
   setWarna(warna);
   $('#fg-nama').value = n?.nama || '';
+  emojiTouched = !!n;
+  setEmoji(n ? (emojiOf(n) || '') : '', false);
   $('#fg-amplop').value = n?.amplop || '';
   $('#fg-nama-err').hidden = true;
   $('#fg-title').textContent = n ? 'Edit' : parentId ? `Subkategori baru di ${byId.get(parentId).nama}` : 'Kategori atau tujuan baru';
@@ -1637,6 +1749,7 @@ $('#form-group').addEventListener('submit', async e => {
     id: old?.id || uuid(), kind, nama,
     warna,
     amplop: kind === 'kategori' ? ($('#fg-amplop').value.trim() || null) : null,
+    emoji: firstGrapheme($('#fg-emoji').value),
     status: 'ingin', link: null, harga: null, toko: null, harga_dicek_pada: null,
   };
   const btn = $('#fg-submit');

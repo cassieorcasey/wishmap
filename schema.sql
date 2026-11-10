@@ -30,6 +30,7 @@ create table if not exists public.nodes (
   -- khusus kategori/tujuan
   warna             text,   -- nama preset atau hex bebas #RRGGBB (lihat constraint nodes_warna_check)
   amplop            text,   -- colokan v2: nama amplop di sheet budget
+  emoji             text,   -- kategori/tujuan: null = ditebak dari nama, '' = tanpa emoji
 
   created_at        timestamptz not null default now(),
   updated_at        timestamptz not null default now(),
@@ -40,6 +41,11 @@ create table if not exists public.nodes (
 );
 
 create index if not exists nodes_user_idx on public.nodes (user_id);
+
+-- Emoji kategori/tujuan (ditambahkan setelah v1; aman dijalankan ulang)
+alter table public.nodes add column if not exists emoji text;
+alter table public.nodes drop constraint if exists nodes_emoji_check;
+alter table public.nodes add constraint nodes_emoji_check check (emoji is null or char_length(emoji) <= 16);
 
 -- Warna: 8 preset yang ikut tema terang/gelap, atau hex bebas #RRGGBB.
 -- drop + add supaya aman dijalankan ulang di database yang sudah ada.
