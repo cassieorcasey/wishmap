@@ -42,6 +42,7 @@
   --c-pink: #FF2D55;  --c-orange: #FF9500; --c-yellow: #E0B000; --c-green: #34C759;
   --c-teal: #30B0C7;  --c-blue: #007AFF;   --c-indigo: #5856D6; --c-purple: #AF52DE;
   --c-none: #8E8E93;
+  --terr: .2;
 
   --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Figtree", system-ui, sans-serif;
   --font-round: ui-rounded, "SF Pro Rounded", "Nunito", -apple-system, system-ui, sans-serif;
@@ -63,7 +64,7 @@
     --scrim: rgba(0, 0, 0, .45); --edge: rgba(220, 220, 255, .24);
     --accent: #0A84FF; --ok: #30D158; --stale: #FFB340; --danger: #FF453A;
     --c-pink: #FF375F; --c-orange: #FF9F0A; --c-yellow: #FFD60A; --c-green: #30D158;
-    --c-teal: #40C8E0; --c-blue: #0A84FF; --c-indigo: #5E5CE6; --c-purple: #BF5AF2; --c-none: #98989D;
+    --c-teal: #40C8E0; --c-blue: #0A84FF; --c-indigo: #5E5CE6; --c-purple: #BF5AF2; --c-none: #98989D; --terr: .26;
     color-scheme: dark;
   }
 }
@@ -77,7 +78,7 @@
   --scrim: rgba(0, 0, 0, .45); --edge: rgba(220, 220, 255, .24);
   --accent: #0A84FF; --ok: #30D158; --stale: #FFB340; --danger: #FF453A;
   --c-pink: #FF375F; --c-orange: #FF9F0A; --c-yellow: #FFD60A; --c-green: #30D158;
-  --c-teal: #40C8E0; --c-blue: #0A84FF; --c-indigo: #5E5CE6; --c-purple: #BF5AF2; --c-none: #98989D;
+  --c-teal: #40C8E0; --c-blue: #0A84FF; --c-indigo: #5E5CE6; --c-purple: #BF5AF2; --c-none: #98989D; --terr: .26;
   color-scheme: dark;
 }
 
@@ -114,17 +115,22 @@ button { cursor: pointer; }
 .link { stroke: var(--edge); stroke-width: 1.3; fill: none; vector-effect: non-scaling-stroke; transition: opacity .2s; }
 .link.anggota { stroke-opacity: .5; }
 .link.alternatif { stroke: var(--fg-3); stroke-dasharray: 5 5; stroke-width: 1.5; }
-.link.pelengkap { stroke: var(--accent); stroke-opacity: .65; stroke-width: 2; }
+.link.pelengkap { stroke: var(--fg-2); stroke-opacity: .5; stroke-width: 2; }
 .link.induk { stroke-width: 2.4; stroke-opacity: .55; }
 
 .glyph rect { fill: var(--glass-solid); stroke: var(--hair); vector-effect: non-scaling-stroke; }
 .glyph text { fill: var(--fg-2); font: 700 10px var(--font-ui); text-anchor: middle; dominant-baseline: central; }
-.glyph.pelengkap text { fill: var(--accent); font-size: 13px; }
+.glyph.pelengkap text { font-size: 13px; }
 .glyph { transition: opacity .2s; pointer-events: none; }
 
 .node { cursor: pointer; outline: none; transition: opacity .2s; }
+.terr circle { pointer-events: none; transition: opacity .25s; }
+#map.focusing .terr circle.faded { opacity: .3; }
+.node .shadow { fill: url(#g-shade); pointer-events: none; }
+.node .sheen { fill: url(#g-sheen); pointer-events: none; }
+.node .base { fill: var(--bg); }
 .node .bubble { fill: var(--cc); stroke: var(--bg); stroke-width: 2; vector-effect: non-scaling-stroke; }
-.node.stale .bubble { filter: saturate(.35); }
+.node.stale .bubble { filter: saturate(.6); }
 .stale-ring { fill: none; stroke: var(--stale); stroke-width: 1.7; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
 .node .initial { fill: var(--ink, var(--on-bubble)); font-family: var(--font-round); font-weight: 800; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .node .photo { pointer-events: none; }
@@ -139,8 +145,8 @@ button { cursor: pointer; }
 .node .label .price { fill: var(--fg-2); font-variant-numeric: tabular-nums; font-weight: 600; }
 .node.batal .label .name { text-decoration: line-through; }
 .node.batal, .node.tergeser { opacity: .3; }
-.node.grp .shape { fill: var(--cc); fill-opacity: .16; stroke: var(--cc); stroke-width: 2; vector-effect: non-scaling-stroke; }
-.node.grp .count { fill: color-mix(in srgb, var(--cc), var(--fg) 28%); font-family: var(--font-round); font-weight: 800; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.node.grp .shape { fill: var(--cc); fill-opacity: .2; stroke: var(--cc); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.node.grp .count { fill: color-mix(in srgb, var(--cc), var(--fg) 45%); font-family: var(--font-round); font-weight: 800; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .node.grp .target { fill: none; stroke: var(--cc); stroke-width: 2; vector-effect: non-scaling-stroke; }
 .node.grp .target-dot { fill: var(--cc); }
 .node.grp .label { font-family: var(--font-round); font-weight: 800; font-size: calc(14px * var(--inv, 1)); }
@@ -152,11 +158,10 @@ button { cursor: pointer; }
 #map.focusing .node.faded, #map.focusing .link.faded, #map.focusing .glyph.faded { opacity: .1; }
 #map.focusing .node.batal.hot, #map.focusing .node.tergeser.hot { opacity: .45; }
 
-/* semantic zoom: jauh = gelembung, sedang = nama, dekat = harga, foto, tanda relasi */
+/* semantic zoom: jauh = gelembung, sedang = nama, harga, foto; dekat = tanda relasi */
 #map[data-zoom="far"] .node.produk:not(.hot):not(.selected) .label,
-#map[data-zoom="far"] .node.produk .initial { display: none; }
-#map:not([data-zoom="near"]) .node .label .price,
-#map:not([data-zoom="near"]) .node .photo,
+#map[data-zoom="far"] .node.sub:not(.hot):not(.selected) .label,
+#map[data-zoom="far"] .node .photo,
 #map:not([data-zoom="near"]) .glyph { display: none; }
 
 /* ── kontrol mengambang ── */
@@ -167,7 +172,29 @@ button { cursor: pointer; }
 }
 .topbar > * { pointer-events: auto; }
 .left-col { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0; }
-.brand { display: flex; align-items: center; gap: 12px; padding: 8px 18px 8px 10px; border-radius: 999px; min-width: 0; }
+.brand-wrap { position: relative; min-width: 0; }
+.brand { display: flex; align-items: center; gap: 12px; padding: 7px 7px 7px 10px; border-radius: 999px; min-width: 0; }
+.menu-btn {
+  width: 40px; height: 40px; flex: none; border: 0; border-radius: 50%;
+  background: transparent; color: var(--fg-2); display: grid; place-items: center;
+}
+.menu-btn:hover, .menu-btn[aria-expanded="true"] { background: var(--fill); color: var(--fg); }
+.menu-btn svg { width: 18px; height: 18px; fill: currentColor; }
+.menu {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 6;
+  width: max-content; min-width: 100%; max-width: calc(100vw - 32px); box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 2px; padding: 6px; border-radius: 20px;
+  background: var(--glass-solid);
+}
+.menu .info { padding: 8px 12px 6px; font-size: 12.5px; color: var(--fg-2); }
+.menu button {
+  min-height: 44px; padding: 0 12px; border: 0; border-radius: 13px; background: transparent;
+  text-align: left; font-size: 15px; font-weight: 500; color: var(--fg);
+}
+.menu button:hover { background: var(--fill); }
+.menu button.danger { color: var(--danger); }
+.menu button[disabled] { opacity: .4; cursor: default; background: transparent; }
+.menu hr { border: 0; border-top: 1px solid var(--hair); margin: 4px 10px; }
 .brand svg { flex: none; }
 .brand-text { display: flex; flex-direction: column; min-width: 0; }
 .brand h1 { margin: 0; font: 800 18px/1.1 var(--font-round); letter-spacing: -.01em; }
@@ -195,7 +222,6 @@ button { cursor: pointer; }
 .btn.danger-text { background: transparent; color: var(--danger); }
 .btn.danger { background: var(--danger); color: var(--on-accent); }
 .btn.danger:hover { filter: brightness(1.08); background: var(--danger); }
-.chip-btn.danger-chip { color: var(--danger); }
 .btn.danger-text:hover { background: var(--fill); }
 .btn[disabled] { opacity: .5; cursor: progress; }
 .btn svg { width: 16px; height: 16px; }
@@ -412,8 +438,20 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
   <svg id="map" data-zoom="mid" aria-label="Peta wishlist">
     <defs>
       <clipPath id="clip-circle" clipPathUnits="objectBoundingBox"><circle cx=".5" cy=".5" r=".5"></circle></clipPath>
+      <radialGradient id="g-sheen" cx=".34" cy=".26" r=".82">
+        <stop offset="0" stop-color="#fff" stop-opacity=".5"></stop>
+        <stop offset=".45" stop-color="#fff" stop-opacity=".07"></stop>
+        <stop offset=".78" stop-color="#000" stop-opacity="0"></stop>
+        <stop offset="1" stop-color="#000" stop-opacity=".17"></stop>
+      </radialGradient>
+      <radialGradient id="g-shade">
+        <stop offset=".5" stop-color="#000" stop-opacity=".2"></stop>
+        <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
+      </radialGradient>
+      <g id="terr-defs"></g>
     </defs>
     <g id="vp" style="--inv: 1">
+      <g id="terr" class="terr"></g>
       <g id="links"></g>
       <g id="glyphs"></g>
       <g id="nodes"></g>
@@ -423,6 +461,7 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
 
 <header class="topbar">
   <div class="left-col">
+    <div class="brand-wrap">
     <div class="brand glass">
       <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
         <line x1="9" y1="11" x2="20" y2="9" stroke="var(--edge)" stroke-width="1.5"></line>
@@ -435,11 +474,20 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
         <h1>Wishmap</h1>
         <span class="stat" id="stat-main" title="Barang dalam satu grup alternatif dihitung sekali, pakai harga termurah">Memuat…</span>
       </div>
+      <button type="button" class="menu-btn" id="menu-btn" aria-label="Menu lainnya" aria-expanded="false" aria-controls="menu">
+        <svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="3.5" cy="9" r="1.6"></circle><circle cx="9" cy="9" r="1.6"></circle><circle cx="14.5" cy="9" r="1.6"></circle></svg>
+      </button>
+    </div>
+    <div class="menu glass" id="menu" hidden>
+      <div class="info" id="mode-chip"></div>
+      <button type="button" id="reset-btn" hidden>Pulihkan data contoh</button>
+      <button type="button" id="logout-btn" hidden>Keluar</button>
+      <hr>
+      <button type="button" class="danger" id="clear-btn">Hapus semua…</button>
+    </div>
     </div>
     <div class="mode-row">
       <button type="button" class="chip-btn glass stale-chip" id="stale-btn" hidden><span class="ring"></span><span id="stale-text"></span></button>
-      <span class="chip-btn glass" id="mode-chip" hidden></span>
-      <button type="button" class="chip-btn glass danger-chip" id="clear-btn" hidden>Hapus semua</button>
     </div>
   </div>
   <div class="actions">
@@ -461,7 +509,7 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
 <div class="legend glass" aria-label="Keterangan">
   <span><svg width="22" height="12" aria-hidden="true"><circle cx="4" cy="6" r="3" fill="var(--fg-3)"></circle><circle cx="15" cy="6" r="6" fill="var(--fg-3)"></circle></svg>Ukuran = harga</span>
   <span><svg width="22" height="4" aria-hidden="true"><line x1="0" y1="2" x2="22" y2="2" stroke="var(--fg-3)" stroke-width="1.5" stroke-dasharray="4 3"></line></svg>Alternatif</span>
-  <span><svg width="22" height="4" aria-hidden="true"><line x1="0" y1="2" x2="22" y2="2" stroke="var(--accent)" stroke-width="2"></line></svg>Pelengkap</span>
+  <span><svg width="22" height="4" aria-hidden="true"><line x1="0" y1="2" x2="22" y2="2" stroke="var(--fg-2)" stroke-opacity=".6" stroke-width="2"></line></svg>Pelengkap</span>
   <span><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" fill="none" stroke="var(--stale)" stroke-width="1.6" stroke-dasharray="2.5 2.5"></circle></svg>Harga basi</span>
 </div>
 
@@ -641,11 +689,11 @@ function inkOf(c) {
   return 1.05 / (L + 0.05) >= (L + 0.05) / 0.062 ? '#FFFFFF' : '#1C1C1E';
 }
 const ccStyle = c => `--cc: ${cssColor(c)}; --ink: ${inkOf(c)}`;
-/** Garis untuk warna bebas: dicampur dengan warna teks agar warna sangat terang/gelap tetap terlihat. */
-const lineColor = c => (HEX.test(c || '') ? `color-mix(in srgb, ${c}, var(--fg) 40%)` : cssColor(c));
+/** Turunan warna untuk subkategori yang warnanya sama dengan induknya: [campuran, persen]. */
+const SHADES = [['white', 32], ['black', 22], ['white', 50], ['black', 36]];
 const TOKO = { shopee: 'Shopee', tiktok: 'TikTok Shop', lainnya: 'Toko lain' };
 const STATUS = { ingin: 'Ingin', dibeli: 'Dibeli', batal: 'Batal' };
-const LINK_DIST = { anggota: 74, alternatif: 48, pelengkap: 62, induk: 96 };
+const LINK_DIST = { anggota: 82, alternatif: 56, pelengkap: 70, induk: 104 };
 const LINK_STR = { anggota: 0.45, alternatif: 0.7, pelengkap: 0.35, induk: 0.6 };
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const canHover = matchMedia('(hover: hover)').matches;
@@ -838,6 +886,7 @@ function derive() {
     color: new Map(), memberOf: new Map(), members: new Map(),
     alt: new Map(), pel: new Map(), comp: new Map(), compBought: new Map(),
     parent: new Map(), children: new Map(), depth: new Map(),
+    home: new Map(), shade: new Map(),
     tergeser: new Set(), stale: new Set(),
   };
   for (const n of nodes) {
@@ -858,6 +907,14 @@ function derive() {
     while (cur && k < 32) { k++; cur = d.parent.get(cur); }
     d.depth.set(n.id, k);
   }
+  // Subkategori yang warnanya sama dengan induknya diberi turunan warna (urut id supaya stabil antar muat)
+  for (const n of nodes) {
+    if (n.kind !== 'kategori') continue;
+    const par = byId.get(d.parent.get(n.id));
+    if (!par || (par.warna || 'none') !== (n.warna || 'none')) continue;
+    const sibs = d.children.get(par.id).filter(id => (byId.get(id).warna || 'none') === (par.warna || 'none')).sort();
+    d.shade.set(n.id, sibs.indexOf(n.id) + d.depth.get(n.id) - 1);
+  }
   // Komponen terhubung pada sisi "alternatif" (union-find) → satu keputusan beli per komponen
   const products = nodes.filter(n => n.kind === 'produk' && n.status !== 'batal');
   const parent = new Map(products.map(p => [p.id, p.id]));
@@ -873,6 +930,7 @@ function derive() {
     const groups = d.memberOf.get(n.id).map(id => byId.get(id));
     const home = groups.filter(g => g.kind === 'kategori').sort((a, b) => d.depth.get(b.id) - d.depth.get(a.id))[0] || groups[0];
     d.color.set(n.id, home?.warna || 'none');
+    if (home) d.home.set(n.id, home.id);
     if (n.status === 'ingin') {
       if (d.compBought.has(d.comp.get(n.id))) d.tergeser.add(n.id);
       const ds = daysSince(n.harga_dicek_pada);
@@ -880,6 +938,25 @@ function derive() {
     }
   }
   return d;
+}
+
+/** Warna simpul di peta: warna kategori, digeser bila kategorinya subkategori sewarna dengan induknya. */
+function mapColor(id) {
+  const base = cssColor(D.color.get(id));
+  const s = D.shade.get(byId.get(id)?.kind === 'produk' ? D.home.get(id) : id);
+  if (s == null) return base;
+  const [to, pct] = SHADES[s % SHADES.length];
+  return `color-mix(in oklab, ${base}, ${to} ${pct}%)`;
+}
+const mapLine = id => (HEX.test(D.color.get(id) || '') ? `color-mix(in srgb, ${mapColor(id)}, var(--fg) 40%)` : mapColor(id));
+/** Warna wilayah: warna kategori akar tempat simpul berada (tujuan memakai warnanya sendiri). */
+function terrColor(id) {
+  const n = byId.get(id);
+  if (n.kind === 'produk' && n.status === 'batal') return null;
+  let g = n.kind === 'produk' ? D.home.get(id) : id, k = 0;
+  if (!g) return null;
+  while (D.parent.get(g) && k++ < 32) g = D.parent.get(g);
+  return cssColor(byId.get(g)?.warna);
 }
 
 /** Semua kategori di bawah id (termasuk id), BFS. */
@@ -927,19 +1004,47 @@ function estimate(ids) {
 /* ───────────── Graf (D3-force) ───────────── */
 const svgEl = $('#map'), stageEl = $('#stage');
 const svg = d3.select(svgEl), vp = d3.select('#vp');
-const gL = d3.select('#links'), gG = d3.select('#glyphs'), gN = d3.select('#nodes');
+const gT = d3.select('#terr'), gL = d3.select('#links'), gG = d3.select('#glyphs'), gN = d3.select('#nodes');
 let simNodes = [], simLinks = [], pos = new Map(), K = 1, T = d3.zoomIdentity, zoomLevel = 'mid';
 let rScale = d3.scaleSqrt().domain([0, 1]).range([9, 24]);
+
+/* Gerak melayang: hanya di lapisan gambar. Tiap simpul digeser beberapa piksel mengikuti gelombang pelan,
+   tanpa mengubah posisi fisikanya, jadi tata letak tidak ikut bergeser. Mati saat prefers-reduced-motion,
+   dan berhenti sendiri setelah 90 detik tanpa interaksi (hemat baterai). */
+const IDLE_STOP_MS = 90000;
+let driftTimer = null, lastActive = performance.now();
+function driftFrame() {
+  const now = performance.now();
+  if (now - lastActive > IDLE_STOP_MS) { driftTimer.stop(); driftTimer = null; return; }
+  const t = now / 1000;
+  for (const n of simNodes) {
+    if (n.phase == null) { n.phase = Math.random() * 6.283; n.pace = 0.75 + Math.random() * 0.5; }
+    const a = n.fx != null ? 0 : n.kind === 'produk' ? 3 : 1.4;
+    n.ox = Math.cos(t * 0.8 * n.pace + n.phase) * a;
+    n.oy = Math.sin(t * 0.62 * n.pace + n.phase * 1.7) * a;
+  }
+  ticked();
+}
+function startDrift() {
+  if (reduceMotion || driftTimer || !simNodes.length) return;
+  lastActive = performance.now();
+  driftTimer = d3.timer(driftFrame);
+}
+function wake() {
+  lastActive = performance.now();
+  if (!driftTimer && loaded) startDrift();
+}
+['pointerdown', 'pointermove', 'keydown', 'wheel'].forEach(ev => addEventListener(ev, wake, { passive: true }));
 
 const sim = d3.forceSimulation()
   .velocityDecay(0.28)
   .alphaDecay(0.028)
   .force('link', d3.forceLink().id(d => d.id).distance(l => LINK_DIST[l.type]).strength(l => LINK_STR[l.type]))
   .force('charge', d3.forceManyBody().strength(d => (d.kind === 'produk' ? -150 : d.depth ? -380 : -620)).distanceMax(700))
-  .force('collide', d3.forceCollide().radius(d => d.r + (d.kind === 'produk' ? 7 : 18)).iterations(2))
+  .force('collide', d3.forceCollide().radius(d => d.r + (d.kind === 'produk' ? 14 : 22)).iterations(2))
   .force('x', d3.forceX(0).strength(0.035))
   .force('y', d3.forceY(0).strength(0.035))
-  .on('tick', ticked)
+  .on('tick', () => { if (!driftTimer) ticked(); })
   .stop();
 
 function radiusOf(n) {
@@ -997,11 +1102,28 @@ const drag = d3.drag()
   .on('end', (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; svgEl.classList.remove('dragging'); });
 
 function draw() {
+  // Wilayah: tiap simpul memancarkan cahaya lembut berwarna kategori akarnya; tumpukannya membentuk area
+  const terr = simNodes.map(d => ({ d, color: terrColor(d.id) })).filter(t => t.color);
+  const tones = [...new Set(terr.map(t => t.color))];
+  const defs = d3.select('#terr-defs');
+  defs.selectAll('*').remove();
+  tones.forEach((c, i) => {
+    const g = defs.append('radialGradient').attr('id', `tg-${i}`);
+    g.append('stop').attr('offset', 0).style('stop-color', c).style('stop-opacity', 'var(--terr)');
+    g.append('stop').attr('offset', 0.5).style('stop-color', c).style('stop-opacity', 'calc(var(--terr) * .42)');
+    g.append('stop').attr('offset', 1).style('stop-color', c).style('stop-opacity', 0);
+  });
+  const ts = gT.selectAll('circle').data(terr, t => t.d.id);
+  ts.exit().remove();
+  ts.enter().append('circle').merge(ts)
+    .attr('r', t => t.d.r + (t.d.kind === 'produk' ? 58 : 92))
+    .attr('fill', t => `url(#tg-${tones.indexOf(t.color)})`);
+
   const ls = gL.selectAll('line').data(simLinks, d => d.id);
   ls.exit().remove();
   ls.enter().append('line').merge(ls)
     .attr('class', d => `link ${d.type}`)
-    .style('stroke', d => (d.type === 'anggota' || d.type === 'induk' ? lineColor(D.color.get(idOf(d.target))) : null));
+    .style('stroke', d => (d.type === 'anggota' || d.type === 'induk' ? mapLine(idOf(d.target)) : null));
 
   const gs = gG.selectAll('g.glyph').data(simLinks.filter(l => l.type === 'alternatif' || l.type === 'pelengkap'), d => d.id);
   gs.exit().remove();
@@ -1038,19 +1160,23 @@ function paintNode(el, d) {
     if (D.tergeser.has(n.id)) cls.push('tergeser');
     if (D.stale.has(n.id)) cls.push('stale');
   }
+  if (n.kind !== 'produk' && D.depth.get(n.id) > 0) cls.push('sub');
   if (n.id === selectedId) cls.push('selected');
   if (HEX.test(D.color.get(n.id) || '')) cls.push('custom');
-  g.attr('class', cls.join(' ')).style('--cc', cssColor(D.color.get(n.id))).style('--ink', inkOf(D.color.get(n.id)));
+  g.attr('class', cls.join(' ')).style('--cc', mapColor(n.id)).style('--ink', inkOf(D.color.get(n.id)));
 
   if (n.kind === 'produk') {
     g.attr('aria-label', `${n.nama}, ${n.harga == null ? 'tanpa harga' : rp(n.harga)}, ${STATUS[n.status]}`);
+    g.append('circle').attr('class', 'shadow').attr('r', d.r * 1.5).attr('cy', d.r * 0.3);
     if (D.stale.has(n.id)) g.append('circle').attr('class', 'stale-ring').attr('r', d.r + 4.5);
     g.append('circle').attr('class', 'bubble').attr('r', d.r);
-    g.append('text').attr('class', 'initial').attr('font-size', d.r * 0.85).text(initialOf(n.nama));
+    g.append('circle').attr('class', 'sheen').attr('r', d.r);
     const foto = safeUrl(n.foto_url);
     if (foto) {
+      // foto mengisi bulatan; tepi bulatan tersisa sebagai cincin warna kategori
+      const pr = d.r - Math.min(2.6, d.r * 0.18);
       g.append('image').attr('class', 'photo').attr('href', foto)
-        .attr('x', -d.r).attr('y', -d.r).attr('width', d.r * 2).attr('height', d.r * 2)
+        .attr('x', -pr).attr('y', -pr).attr('width', pr * 2).attr('height', pr * 2)
         .attr('preserveAspectRatio', 'xMidYMid slice').attr('clip-path', 'url(#clip-circle)')
         .on('error', function () { this.remove(); });
     }
@@ -1068,11 +1194,13 @@ function paintNode(el, d) {
     g.attr('aria-label', `${n.kind === 'kategori' ? 'Kategori' : 'Tujuan'} ${labelOf(n)}, ${count} barang`);
     let bottom = d.r;
     if (n.kind === 'kategori') {
+      g.append('circle').attr('class', 'base').attr('r', d.r);
       g.append('circle').attr('class', 'shape').attr('r', d.r);
       g.append('text').attr('class', 'count').attr('font-size', d.r * 0.72).text(count);
     } else {
       const s = d.r * 1.72;
       bottom = s / 2;
+      g.append('rect').attr('class', 'base').attr('x', -s / 2).attr('y', -s / 2).attr('width', s).attr('height', s).attr('rx', s * 0.3);
       g.append('rect').attr('class', 'shape').attr('x', -s / 2).attr('y', -s / 2).attr('width', s).attr('height', s).attr('rx', s * 0.3);
       g.append('circle').attr('class', 'target').attr('r', s * 0.22);
       g.append('circle').attr('class', 'target-dot').attr('r', s * 0.07);
@@ -1081,17 +1209,19 @@ function paintNode(el, d) {
   }
 }
 
+const px = d => d.x + (d.ox || 0), py = d => d.y + (d.oy || 0);
 function ticked() {
-  gN.selectAll('g.node').attr('transform', d => `translate(${d.x},${d.y})`);
+  gT.selectAll('circle').attr('cx', t => px(t.d)).attr('cy', t => py(t.d));
+  gN.selectAll('g.node').attr('transform', d => `translate(${px(d)},${py(d)})`);
   gL.selectAll('line')
-    .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
-    .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+    .attr('x1', d => px(d.source)).attr('y1', d => py(d.source))
+    .attr('x2', d => px(d.target)).attr('y2', d => py(d.target));
   placeGlyphs();
 }
 function placeGlyphs() {
   gG.selectAll('g.glyph').attr('transform', d =>
     typeof d.source === 'object'
-      ? `translate(${(d.source.x + d.target.x) / 2},${(d.source.y + d.target.y) / 2}) scale(${1 / K})`
+      ? `translate(${(px(d.source) + px(d.target)) / 2},${(py(d.source) + py(d.target)) / 2}) scale(${1 / K})`
       : null);
 }
 
@@ -1120,8 +1250,8 @@ function fit(animate = true) {
   if (!simNodes.length) return;
   const W = svgEl.clientWidth, H = svgEl.clientHeight, phone = W <= 640;
   const x0 = d3.min(simNodes, d => d.x - d.r), x1 = d3.max(simNodes, d => d.x + d.r);
-  const y0 = d3.min(simNodes, d => d.y - d.r), y1 = d3.max(simNodes, d => d.y + d.r + 34);
-  const top = phone ? 130 : 96, bottom = phone ? 90 : 76, side = phone ? 20 : 48;
+  const y0 = d3.min(simNodes, d => d.y - d.r), y1 = d3.max(simNodes, d => d.y + d.r + 46);
+  const top = phone ? 116 : 96, bottom = phone ? 90 : 76, side = phone ? 20 : 48;
   const k = Math.max(0.2, Math.min(1.8, (W - side * 2) / (x1 - x0 || 1), (H - top - bottom) / (y1 - y0 || 1)));
   const t = d3.zoomIdentity
     .translate(W / 2 - k * (x0 + x1) / 2, top + (H - top - bottom) / 2 - k * (y0 + y1) / 2)
@@ -1161,6 +1291,7 @@ function applyHighlight() {
     .classed('hot', d => !!focus && nb.has(d.id))
     .classed('selected', d => d.id === selectedId);
   const linkFaded = l => !!focus && !(nb.has(idOf(l.source)) && nb.has(idOf(l.target)) && (idOf(l.source) === focus || idOf(l.target) === focus || byId.get(focus)?.kind === 'kategori'));
+  gT.selectAll('circle').classed('faded', t => !!focus && !nb.has(t.d.id));
   gL.selectAll('line').classed('faded', linkFaded);
   gG.selectAll('g.glyph').classed('faded', linkFaded);
 }
@@ -1176,17 +1307,21 @@ function renderHeader() {
   const btn = $('#stale-btn');
   btn.hidden = D.stale.size === 0;
   $('#stale-text').textContent = `${D.stale.size} harga perlu dicek`;
-  $('#clear-btn').hidden = nodes.length === 0;
+  $('#clear-btn').disabled = nodes.length === 0;
 }
 function renderMode() {
-  const chip = $('#mode-chip');
-  chip.hidden = false;
-  if (store.mode === 'local') {
-    chip.innerHTML = `Mode contoh · tersimpan di browser ini <button type="button" class="mini" id="reset-btn">Reset</button>`;
-  } else {
-    chip.innerHTML = `Tersinkron <button type="button" class="mini" id="logout-btn">Keluar</button>`;
-  }
+  const local = store.mode === 'local';
+  $('#mode-chip').textContent = local ? 'Mode contoh · tersimpan di browser ini' : 'Tersinkron antar perangkat';
+  $('#reset-btn').hidden = !local;
+  $('#logout-btn').hidden = local;
 }
+const menuEl = $('#menu'), menuBtn = $('#menu-btn');
+function toggleMenu(open = menuEl.hidden) {
+  menuEl.hidden = !open;
+  menuBtn.setAttribute('aria-expanded', String(open));
+}
+menuBtn.addEventListener('click', () => toggleMenu());
+document.addEventListener('pointerdown', e => { if (!menuEl.hidden && !e.target.closest('.brand-wrap')) toggleMenu(false); });
 
 /* ───────────── Kartu ───────────── */
 const xIcon = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>';
@@ -1672,10 +1807,11 @@ document.querySelectorAll('dialog.sheet').forEach(dlg => {
 /* ───────────── Hapus semua ───────────── */
 const dlgC = $('#dlg-clear');
 $('#clear-btn').addEventListener('click', () => {
+  toggleMenu(false);
   const p = nodes.filter(n => n.kind === 'produk').length;
   $('#fc-summary').textContent = `${p} barang, ${nodes.length - p} kategori/tujuan, dan ${relations.length} relasi akan dihapus.`;
   $('#fc-note').textContent = store.mode === 'local'
-    ? 'Data contoh bisa dipulihkan lagi lewat tombol Reset.'
+    ? 'Data contoh bisa dipulihkan lagi lewat menu ••• › Pulihkan data contoh.'
     : 'Data terhapus permanen dari Supabase dan tidak bisa dikembalikan.';
   dlgC.showModal();
   $('#fc-submit').focus();
@@ -1725,23 +1861,25 @@ $('#stale-btn').addEventListener('click', () => {
   if (!list.length) return;
   select(list[staleCursor++ % list.length].id);
 });
-$('#mode-chip').addEventListener('click', async e => {
-  if (e.target.id === 'reset-btn') {
-    const b = e.target;
-    if (!b.dataset.armed) {
-      b.dataset.armed = '1'; b.textContent = 'Yakin? Klik lagi';
-      setTimeout(() => { if (b.isConnected) { delete b.dataset.armed; b.textContent = 'Reset'; } }, 3500);
-      return;
-    }
-    const d = await LocalStore.reset();
-    nodes = d.nodes; relations = d.relations; pos.clear(); selectedId = null;
-    layoutFresh();
-    toast('Data contoh dipulihkan');
+$('#reset-btn').addEventListener('click', async e => {
+  const b = e.currentTarget, label = 'Pulihkan data contoh';
+  if (!b.dataset.armed) {
+    b.dataset.armed = '1'; b.textContent = 'Yakin? Klik lagi';
+    setTimeout(() => { delete b.dataset.armed; b.textContent = label; }, 3500);
+    return;
   }
-  if (e.target.id === 'logout-btn') await store.sb.auth.signOut();
+  delete b.dataset.armed; b.textContent = label;
+  toggleMenu(false);
+  const d = await LocalStore.reset();
+  nodes = d.nodes; relations = d.relations; pos.clear(); selectedId = null;
+  layoutFresh();
+  toast('Data contoh dipulihkan');
 });
+$('#logout-btn').addEventListener('click', async () => { toggleMenu(false); await store.sb.auth.signOut(); });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && !document.querySelector('dialog[open]') && selectedId) select(null, { focus: false });
+  if (e.key !== 'Escape' || document.querySelector('dialog[open]')) return;
+  if (!menuEl.hidden) { toggleMenu(false); menuBtn.focus(); }
+  else if (selectedId) select(null, { focus: false });
 });
 
 /* ───────────── Mulai ───────────── */
@@ -1759,6 +1897,7 @@ function layoutFresh() {
   $('#empty').hidden = nodes.length > 0;
   fit(false);
   if (!reduceMotion) sim.alpha(0.1).restart();
+  startDrift();
 }
 async function loadAll() {
   if (loading) return;

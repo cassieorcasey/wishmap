@@ -18,7 +18,8 @@ It is built for personal use: one person, one private wishlist. It is not a stor
 - Categories can contain subcategories, for example Skincare › Sunscreen and Skincare › Facial Wash.
 - Each item stores a shop link, a price, and the date the price was last checked. Prices older than 30 days are marked as stale.
 - Items can be linked as alternatives (pick one) or complements (used together). Once one alternative is marked as bought, the others fade out and drop from the estimated total.
-- Zoom changes what you see: bubbles from far away, names at medium range, prices and photos up close.
+- Zoom changes what you see: colored regions and bubbles from far away, then names, prices, and photos at medium range, and relation tags up close.
+- Each category tints the area around its items, so groups read as regions on a map. Subcategories that share their parent's color get a lighter or darker shade of it.
 - Categories can use one of eight preset colors or any color you pick.
 
 ## Running your own copy
