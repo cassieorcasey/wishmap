@@ -19,17 +19,18 @@
 :root {
   --bg: #EEF0F5;
   --dot: rgba(60, 60, 100, .17);
+  --dot-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='12' cy='12' r='1.2' fill='%23707090' fill-opacity='.42'/%3E%3C/svg%3E");
   --fg: #1C1C1E;
   --fg-2: rgba(44, 44, 60, .72);
   --fg-3: rgba(44, 44, 60, .46);
   --glass: rgba(255, 255, 255, .64);
   --glass-solid: rgba(252, 252, 255, .92);
-  --glass-line: rgba(255, 255, 255, .85);
+  --glass-line: rgba(30, 30, 60, .09);
   --hair: rgba(40, 40, 70, .12);
   --fill: rgba(118, 118, 128, .12);
   --fill-2: rgba(118, 118, 128, .22);
   --field: rgba(255, 255, 255, .95);
-  --shadow: 0 14px 44px rgba(40, 40, 90, .14), 0 1px 3px rgba(40, 40, 90, .10);
+  --shadow: 0 6px 20px rgba(40, 40, 90, .09), 0 1px 2px rgba(40, 40, 90, .08);
   --scrim: rgba(18, 18, 30, .26);
   --edge: rgba(60, 60, 100, .30);
   --accent: #007AFF;
@@ -55,12 +56,12 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0D0E13; --dot: rgba(210, 210, 255, .10); --fg: #F2F2F7;
+    --bg: #0D0E13; --dot: rgba(210, 210, 255, .10); --dot-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='12' cy='12' r='1.2' fill='%23D2D2FF' fill-opacity='.2'/%3E%3C/svg%3E"); --fg: #F2F2F7;
     --fg-2: rgba(235, 235, 245, .70); --fg-3: rgba(235, 235, 245, .42);
     --glass: rgba(34, 34, 44, .60); --glass-solid: rgba(36, 36, 46, .94); --glass-line: rgba(255, 255, 255, .09);
     --hair: rgba(255, 255, 255, .10); --fill: rgba(118, 118, 128, .24); --fill-2: rgba(118, 118, 128, .36);
     --field: rgba(255, 255, 255, .06);
-    --shadow: 0 14px 44px rgba(0, 0, 0, .55), 0 1px 3px rgba(0, 0, 0, .4);
+    --shadow: 0 6px 20px rgba(0, 0, 0, .45), 0 1px 2px rgba(0, 0, 0, .35);
     --scrim: rgba(0, 0, 0, .45); --edge: rgba(220, 220, 255, .24);
     --accent: #0A84FF; --ok: #30D158; --stale: #FFB340; --danger: #FF453A;
     --c-pink: #FF375F; --c-orange: #FF9F0A; --c-yellow: #FFD60A; --c-green: #30D158;
@@ -69,12 +70,12 @@
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0D0E13; --dot: rgba(210, 210, 255, .10); --fg: #F2F2F7;
+  --bg: #0D0E13; --dot: rgba(210, 210, 255, .10); --dot-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='12' cy='12' r='1.2' fill='%23D2D2FF' fill-opacity='.2'/%3E%3C/svg%3E"); --fg: #F2F2F7;
   --fg-2: rgba(235, 235, 245, .70); --fg-3: rgba(235, 235, 245, .42);
   --glass: rgba(34, 34, 44, .60); --glass-solid: rgba(36, 36, 46, .94); --glass-line: rgba(255, 255, 255, .09);
   --hair: rgba(255, 255, 255, .10); --fill: rgba(118, 118, 128, .24); --fill-2: rgba(118, 118, 128, .36);
   --field: rgba(255, 255, 255, .06);
-  --shadow: 0 14px 44px rgba(0, 0, 0, .55), 0 1px 3px rgba(0, 0, 0, .4);
+  --shadow: 0 6px 20px rgba(0, 0, 0, .45), 0 1px 2px rgba(0, 0, 0, .35);
   --scrim: rgba(0, 0, 0, .45); --edge: rgba(220, 220, 255, .24);
   --accent: #0A84FF; --ok: #30D158; --stale: #FFB340; --danger: #FF453A;
   --c-pink: #FF375F; --c-orange: #FF9F0A; --c-yellow: #FFD60A; --c-green: #30D158;
@@ -106,7 +107,7 @@ button { cursor: pointer; }
 /* ── kanvas ── */
 #stage {
   position: fixed; inset: 0;
-  background-image: radial-gradient(circle, var(--dot) 1.1px, transparent 1.4px);
+  background-image: var(--dot-img);
   background-size: 24px 24px;
 }
 #map { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
@@ -119,50 +120,47 @@ button { cursor: pointer; }
 .link.induk { stroke-width: 2.4; stroke-opacity: .55; }
 
 .glyph rect { fill: var(--glass-solid); stroke: var(--hair); vector-effect: non-scaling-stroke; }
-.glyph text { fill: var(--fg-2); font: 700 10px var(--font-ui); text-anchor: middle; dominant-baseline: central; }
-.glyph.pelengkap text { font-size: 13px; }
-.glyph { transition: opacity .2s; pointer-events: none; }
+.glyph text { fill: var(--fg-2); font: 600 11px var(--font-ui); text-anchor: middle; dominant-baseline: central; }
+.glyph { pointer-events: none; }
 
 .node { cursor: pointer; outline: none; transition: opacity .2s; }
 .terr circle { pointer-events: none; transition: opacity .25s; }
 #map.focusing .terr circle.faded { opacity: .3; }
-.node .shadow { fill: url(#g-shade); pointer-events: none; }
-.node .sheen { fill: url(#g-sheen); pointer-events: none; }
 .node .base { fill: var(--bg); }
 .node .bubble { fill: var(--cc); stroke: var(--bg); stroke-width: 2; vector-effect: non-scaling-stroke; }
 .node.stale .bubble { filter: saturate(.6); }
 .stale-ring { fill: none; stroke: var(--stale); stroke-width: 1.7; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
-.node .initial { fill: var(--ink, var(--on-bubble)); font-family: var(--font-round); font-weight: 800; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .node .photo { pointer-events: none; }
-.node .badge circle { fill: var(--ok); stroke: var(--bg); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
-.node .badge path { fill: none; stroke: var(--on-bubble); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* Selesai (dibeli), batal, atau tergeser: bulatan berongga. Teks tetap kontras penuh (≥ 4.5:1). */
+.node.hollow .bubble { fill: var(--bg); stroke: var(--cc); stroke-width: 2; }
+.node.batal .bubble { stroke-dasharray: 3 3; }
+.node .tick { fill: none; stroke: color-mix(in srgb, var(--cc), var(--fg) 30%); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; pointer-events: none; }
 .node .label {
   font-family: var(--font-ui); font-weight: 600; text-anchor: middle; dominant-baseline: hanging;
   fill: var(--fg); font-size: calc(11.5px * var(--inv, 1));
-  paint-order: stroke; stroke: var(--bg); stroke-width: calc(3.5px * var(--inv, 1)); stroke-linejoin: round;
+  /* halo selebar 5px berwarna kanvas: garis penghubung tidak pernah memotong huruf */
+  paint-order: stroke; stroke: var(--bg); stroke-width: calc(5px * var(--inv, 1)); stroke-linejoin: round;
   pointer-events: none;
 }
-.node .label .price { fill: var(--fg-2); font-variant-numeric: tabular-nums; font-weight: 600; }
-.node.batal .label .name { text-decoration: line-through; }
-.node.batal, .node.tergeser { opacity: .3; }
+.node .label .price { fill: var(--fg-2); font-variant-numeric: tabular-nums; font-weight: 500; }
+.node.hollow .label .name { fill: var(--fg-2); }
 .node.grp .shape { fill: var(--cc); fill-opacity: .2; stroke: var(--cc); stroke-width: 2; vector-effect: non-scaling-stroke; }
 .node.grp .count { fill: color-mix(in srgb, var(--cc), var(--fg) 45%); font-family: var(--font-round); font-weight: 800; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
-.node.grp .target { fill: none; stroke: var(--cc); stroke-width: 2; vector-effect: non-scaling-stroke; }
-.node.grp .target-dot { fill: var(--cc); }
 .node.grp .label { font-family: var(--font-round); font-weight: 800; font-size: calc(14px * var(--inv, 1)); }
 .node.custom .bubble { stroke: color-mix(in srgb, var(--cc), var(--fg) 35%); stroke-width: 1.5; }
+.node.custom.hollow .bubble { stroke-width: 2; }
 .node.grp.custom .shape { stroke: color-mix(in srgb, var(--cc), var(--fg) 35%); fill-opacity: .3; }
 .node.selected .bubble, .node.selected .shape { stroke: var(--fg); stroke-width: 3; }
 .node:focus-visible .bubble, .node:focus-visible .shape { stroke: var(--accent); stroke-width: 3.5; }
 
-#map.focusing .node.faded, #map.focusing .link.faded, #map.focusing .glyph.faded { opacity: .1; }
-#map.focusing .node.batal.hot, #map.focusing .node.tergeser.hot { opacity: .45; }
+#map.focusing .node.faded, #map.focusing .link.faded { opacity: .12; }
 
-/* semantic zoom: jauh = gelembung, sedang = nama, harga, foto; dekat = tanda relasi */
+/* Tampil bertahap: jauh = wilayah dan gelembung; sedang = nama, harga, foto.
+   Nama relasi (Alternatif, Pelengkap) hanya muncul di garis milik simpul yang sedang disorot. */
 #map[data-zoom="far"] .node.produk:not(.hot):not(.selected) .label,
 #map[data-zoom="far"] .node.sub:not(.hot):not(.selected) .label,
 #map[data-zoom="far"] .node .photo,
-#map:not([data-zoom="near"]) .glyph { display: none; }
+.glyph:not(.show), #map[data-zoom="far"] .glyph { display: none; }
 
 /* ── kontrol mengambang ── */
 .topbar {
@@ -179,6 +177,7 @@ button { cursor: pointer; }
   background: transparent; color: var(--fg-2); display: grid; place-items: center;
 }
 .menu-btn:hover, .menu-btn[aria-expanded="true"] { background: var(--fill); color: var(--fg); }
+.brand .menu-btn:first-of-type { margin-left: auto; }
 .menu-btn svg { width: 18px; height: 18px; fill: currentColor; }
 .menu {
   position: absolute; top: calc(100% + 8px); left: 0; z-index: 6;
@@ -204,6 +203,15 @@ button { cursor: pointer; }
   padding: 7px 12px; font-size: 12.5px; font-weight: 600; color: var(--fg-2);
 }
 .chip-btn.stale-chip { color: var(--stale); }
+.chip-btn.stale-chip[aria-pressed="true"] { background: var(--stale); color: var(--bg); }
+.chip-btn.stale-chip[aria-pressed="true"] .ring { border-color: var(--bg); }
+.view-seg { display: inline-flex; padding: 3px; gap: 2px; border-radius: 999px; }
+.view-seg button {
+  min-height: 30px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent;
+  font-size: 13px; font-weight: 600; color: var(--fg-2);
+}
+.view-seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.view-seg button:not([aria-pressed="true"]):hover { background: var(--fill); color: var(--fg); }
 .chip-btn .ring { width: 10px; height: 10px; border-radius: 50%; border: 1.7px dashed var(--stale); }
 .mode-row { display: flex; gap: 6px; flex-wrap: wrap; }
 
@@ -235,12 +243,25 @@ button { cursor: pointer; }
 .zoombar button:hover { background: var(--fill); }
 .zoombar svg { width: 18px; height: 18px; }
 
+.zoombar button[aria-expanded="true"] { background: var(--fill-2); }
+.zoombar .kbd-hint { display: none; }
 .legend {
-  position: fixed; bottom: var(--bottom); left: 50%; transform: translateX(-50%);
-  display: flex; align-items: center; gap: 16px; padding: 9px 16px; border-radius: 999px;
-  font-size: 12px; color: var(--fg-2); white-space: nowrap; z-index: 3;
+  position: fixed; left: calc(var(--gutter-l) + 52px); bottom: var(--bottom); z-index: 6;
+  width: 232px; max-width: calc(100vw - var(--gutter-l) - var(--gutter-r) - 52px); box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 2px; padding: 8px; border-radius: 20px;
+  background: var(--glass-solid); font-size: 14px; color: var(--fg);
 }
-.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend h3 { margin: 6px 10px 4px; font-size: 12.5px; font-weight: 600; color: var(--fg-2); }
+.legend h3 + * { margin-top: 0; }
+.legend hr { border: 0; border-top: 1px solid var(--hair); margin: 6px 10px; }
+.legend .row, .legend button {
+  display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 10px; border: 0;
+  border-radius: 12px; background: transparent; text-align: left; font-size: 14px; color: var(--fg);
+}
+.legend button:hover { background: var(--fill); }
+.legend button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.legend button[aria-pressed="true"] svg * { stroke: var(--bg); }
+.legend .sw { width: 24px; display: grid; place-items: center; flex: none; }
 .legend svg { overflow: visible; }
 
 .toast {
@@ -258,6 +279,46 @@ button { cursor: pointer; }
 .empty h2 { margin: 0; font: 800 22px/1.2 var(--font-round); }
 .empty p { margin: 0; color: var(--fg-2); }
 .empty .row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 6px; }
+
+/* ── tampilan daftar ── */
+.listview {
+  position: fixed; z-index: 3; left: 50%; transform: translateX(-50%);
+  top: calc(var(--top) + 104px); bottom: var(--bottom);
+  width: min(720px, calc(100% - var(--gutter-l) - var(--gutter-r))); box-sizing: border-box;
+  overflow: auto; border-radius: var(--r-lg); background: var(--glass-solid); padding: 8px 20px 20px;
+}
+body[data-view="list"] .zoombar, body[data-view="list"] .legend { display: none; }
+body[data-view="list"] #stage { visibility: hidden; }
+.listview section + section { margin-top: 18px; }
+.listview h2 { display: flex; align-items: baseline; gap: 10px; margin: 14px 4px 4px; font: 800 17px/1.25 var(--font-round); }
+.listview h2 .dot { align-self: center; }
+.listview h2 .sum { margin-left: auto; font: 600 13.5px/1 var(--font-ui); color: var(--fg-2); font-variant-numeric: tabular-nums; }
+.listview .rowbtn { width: 100%; }
+.listview .rowbtn .st { font-size: 13px; color: var(--fg-2); white-space: nowrap; }
+.listview .rowbtn .st.is-stale { color: var(--stale); font-weight: 600; }
+.listview .rowbtn .pr { min-width: 6.5em; text-align: right; color: var(--fg); }
+.listview .rowbtn.off .pr { color: var(--fg-2); }
+.listview .empty-note { padding: 24px 4px; color: var(--fg-2); }
+
+/* ── pencarian ── */
+dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
+.search .box { padding: 14px 16px; border-bottom: 1px solid var(--hair); }
+.search input {
+  width: 100%; box-sizing: border-box; font-size: 17px; padding: 10px 12px; border: 0; border-radius: 12px;
+  background: var(--fill);
+}
+.search input:focus { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent); }
+.search ul { list-style: none; margin: 0; padding: 6px; max-height: min(52vh, 420px); overflow: auto; }
+.search li button {
+  width: 100%; display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 10px;
+  border: 0; border-radius: 12px; background: transparent; text-align: left; font-size: 15px; color: var(--fg);
+}
+.search li button .nm { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.search li button .sub { display: block; font-size: 12.5px; color: var(--fg-2); }
+.search li button .pr { color: var(--fg-2); font-variant-numeric: tabular-nums; font-size: 13.5px; }
+.search li button[aria-selected="true"], .search li button:hover { background: var(--fill); }
+.search .none { padding: 14px 12px; color: var(--fg-2); }
+.search .keys { padding: 10px 16px 14px; border-top: 1px solid var(--hair); font-size: 12.5px; color: var(--fg-2); }
 
 /* ── kartu produk / grup ── */
 .card {
@@ -279,7 +340,7 @@ button { cursor: pointer; }
 .card-photo {
   position: relative; margin: 10px 10px 0; aspect-ratio: 4 / 3; max-width: 100%;
   border-radius: 18px; overflow: hidden; display: grid; place-items: center;
-  background: linear-gradient(140deg, color-mix(in srgb, var(--cc) 70%, var(--glass-solid)), var(--cc));
+  background: var(--cc);
   color: var(--ink, var(--on-bubble)); font: 800 64px/1 var(--font-round);
 }
 .card-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -287,7 +348,7 @@ button { cursor: pointer; }
 .card.grp .card-body { padding-top: 22px; }
 .eyebrow {
   display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding-right: 36px;
-  font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-2);
+  font-size: 13px; font-weight: 600; color: var(--fg-2);
 }
 .card.produk .eyebrow { padding-right: 0; }
 .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--cc); flex: none; }
@@ -314,7 +375,7 @@ button { cursor: pointer; }
 .seg input { position: absolute; opacity: 0; pointer-events: none; }
 .seg input:focus-visible + span { outline: 2.5px solid var(--accent); outline-offset: 1px; }
 
-.rel h3 { margin: 0 0 8px; font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-3); }
+.rel h3 { margin: 0 0 8px; font-size: 13px; font-weight: 600; color: var(--fg-2); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip {
   display: inline-flex; align-items: center; gap: 6px; max-width: 100%;
@@ -396,7 +457,7 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
 .swatches span { display: block; width: 30px; height: 30px; border-radius: 50%; background: var(--cc); cursor: pointer; box-shadow: inset 0 0 0 2px var(--glass-solid); border: 2px solid transparent; }
 .swatches input:checked + span { border-color: var(--fg); }
 .swatches input:focus-visible + span { outline: 2.5px solid var(--accent); outline-offset: 2px; }
-.swatches .rainbow { background: conic-gradient(#FF3B30, #FFCC00, #34C759, #30B0C7, #007AFF, #AF52DE, #FF2D55, #FF3B30); }
+.swatches .rainbow { /* taste-skill-ignore: lingkar warna = tanda 'warna bebas' */ background: conic-gradient(#FF3B30, #FFCC00, #34C759, #30B0C7, #007AFF, #AF52DE, #FF2D55, #FF3B30); }
 .custom-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .custom-row input[type="color"] {
   width: 46px; height: 44px; padding: 3px; border: 1px solid var(--hair); border-radius: 12px;
@@ -407,7 +468,6 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
 .custom-row input[type="color"]::-moz-color-swatch { border: 0; border-radius: 8px; }
 .field .custom-row input[type="text"] { width: 9.5em; font-family: ui-monospace, "SF Mono", Menlo, monospace; text-transform: uppercase; }
 
-@media (max-width: 760px) { .legend { display: none; } }
 @media (max-width: 640px) {
   .actions {
     position: fixed; right: var(--gutter-r); bottom: var(--bottom);
@@ -424,6 +484,8 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
     border-radius: var(--r-lg) var(--r-lg) 0 0;
   }
   .toast { bottom: calc(var(--bottom) + 64px); }
+  .listview { top: calc(var(--top) + 100px); bottom: calc(var(--bottom) + 116px); }
+  dialog.search { margin-top: 8vh; }
 }
 @media (max-width: 420px) { .row2 { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) {
@@ -438,16 +500,6 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
   <svg id="map" data-zoom="mid" aria-label="Peta wishlist">
     <defs>
       <clipPath id="clip-circle" clipPathUnits="objectBoundingBox"><circle cx=".5" cy=".5" r=".5"></circle></clipPath>
-      <radialGradient id="g-sheen" cx=".34" cy=".26" r=".82">
-        <stop offset="0" stop-color="#fff" stop-opacity=".5"></stop>
-        <stop offset=".45" stop-color="#fff" stop-opacity=".07"></stop>
-        <stop offset=".78" stop-color="#000" stop-opacity="0"></stop>
-        <stop offset="1" stop-color="#000" stop-opacity=".17"></stop>
-      </radialGradient>
-      <radialGradient id="g-shade">
-        <stop offset=".5" stop-color="#000" stop-opacity=".2"></stop>
-        <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
-      </radialGradient>
       <g id="terr-defs"></g>
     </defs>
     <g id="vp" style="--inv: 1">
@@ -474,6 +526,9 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
         <h1>Wishmap</h1>
         <span class="stat" id="stat-main" title="Barang dalam satu grup alternatif dihitung sekali, pakai harga termurah">Memuat…</span>
       </div>
+      <button type="button" class="menu-btn" id="search-btn" aria-label="Cari barang atau kategori" title="Cari (⌘K atau /)">
+        <svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.8" cy="7.8" r="5" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M11.6 11.6l3.6 3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>
+      </button>
       <button type="button" class="menu-btn" id="menu-btn" aria-label="Menu lainnya" aria-expanded="false" aria-controls="menu">
         <svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="3.5" cy="9" r="1.6"></circle><circle cx="9" cy="9" r="1.6"></circle><circle cx="14.5" cy="9" r="1.6"></circle></svg>
       </button>
@@ -487,7 +542,11 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
     </div>
     </div>
     <div class="mode-row">
-      <button type="button" class="chip-btn glass stale-chip" id="stale-btn" hidden><span class="ring"></span><span id="stale-text"></span></button>
+      <div class="view-seg glass" role="group" aria-label="Tampilan">
+        <button type="button" id="view-map" aria-pressed="true">Peta</button>
+        <button type="button" id="view-list" aria-pressed="false">Daftar</button>
+      </div>
+      <button type="button" class="chip-btn glass stale-chip" id="stale-btn" aria-pressed="false" title="Sorot barang yang harganya perlu dicek" hidden><span class="ring"></span><span id="stale-text"></span></button>
     </div>
   </div>
   <div class="actions">
@@ -501,17 +560,24 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
 </header>
 
 <div class="zoombar glass" role="group" aria-label="Zoom peta">
-  <button type="button" id="zoom-in" aria-label="Perbesar"><svg viewBox="0 0 18 18"><path d="M9 4v10M4 9h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
-  <button type="button" id="zoom-out" aria-label="Perkecil"><svg viewBox="0 0 18 18"><path d="M4 9h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
-  <button type="button" id="zoom-fit" aria-label="Tampilkan semua"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V3h4M15 7V3h-4M3 11v4h4M15 11v4h-4"></path></svg></button>
+  <button type="button" id="zoom-in" aria-label="Perbesar" title="Perbesar (+)"><svg viewBox="0 0 18 18"><path d="M9 4v10M4 9h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
+  <button type="button" id="zoom-out" aria-label="Perkecil" title="Perkecil (−)"><svg viewBox="0 0 18 18"><path d="M4 9h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
+  <button type="button" id="zoom-fit" aria-label="Tampilkan semua" title="Tampilkan semua (0)"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V3h4M15 7V3h-4M3 11v4h4M15 11v4h-4"></path></svg></button>
+  <button type="button" id="legend-btn" aria-label="Keterangan peta" aria-expanded="false" aria-controls="legend" title="Keterangan"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="9" cy="9" r="6.6"></circle><path d="M9 8.2v4.2"></path><circle cx="9" cy="5.6" r=".4" fill="currentColor"></circle></svg></button>
 </div>
 
-<div class="legend glass" aria-label="Keterangan">
-  <span><svg width="22" height="12" aria-hidden="true"><circle cx="4" cy="6" r="3" fill="var(--fg-3)"></circle><circle cx="15" cy="6" r="6" fill="var(--fg-3)"></circle></svg>Ukuran = harga</span>
-  <span><svg width="22" height="4" aria-hidden="true"><line x1="0" y1="2" x2="22" y2="2" stroke="var(--fg-3)" stroke-width="1.5" stroke-dasharray="4 3"></line></svg>Alternatif</span>
-  <span><svg width="22" height="4" aria-hidden="true"><line x1="0" y1="2" x2="22" y2="2" stroke="var(--fg-2)" stroke-opacity=".6" stroke-width="2"></line></svg>Pelengkap</span>
-  <span><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" fill="none" stroke="var(--stale)" stroke-width="1.6" stroke-dasharray="2.5 2.5"></circle></svg>Harga basi</span>
+<div class="legend glass" id="legend" role="dialog" aria-label="Keterangan peta" hidden>
+  <h3>Barang</h3>
+  <div class="row"><span class="sw"><svg width="22" height="12" aria-hidden="true"><circle cx="4" cy="6" r="3" fill="var(--fg-3)"></circle><circle cx="15" cy="6" r="6" fill="var(--fg-3)"></circle></svg></span>Ukuran = harga</div>
+  <button type="button" data-lens="stale" aria-pressed="false"><span class="sw"><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" fill="none" stroke="var(--stale)" stroke-width="1.6" stroke-dasharray="2.5 2.5"></circle></svg></span>Harga basi</button>
+  <button type="button" data-lens="dibeli" aria-pressed="false"><span class="sw"><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="none" stroke="var(--fg-2)" stroke-width="1.6"></circle><path d="M4.4 7.2l1.8 1.8 3.4-3.6" fill="none" stroke="var(--fg-2)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>Dibeli</button>
+  <hr>
+  <h3>Garis</h3>
+  <button type="button" data-lens="alternatif" aria-pressed="false"><span class="sw"><svg width="22" height="4" aria-hidden="true"><line x1="0" y1="2" x2="22" y2="2" stroke="var(--fg-2)" stroke-width="1.5" stroke-dasharray="4 3"></line></svg></span>Alternatif · pilih satu</button>
+  <button type="button" data-lens="pelengkap" aria-pressed="false"><span class="sw"><svg width="22" height="4" aria-hidden="true"><line x1="0" y1="2" x2="22" y2="2" stroke="var(--fg-2)" stroke-width="2"></line></svg></span>Pelengkap · dipakai bersama</button>
 </div>
+
+<main class="listview" id="listview" aria-label="Daftar barang" hidden></main>
 
 <div class="empty glass" id="empty" hidden>
   <h2>Peta masih kosong</h2>
@@ -523,6 +589,12 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
 </div>
 
 <aside class="card glass" id="card" hidden aria-live="polite"></aside>
+
+<dialog class="sheet search" id="dlg-search" aria-label="Cari">
+  <div class="box"><input type="search" id="search-q" placeholder="Cari barang atau kategori" autocomplete="off" aria-controls="search-res" aria-label="Kata pencarian"></div>
+  <ul id="search-res" role="listbox" aria-label="Hasil"></ul>
+  <div class="keys">↑ ↓ pilih · Enter buka · Esc tutup</div>
+</dialog>
 <div class="toast glass" id="toast" role="status" hidden></div>
 
 <!-- Form barang -->
@@ -724,6 +796,8 @@ function agoText(n) {
   if (n === 1) return 'Dicek kemarin';
   return `Dicek ${n} hari lalu`;
 }
+const priceText = n => (n.status === 'dibeli' ? 'Dibeli' : n.status === 'batal' ? 'Batal'
+  : D?.tergeser?.has(n.id) ? 'Alternatif dibeli' : n.harga == null ? 'Tanpa harga' : 'Rp ' + rpShort(n.harga));
 const initialOf = s => (String(s).match(/[\p{L}\p{N}]/u) || ['?'])[0].toUpperCase();
 /** Pecah teks per kata menjadi baris sepanjang <= max karakter; kata yang lebih panjang tetap utuh. */
 function wrapWords(s, max) {
@@ -1041,11 +1115,47 @@ const sim = d3.forceSimulation()
   .alphaDecay(0.028)
   .force('link', d3.forceLink().id(d => d.id).distance(l => LINK_DIST[l.type]).strength(l => LINK_STR[l.type]))
   .force('charge', d3.forceManyBody().strength(d => (d.kind === 'produk' ? -150 : d.depth ? -380 : -620)).distanceMax(700))
-  .force('collide', d3.forceCollide().radius(d => d.r + (d.kind === 'produk' ? 14 : 22)).iterations(2))
+  .force('collide', d3.forceCollide().radius(d => d.r + (d.kind === 'produk' ? 8 : 16)).iterations(2))
+  .force('box', boxCollide())
   .force('x', d3.forceX(0).strength(0.035))
   .force('y', d3.forceY(0).strength(0.035))
   .on('tick', () => { if (!driftTimer) ticked(); })
   .stop();
+
+/** Perkiraan ukuran label di unit peta (zoom 1), untuk gaya tabrakan kotak. */
+function labelBox(n) {
+  if (n.kind === 'produk') {
+    const lines = wrapWords(n.nama, 20);
+    const w = Math.max(...lines.map(l => l.length), priceText(n).length) * 6.5;
+    return { w, h: lines.length * 13.8 + 15.5, gap: 5 };
+  }
+  return { w: n.nama.length * 8.6, h: 17, gap: 6 };
+}
+/** Gaya tabrakan kotak: tiap simpul + labelnya adalah satu persegi; yang bertumpuk didorong lewat sumbu terpendek. */
+function boxCollide() {
+  let ns = [];
+  const force = () => {
+    for (let i = 0; i < ns.length; i++) {
+      const a = ns[i];
+      for (let j = i + 1; j < ns.length; j++) {
+        const b = ns[j];
+        const ox = Math.min(a.x + a.hw, b.x + b.hw) - Math.max(a.x - a.hw, b.x - b.hw);
+        if (ox <= 0) continue;
+        const oy = Math.min(a.y + a.bot, b.y + b.bot) - Math.max(a.y - a.top, b.y - b.top);
+        if (oy <= 0) continue;
+        if (ox < oy) {
+          const s = (a.x < b.x ? -1 : 1) * ox * 0.25;
+          a.vx += s; b.vx -= s;
+        } else {
+          const s = ((a.y - a.top + a.bot) < (b.y - b.top + b.bot) ? -1 : 1) * oy * 0.25;
+          a.vy += s; b.vy -= s;
+        }
+      }
+    }
+  };
+  force.initialize = n => { ns = n; };
+  return force;
+}
 
 function radiusOf(n) {
   if (n.kind === 'produk') return n.harga == null ? 10 : rScale(n.harga);
@@ -1085,7 +1195,14 @@ function rebuild() {
 
   simNodes = [...nodes]
     .sort((a, b) => (a.kind === 'produk') - (b.kind === 'produk'))
-    .map(n => Object.assign(pos.get(n.id), { id: n.id, kind: n.kind, depth: D.depth.get(n.id) || 0, r: radiusOf(n) }));
+    .map(n => {
+      const r = radiusOf(n), lb = labelBox(n);
+      const half = n.kind === 'tujuan' ? r * 0.86 : r;   // tujuan digambar sebagai persegi bersudut 1,72r
+      return Object.assign(pos.get(n.id), {
+        id: n.id, kind: n.kind, depth: D.depth.get(n.id) || 0, r,
+        hw: Math.max(half, lb.w / 2) + 6, top: half + 4, bot: half + lb.gap + lb.h + 4,
+      });
+    });
   simLinks = relations
     .filter(r => byId.has(r.from_id) && byId.has(r.to_id))
     .map(r => ({ id: r.id, type: r.type, source: r.from_id, target: r.to_id }));
@@ -1128,14 +1245,14 @@ function draw() {
   const gs = gG.selectAll('g.glyph').data(simLinks.filter(l => l.type === 'alternatif' || l.type === 'pelengkap'), d => d.id);
   gs.exit().remove();
   const ge = gs.enter().append('g');
-  ge.append('rect').attr('y', -9).attr('height', 18).attr('rx', 9);
+  ge.append('rect').attr('y', -10).attr('height', 20).attr('rx', 10);
   ge.append('text');
   ge.merge(gs)
     .attr('class', d => `glyph ${d.type}`)
     .each(function (d) {
-      const w = d.type === 'alternatif' ? 36 : 20;
+      const w = d.type === 'alternatif' ? 70 : 74;
       d3.select(this).select('rect').attr('x', -w / 2).attr('width', w);
-      d3.select(this).select('text').text(d.type === 'alternatif' ? 'atau' : '+');
+      d3.select(this).select('text').text(d.type === 'alternatif' ? 'Alternatif' : 'Pelengkap');
     });
 
   const ns = gN.selectAll('g.node').data(simNodes, d => d.id);
@@ -1158,6 +1275,7 @@ function paintNode(el, d) {
   if (n.kind === 'produk') {
     cls.push(n.status);
     if (D.tergeser.has(n.id)) cls.push('tergeser');
+    if (n.status !== 'ingin' || D.tergeser.has(n.id)) cls.push('hollow');
     if (D.stale.has(n.id)) cls.push('stale');
   }
   if (n.kind !== 'produk' && D.depth.get(n.id) > 0) cls.push('sub');
@@ -1166,12 +1284,11 @@ function paintNode(el, d) {
   g.attr('class', cls.join(' ')).style('--cc', mapColor(n.id)).style('--ink', inkOf(D.color.get(n.id)));
 
   if (n.kind === 'produk') {
-    g.attr('aria-label', `${n.nama}, ${n.harga == null ? 'tanpa harga' : rp(n.harga)}, ${STATUS[n.status]}`);
-    g.append('circle').attr('class', 'shadow').attr('r', d.r * 1.5).attr('cy', d.r * 0.3);
+    const hollow = n.status !== 'ingin' || D.tergeser.has(n.id);
+    g.attr('aria-label', `${n.nama}, ${n.harga == null ? 'tanpa harga' : rp(n.harga)}, ${D.tergeser.has(n.id) ? 'alternatif sudah dibeli' : STATUS[n.status]}`);
     if (D.stale.has(n.id)) g.append('circle').attr('class', 'stale-ring').attr('r', d.r + 4.5);
     g.append('circle').attr('class', 'bubble').attr('r', d.r);
-    g.append('circle').attr('class', 'sheen').attr('r', d.r);
-    const foto = safeUrl(n.foto_url);
+    const foto = hollow ? '' : safeUrl(n.foto_url);
     if (foto) {
       // foto mengisi bulatan; tepi bulatan tersisa sebagai cincin warna kategori
       const pr = d.r - Math.min(2.6, d.r * 0.18);
@@ -1181,14 +1298,12 @@ function paintNode(el, d) {
         .on('error', function () { this.remove(); });
     }
     if (n.status === 'dibeli') {
-      const b = g.append('g').attr('class', 'badge').attr('transform', `translate(${d.r * 0.72},${-d.r * 0.72})`);
-      b.append('circle').attr('r', 6.5);
-      b.append('path').attr('d', 'M-3,0.2 L-0.9,2.3 L3.1,-2.1');
+      const k = Math.max(d.r, 9) * 0.5;
+      g.append('path').attr('class', 'tick').attr('d', `M${-k * 0.9},${k * 0.05} L${-k * 0.25},${k * 0.7} L${k * 0.95},${-k * 0.6}`);
     }
     const t = g.append('text').attr('class', 'label').attr('y', d.r + 5);
     wrapWords(n.nama, 20).forEach((line, i) => t.append('tspan').attr('class', 'name').attr('x', 0).attr('dy', i ? '1.2em' : 0).text(line));
-    t.append('tspan').attr('class', 'price').attr('x', 0).attr('dy', '1.3em')
-      .text(n.status === 'dibeli' ? 'Dibeli' : n.harga == null ? 'Tanpa harga' : rpShort(n.harga));
+    t.append('tspan').attr('class', 'price').attr('x', 0).attr('dy', '1.3em').text(priceText(n));
   } else {
     const count = n.kind === 'kategori' ? productsIn(n.id).length : D.members.get(n.id).length;
     g.attr('aria-label', `${n.kind === 'kategori' ? 'Kategori' : 'Tujuan'} ${labelOf(n)}, ${count} barang`);
@@ -1202,8 +1317,7 @@ function paintNode(el, d) {
       bottom = s / 2;
       g.append('rect').attr('class', 'base').attr('x', -s / 2).attr('y', -s / 2).attr('width', s).attr('height', s).attr('rx', s * 0.3);
       g.append('rect').attr('class', 'shape').attr('x', -s / 2).attr('y', -s / 2).attr('width', s).attr('height', s).attr('rx', s * 0.3);
-      g.append('circle').attr('class', 'target').attr('r', s * 0.22);
-      g.append('circle').attr('class', 'target-dot').attr('r', s * 0.07);
+      g.append('text').attr('class', 'count').attr('font-size', d.r * 0.72).text(count);
     }
     g.append('text').attr('class', 'label').attr('y', bottom + 6).append('tspan').attr('class', 'name').attr('x', 0).text(n.nama);
   }
@@ -1218,11 +1332,27 @@ function ticked() {
     .attr('x2', d => px(d.target)).attr('y2', d => py(d.target));
   placeGlyphs();
 }
+/** Titik keluar sinar dari a ke b dari kotak simpul+label a, sebagai fraksi panjang segmen. */
+function exitT(a, b) {
+  const dx = px(b) - px(a), dy = py(b) - py(a);
+  const tx = dx > 0 ? a.hw / dx : dx < 0 ? -a.hw / dx : Infinity;
+  const ty = dy > 0 ? a.bot / dy : dy < 0 ? -a.top / dy : Infinity;
+  return Math.min(tx, ty);
+}
+/* Nama relasi diletakkan di tengah bagian garis yang berada di luar kedua kotak label,
+   supaya tidak menimpa nama atau harga barang. */
 function placeGlyphs() {
-  gG.selectAll('g.glyph').attr('transform', d =>
-    typeof d.source === 'object'
-      ? `translate(${(px(d.source) + px(d.target)) / 2},${(py(d.source) + py(d.target)) / 2}) scale(${1 / K})`
-      : null);
+  gG.selectAll('g.glyph').each(function (d) {
+    if (typeof d.source !== 'object') return;
+    const t0 = exitT(d.source, d.target), t1 = 1 - exitT(d.target, d.source);
+    const len = Math.hypot(px(d.target) - px(d.source), py(d.target) - py(d.source)) * K;
+    // Celah garis di luar label terlalu pendek: nama relasi disembunyikan, garisnya sendiri sudah berkode
+    const room = (t1 - t0) * len >= 30;
+    const t = (t0 + t1) / 2;
+    const x = px(d.source) + (px(d.target) - px(d.source)) * t, y = py(d.source) + (py(d.target) - py(d.source)) * t;
+    this.setAttribute('visibility', room ? 'visible' : 'hidden');
+    if (room) this.setAttribute('transform', `translate(${x},${y}) scale(${1 / K})`);
+  });
 }
 
 /* Zoom + kanvas titik tak hingga */
@@ -1269,8 +1399,40 @@ function focusNode(id) {
   moveTo(d3.zoomIdentity.translate(cx - k * d.x, cy - k * d.y).scale(k), 560);
 }
 
+/* Lensa: sorotan dari legenda atau chip harga basi. Hover dan pilihan tetap didahulukan. */
+let lens = null;
+function lensIds(l) {
+  const out = new Set();
+  const addCtx = id => (D.memberOf.get(id) || []).forEach(g => out.add(g));
+  if (l === 'stale' || l === 'dibeli') {
+    for (const n of nodes) {
+      if (n.kind !== 'produk') continue;
+      if (l === 'stale' ? D.stale.has(n.id) : n.status === 'dibeli') { out.add(n.id); addCtx(n.id); }
+    }
+  } else {
+    for (const r of relations) if (r.type === l) { out.add(r.from_id); out.add(r.to_id); }
+  }
+  return out;
+}
+function setLens(l) {
+  lens = lens === l ? null : l;
+  document.querySelectorAll('[data-lens]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lens === lens)));
+  $('#stale-btn').setAttribute('aria-pressed', String(lens === 'stale'));
+  applyHighlight();
+}
+
 function applyHighlight() {
   const focus = hoverId || selectedId;
+  if (!focus && lens) {
+    const nb = lensIds(lens), rel = lens === 'alternatif' || lens === 'pelengkap';
+    svgEl.classList.add('focusing');
+    gN.selectAll('g.node').classed('faded', d => !nb.has(d.id)).classed('hot', d => nb.has(d.id)).classed('selected', false);
+    const lf = l => (rel ? l.type !== lens : !(nb.has(idOf(l.source)) && nb.has(idOf(l.target))));
+    gT.selectAll('circle').classed('faded', t => !nb.has(t.d.id));
+    gL.selectAll('line').classed('faded', lf);
+    gG.selectAll('g.glyph').classed('show', l => rel && l.type === lens);
+    return;
+  }
   svgEl.classList.toggle('focusing', !!focus);
   const nb = new Set();
   if (focus) {
@@ -1293,11 +1455,10 @@ function applyHighlight() {
   const linkFaded = l => !!focus && !(nb.has(idOf(l.source)) && nb.has(idOf(l.target)) && (idOf(l.source) === focus || idOf(l.target) === focus || byId.get(focus)?.kind === 'kategori'));
   gT.selectAll('circle').classed('faded', t => !!focus && !nb.has(t.d.id));
   gL.selectAll('line').classed('faded', linkFaded);
-  gG.selectAll('g.glyph').classed('faded', linkFaded);
+  gG.selectAll('g.glyph').classed('show', l => !!focus && (idOf(l.source) === focus || idOf(l.target) === focus));
 }
 
 /* ───────────── Header ───────────── */
-let staleCursor = 0;
 function renderHeader() {
   const products = nodes.filter(n => n.kind === 'produk').map(n => n.id);
   const est = estimate(products);
@@ -1329,7 +1490,7 @@ const xIcon = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M1
 function relChips(ids, label = labelOf) {
   return ids.map(id => byId.get(id)).filter(Boolean).map(o => {
     const off = o.status === 'batal' || D.tergeser.has(o.id);
-    const tag = o.status === 'dibeli' ? '<span class="tag">✓ Dibeli</span>' : '';
+    const tag = o.status === 'dibeli' ? '<span class="tag">Dibeli</span>' : '';
     return `<button type="button" class="chip${off ? ' is-off' : ''}" data-act="goto" data-id="${o.id}" style="${ccStyle(D.color.get(o.id))}"><span class="dot"></span><span class="nm">${esc(label(o))}</span>${tag}</button>`;
   }).join('');
 }
@@ -1393,7 +1554,7 @@ function groupCard(n) {
   const order = p => (p.status === 'ingin' && !D.tergeser.has(p.id) ? 0 : p.status === 'dibeli' ? 1 : 2);
   const rows = ids.map(id => byId.get(id)).sort((a, b) => order(a) - order(b) || (b.harga ?? 0) - (a.harga ?? 0)).map(p => {
     const off = p.status === 'batal' || D.tergeser.has(p.id);
-    const pr = p.status === 'dibeli' ? '✓ Dibeli' : p.harga == null ? '—' : rpShort(p.harga);
+    const pr = p.status === 'dibeli' ? 'Dibeli' : p.harga == null ? '—' : 'Rp ' + rpShort(p.harga);
     return `<button type="button" class="rowbtn${off ? ' off' : ''}${p.status === 'dibeli' ? ' bought' : ''}" data-act="goto" data-id="${p.id}" style="${ccStyle(D.color.get(p.id))}"><span class="dot"></span><span class="nm">${esc(p.nama)}${whereIn(p)}</span><span class="pr">${pr}</span></button>`;
   }).join('');
   const label = !isKat ? 'Tujuan' : parentId ? 'Subkategori' : 'Kategori';
@@ -1470,7 +1631,9 @@ function refresh(heat = 0.3) {
   rebuild();
   renderHeader();
   renderCard();
+  if (lens && !lensIds(lens).size) setLens(lens);
   applyHighlight();
+  if (view === 'list') renderList();
   $('#empty').hidden = nodes.length > 0;
   if (!reduceMotion) sim.alpha(Math.max(sim.alpha(), heat)).restart();
   else { for (let i = 0; i < 120; i++) sim.tick(); ticked(); }
@@ -1856,10 +2019,147 @@ $('#zoom-in').addEventListener('click', () => (reduceMotion ? svg : svg.transiti
 $('#zoom-out').addEventListener('click', () => (reduceMotion ? svg : svg.transition().duration(250)).call(zoom.scaleBy, 1 / 1.4));
 $('#zoom-fit').addEventListener('click', () => fit(true));
 $('#stale-btn').addEventListener('click', () => {
-  const list = [...D.stale].map(id => byId.get(id))
-    .sort((a, b) => (daysSince(b.harga_dicek_pada) ?? 1e9) - (daysSince(a.harga_dicek_pada) ?? 1e9));
-  if (!list.length) return;
-  select(list[staleCursor++ % list.length].id);
+  if (view === 'list') setView('map');
+  if (selectedId) select(null, { focus: false });
+  setLens('stale');
+});
+const legendEl = $('#legend'), legendBtn = $('#legend-btn');
+function toggleLegend(open = legendEl.hidden) {
+  legendEl.hidden = !open;
+  legendBtn.setAttribute('aria-expanded', String(open));
+}
+legendBtn.addEventListener('click', () => toggleLegend());
+legendEl.addEventListener('click', e => {
+  const b = e.target.closest('[data-lens]');
+  if (!b) return;
+  if (selectedId) select(null, { focus: false });
+  setLens(b.dataset.lens);
+});
+document.addEventListener('pointerdown', e => {
+  if (!legendEl.hidden && !e.target.closest('#legend, #legend-btn')) toggleLegend(false);
+});
+
+/* ───────────── Peta / Daftar ───────────── */
+let view = 'map';
+function setView(v) {
+  view = v;
+  document.body.dataset.view = v;
+  $('#view-map').setAttribute('aria-pressed', String(v === 'map'));
+  $('#view-list').setAttribute('aria-pressed', String(v === 'list'));
+  $('#listview').hidden = v !== 'list';
+  if (v === 'list') { toggleLegend(false); select(null, { focus: false }); renderList(); }
+}
+$('#view-map').addEventListener('click', () => setView('map'));
+$('#view-list').addEventListener('click', () => setView('list'));
+function rootOf(id) {
+  let g = id, k = 0;
+  while (D.parent.get(g) && k++ < 32) g = D.parent.get(g);
+  return g;
+}
+function renderList() {
+  const el = $('#listview');
+  const products = nodes.filter(n => n.kind === 'produk');
+  if (!products.length) { el.innerHTML = '<p class="empty-note">Belum ada barang. Tambahkan lewat tombol Barang.</p>'; return; }
+  const groups = new Map();
+  for (const p of products) {
+    const home = D.home.get(p.id);
+    const key = home ? rootOf(home) : '';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(p);
+  }
+  const order = p => (p.status === 'ingin' && !D.tergeser.has(p.id) ? 0 : p.status === 'dibeli' ? 1 : 2);
+  const keys = [...groups.keys()].sort((a, b) => (a === '') - (b === '') || (byId.get(a)?.nama || '').localeCompare(byId.get(b)?.nama || '', 'id'));
+  el.innerHTML = keys.map(key => {
+    const g = byId.get(key);
+    const list = groups.get(key).sort((a, b) => order(a) - order(b) || (b.harga ?? -1) - (a.harga ?? -1));
+    const est = estimate(list.map(p => p.id));
+    const sum = est.total ? `±Rp ${esc(rpShort(est.total))}` : '—';
+    const head = g
+      ? `<h2 style="--cc:${mapColor(g.id)}"><span class="dot"></span>${esc(g.nama)}<span class="sum">${sum}</span></h2>`
+      : `<h2>Tanpa kategori<span class="sum">${sum}</span></h2>`;
+    const rows = list.map(p => {
+      const off = p.status === 'batal' || D.tergeser.has(p.id);
+      const home = D.home.get(p.id);
+      const sub = home && home !== key ? pathOf(home).split(' › ').slice(1).join(' › ') : '';
+      const stale = D.stale.has(p.id);
+      const st = D.tergeser.has(p.id) ? 'Alternatif dibeli' : p.status !== 'ingin' ? STATUS[p.status] : stale ? 'Harga basi' : '';
+      return `<button type="button" class="rowbtn${off ? ' off' : ''}${p.status === 'dibeli' ? ' bought' : ''}" data-id="${p.id}">
+        <span class="nm">${esc(p.nama)}${sub ? `<span class="sub">${esc(sub)}</span>` : ''}</span>
+        ${st ? `<span class="st${stale && p.status === 'ingin' && !off ? ' is-stale' : ''}">${st}</span>` : ''}
+        <span class="pr">${esc(rp(p.harga))}</span></button>`;
+    }).join('');
+    return `<section>${head}<div class="rows">${rows}</div></section>`;
+  }).join('');
+}
+$('#listview').addEventListener('click', e => {
+  const b = e.target.closest('.rowbtn');
+  if (!b) return;
+  setView('map');
+  select(b.dataset.id);
+});
+
+/* ───────────── Pencarian ───────────── */
+const dlgS = $('#dlg-search'), sq = $('#search-q'), sres = $('#search-res');
+let sHits = [], sActive = 0;
+const norm = t => String(t).toLocaleLowerCase('id').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+function runSearch() {
+  const q = norm(sq.value.trim());
+  const pool = nodes.filter(n => !q || norm(n.nama).includes(q));
+  pool.sort((a, b) => (norm(a.nama).startsWith(q) ? 0 : 1) - (norm(b.nama).startsWith(q) ? 0 : 1)
+    || (a.kind === 'produk') - (b.kind === 'produk') || a.nama.localeCompare(b.nama, 'id'));
+  sHits = pool.slice(0, 40); sActive = 0;
+  sres.innerHTML = sHits.length ? sHits.map((n, i) => {
+    const sub = n.kind === 'produk'
+      ? (D.memberOf.get(n.id) || []).map(id => labelOf(byId.get(id))).join(', ') || 'Tanpa kategori'
+      : n.kind === 'kategori' ? (D.parent.get(n.id) ? 'Subkategori · ' + pathOf(D.parent.get(n.id)) : 'Kategori') : 'Tujuan';
+    return `<li><button type="button" role="option" id="sr-${i}" data-i="${i}" aria-selected="${i === 0}" style="--cc:${mapColor(n.id)}">
+      <span class="dot"></span><span class="nm">${esc(n.nama)}<span class="sub">${esc(sub)}</span></span>
+      ${n.kind === 'produk' ? `<span class="pr">${esc(priceText(n))}</span>` : ''}</button></li>`;
+  }).join('') : '<li class="none">Tidak ada yang cocok.</li>';
+  sq.setAttribute('aria-activedescendant', sHits.length ? 'sr-0' : '');
+}
+function moveActive(d) {
+  if (!sHits.length) return;
+  sActive = (sActive + d + sHits.length) % sHits.length;
+  sres.querySelectorAll('[role="option"]').forEach((b, i) => b.setAttribute('aria-selected', String(i === sActive)));
+  sres.querySelector(`#sr-${sActive}`).scrollIntoView({ block: 'nearest' });
+  sq.setAttribute('aria-activedescendant', `sr-${sActive}`);
+}
+function pickHit(i) {
+  const n = sHits[i];
+  if (!n) return;
+  dlgS.close();
+  if (view === 'list') setView('map');
+  if (lens) setLens(lens);
+  select(n.id);
+}
+function openSearch() {
+  if (document.querySelector('dialog[open]')) return;
+  toggleMenu(false); toggleLegend(false);
+  sq.value = ''; runSearch();
+  dlgS.showModal(); sq.focus();
+}
+$('#search-btn').addEventListener('click', openSearch);
+sq.addEventListener('input', runSearch);
+sq.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); moveActive(-1); }
+  else if (e.key === 'Enter') { e.preventDefault(); pickHit(sActive); }
+});
+sres.addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) pickHit(+b.dataset.i); });
+dlgS.addEventListener('click', e => { if (e.target === dlgS) dlgS.close(); });
+
+/* Pintasan papan ketik: + − 0 untuk zoom, / atau ⌘K untuk cari, L untuk legenda */
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openSearch(); return; }
+  if (e.metaKey || e.ctrlKey || e.altKey || document.querySelector('dialog[open]')) return;
+  if (e.target.closest('input, textarea, select, [contenteditable]')) return;
+  if (e.key === '/') { e.preventDefault(); openSearch(); }
+  else if (view !== 'map') return;
+  else if (e.key === '+' || e.key === '=') $('#zoom-in').click();
+  else if (e.key === '-' || e.key === '_') $('#zoom-out').click();
+  else if (e.key === '0') fit(true);
+  else if (e.key.toLowerCase() === 'l') toggleLegend();
 });
 $('#reset-btn').addEventListener('click', async e => {
   const b = e.currentTarget, label = 'Pulihkan data contoh';
@@ -1879,7 +2179,9 @@ $('#logout-btn').addEventListener('click', async () => { toggleMenu(false); awai
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape' || document.querySelector('dialog[open]')) return;
   if (!menuEl.hidden) { toggleMenu(false); menuBtn.focus(); }
+  else if (!legendEl.hidden) { toggleLegend(false); legendBtn.focus(); }
   else if (selectedId) select(null, { focus: false });
+  else if (lens) setLens(lens);
 });
 
 /* ───────────── Mulai ───────────── */
@@ -1893,7 +2195,9 @@ function layoutFresh() {
   ticked();
   renderHeader();
   renderCard();
+  if (lens && !lensIds(lens).size) setLens(lens);
   applyHighlight();
+  if (view === 'list') renderList();
   $('#empty').hidden = nodes.length > 0;
   fit(false);
   if (!reduceMotion) sim.alpha(0.1).restart();

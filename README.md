@@ -21,6 +21,8 @@ It is built for personal use: one person, one private wishlist. It is not a stor
 - Zoom changes what you see: colored regions and bubbles from far away, then names, prices, and photos at medium range, and relation tags up close.
 - Each category tints the area around its items, so groups read as regions on a map. Subcategories that share their parent's color get a lighter or darker shade of it.
 - Categories can use one of eight preset colors or any color you pick.
+- Search with ⌘K or `/`, switch between the map and a plain list grouped by category, and use the legend (or the stale-price chip) to highlight only stale, bought, alternative, or complementary items.
+- Keyboard: `+` and `-` zoom, `0` fits the map, `L` opens the legend, `Esc` clears the selection or highlight.
 
 ## Running your own copy
 
