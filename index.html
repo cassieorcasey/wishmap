@@ -766,7 +766,6 @@ const SHADES = [['white', 32], ['black', 22], ['white', 50], ['black', 36]];
 const TOKO = { shopee: 'Shopee', tiktok: 'TikTok Shop', lainnya: 'Toko lain' };
 const STATUS = { ingin: 'Ingin', dibeli: 'Dibeli', batal: 'Batal' };
 const LINK_DIST = { anggota: 82, alternatif: 56, pelengkap: 70, induk: 104 };
-const LINK_STR = { anggota: 0.45, alternatif: 0.7, pelengkap: 0.35, induk: 0.6 };
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const canHover = matchMedia('(hover: hover)').matches;
 
@@ -1113,12 +1112,13 @@ function wake() {
 const sim = d3.forceSimulation()
   .velocityDecay(0.28)
   .alphaDecay(0.028)
-  .force('link', d3.forceLink().id(d => d.id).distance(l => LINK_DIST[l.type]).strength(l => LINK_STR[l.type]))
-  .force('charge', d3.forceManyBody().strength(d => (d.kind === 'produk' ? -150 : d.depth ? -380 : -620)).distanceMax(700))
+  // Struktur datang dari tata letak (x/y tujuan); gaya lain hanya merapikan sisa tumpukan
+  .force('link', d3.forceLink().id(d => d.id).distance(l => LINK_DIST[l.type]).strength(0.015))
+  .force('charge', d3.forceManyBody().strength(-30).distanceMax(110))
   .force('collide', d3.forceCollide().radius(d => d.r + (d.kind === 'produk' ? 8 : 16)).iterations(2))
   .force('box', boxCollide())
-  .force('x', d3.forceX(0).strength(0.035))
-  .force('y', d3.forceY(0).strength(0.035))
+  .force('x', d3.forceX(d => d.tx ?? 0).strength(0.32))
+  .force('y', d3.forceY(d => d.ty ?? 0).strength(0.32))
   .on('tick', () => { if (!driftTimer) ticked(); })
   .stop();
 
@@ -1157,40 +1157,114 @@ function boxCollide() {
   return force;
 }
 
+/* Tata letak mind map.
+   Tiap kategori utama (dan tujuan yang berdiri sendiri) adalah satu pohon melingkar:
+   kategori di tengah, subkategori di cincin dalam, barang di cincin luar. Barang memakai
+   "rumah"-nya (kategori terdalam) sebagai cabang; keanggotaan lain tetap tampil sebagai garis.
+   Pohon-pohon lalu disusun berjajar per baris dengan jarak lega, terbesar lebih dulu. */
+const LEAF_ARC = 138, RING = 132, CLUSTER_GAP = 64;
+function computeLayout() {
+  const out = new Map();
+  const kids = new Map();
+  for (const n of nodes) {
+    const par = n.kind === 'produk' ? D.home.get(n.id) : D.parent.get(n.id);
+    if (!par || !byId.has(par)) continue;
+    if (!kids.has(par)) kids.set(par, []);
+    kids.get(par).push(n);
+  }
+  const rank = n => (n.kind !== 'produk' ? 0 : n.status === 'ingin' && !D.tergeser.has(n.id) ? 1 : n.status === 'dibeli' ? 2 : 3);
+  const cmp = (a, b) => rank(a) - rank(b) || a.nama.localeCompare(b.nama, 'id');
+  const clusters = [];
+  for (const r of nodes.filter(n => n.kind !== 'produk' && !D.parent.get(n.id))) {
+    const h = d3.hierarchy(r, n => (kids.get(n.id) || []).slice().sort(cmp));
+    if (!h.height) { clusters.push({ h, root: r, R: 0, ext: 80 }); continue; }
+    const leaves = h.leaves().length;
+    const R = Math.max(RING * (1 + 0.72 * (h.height - 1)), (leaves * LEAF_ARC) / (2 * Math.PI));
+    d3.tree().size([2 * Math.PI, R]).separation((a, b) => (a.parent === b.parent ? 1 : 1.5) / a.depth)(h);
+    clusters.push({ h, root: r, R, ext: R + 78 });
+  }
+  // Barang tanpa kategori: kisi rapi
+  const loose = nodes.filter(n => n.kind === 'produk' && !D.home.get(n.id)).sort(cmp);
+  if (loose.length) {
+    const cols = Math.ceil(Math.sqrt(loose.length));
+    const rows = Math.ceil(loose.length / cols);
+    clusters.push({ loose, cols, ext: Math.max(cols * 160, rows * 120) / 2 + 40 });
+  }
+  // Urutan: kategori terbesar lebih dulu; tiap tujuan diletakkan tepat setelah kategori
+  // tempat sebagian besar barangnya berada, supaya garisnya pendek.
+  const treeOf = new Map();
+  for (const c of clusters) if (c.h) c.h.each(d => treeOf.set(d.data.id, c));
+  const hostOf = c => {
+    if (!c.root || c.root.kind !== 'tujuan') return null;
+    const votes = new Map();
+    for (const m of D.members.get(c.root.id) || []) {
+      const t = treeOf.get(m);
+      if (t && t !== c) votes.set(t, (votes.get(t) || 0) + 1);
+    }
+    return [...votes].sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+  };
+  const hosted = new Map();
+  const mains = [];
+  for (const c of clusters) {
+    const h = hostOf(c);
+    if (h) { if (!hosted.has(h)) hosted.set(h, []); hosted.get(h).push(c); } else mains.push(c);
+  }
+  mains.sort((a, b) => b.ext - a.ext);
+  const ordered = mains.flatMap(c => [c, ...(hosted.get(c) || [])]);
+  clusters.length = 0; clusters.push(...ordered);
+  // Lebar baris mengikuti bentuk layar supaya peta mengisi ruang yang ada
+  const aspect = Math.min(2.4, Math.max(0.55, (svgEl.clientWidth || 1200) / Math.max(1, (svgEl.clientHeight || 800) - 170)));
+  const area = clusters.reduce((s, c) => s + (2 * c.ext + CLUSTER_GAP) ** 2, 0);
+  const maxW = Math.max(2 * (clusters.reduce((m, c) => Math.max(m, c.ext), 0)), Math.sqrt(area * aspect));
+  let x = 0, y = 0, rowH = 0;
+  const rowsOut = [[]];
+  for (const c of clusters) {
+    const w = 2 * c.ext;
+    if (x > 0 && x + w > maxW) { y += rowH + CLUSTER_GAP; x = 0; rowH = 0; rowsOut.push([]); }
+    c.cx = x + c.ext; c.rowTop = y;
+    x += w + CLUSTER_GAP; rowH = Math.max(rowH, w);
+    rowsOut[rowsOut.length - 1].push(c);
+    c.row = rowsOut.length - 1;
+  }
+  // tiap baris di tengah secara horizontal; tiap cluster di tengah tinggi barisnya
+  const rowW = rowsOut.map(r => r.reduce((s, c) => s + 2 * c.ext, 0) + CLUSTER_GAP * (r.length - 1));
+  const rowHs = rowsOut.map(r => Math.max(...r.map(c => 2 * c.ext)));
+  const W = Math.max(...rowW, 0), H = y + rowH;
+  for (const c of clusters) {
+    const cx = c.cx + (W - rowW[c.row]) / 2 - W / 2;
+    const cy = c.rowTop + rowHs[c.row] / 2 - H / 2;
+    if (c.loose) {
+      const rows = Math.ceil(c.loose.length / c.cols);
+      c.loose.forEach((n, i) => out.set(n.id, {
+        x: cx + ((i % c.cols) - (c.cols - 1) / 2) * 160,
+        y: cy + (Math.floor(i / c.cols) - (rows - 1) / 2) * 120,
+      }));
+      continue;
+    }
+    // sudut awal digeser setengah celah daun, supaya pohon kecil tidak terbentang tepat mendatar
+    const tilt = Math.PI / (2 * Math.max(2, c.h.leaves().length));
+    c.h.each(d => {
+      const a = (d.x || 0) - Math.PI / 2 + tilt, rad = d.y || 0;
+      out.set(d.data.id, { x: cx + rad * Math.cos(a), y: cy + rad * Math.sin(a) });
+    });
+  }
+  for (const n of nodes) if (!out.has(n.id)) out.set(n.id, { x: 0, y: 0 });
+  return out;
+}
+
 function radiusOf(n) {
   if (n.kind === 'produk') return n.harga == null ? 10 : rScale(n.harga);
   const base = 20 + Math.min(14, Math.sqrt(productsIn(n.id).length) * 4.5);
   return (D.depth.get(n.id) || 0) > 0 ? base * 0.72 : base;
-}
-function viewCenter() {
-  const [x, y] = T.invert([svgEl.clientWidth / 2, svgEl.clientHeight / 2]);
-  return { x, y };
 }
 const idOf = v => (typeof v === 'object' ? v.id : v);
 
 function rebuild() {
   const maxH = d3.max(nodes, n => (n.kind === 'produk' ? n.harga : null)) || 1;
   rScale = d3.scaleSqrt().domain([0, maxH]).range([9, 24]);
-  const groups = nodes.filter(n => n.kind !== 'produk');
-  const c0 = viewCenter();
-  // subkategori baru muncul di dekat induknya (induk diproses lebih dulu)
-  groups.filter(g => !pos.has(g.id) && D.depth.get(g.id) > 0)
-    .sort((a, b) => D.depth.get(a.id) - D.depth.get(b.id))
-    .forEach(g => {
-      const par = pos.get(D.parent.get(g.id));
-      if (par) pos.set(g.id, { x: par.x + (Math.random() - 0.5) * 90, y: par.y + (Math.random() - 0.5) * 90 });
-    });
-  const fresh = groups.filter(g => !pos.has(g.id));
-  fresh.forEach((g, i) => {
-    const a = (i / Math.max(fresh.length, 1)) * Math.PI * 2 - Math.PI / 2;
-    const R = fresh.length > 1 ? 150 + fresh.length * 32 : 60;
-    pos.set(g.id, { x: c0.x + Math.cos(a) * R, y: c0.y + Math.sin(a) * R });
-  });
-  for (const p of nodes) {
-    if (p.kind !== 'produk' || pos.has(p.id)) continue;
-    const anchor = D.memberOf.get(p.id).map(id => pos.get(id)).find(Boolean) || c0;
-    pos.set(p.id, { x: anchor.x + (Math.random() - 0.5) * 70, y: anchor.y + (Math.random() - 0.5) * 70 });
-  }
+  // Posisi tujuan tiap simpul dari tata letak mind map; simpul baru langsung muncul di tempatnya
+  const target = computeLayout();
+  for (const n of nodes) if (!pos.has(n.id)) { const t = target.get(n.id); pos.set(n.id, { x: t.x, y: t.y }); }
   for (const id of [...pos.keys()]) if (!byId.has(id)) pos.delete(id);
 
   simNodes = [...nodes]
@@ -1198,8 +1272,9 @@ function rebuild() {
     .map(n => {
       const r = radiusOf(n), lb = labelBox(n);
       const half = n.kind === 'tujuan' ? r * 0.86 : r;   // tujuan digambar sebagai persegi bersudut 1,72r
+      const t = target.get(n.id);
       return Object.assign(pos.get(n.id), {
-        id: n.id, kind: n.kind, depth: D.depth.get(n.id) || 0, r,
+        id: n.id, kind: n.kind, depth: D.depth.get(n.id) || 0, r, tx: t.x, ty: t.y,
         hw: Math.max(half, lb.w / 2) + 6, top: half + 4, bot: half + lb.gap + lb.h + 4,
       });
     });
@@ -1363,7 +1438,7 @@ svg.on('click', e => { if (e.target === svgEl) select(null, { focus: false }); }
 function applyZoom(t) {
   T = t; K = t.k;
   vp.attr('transform', t).style('--inv', (1 / K).toFixed(4));
-  const z = K < 0.7 ? 'far' : K < 1.55 ? 'mid' : 'near';
+  const z = K < 0.62 ? 'far' : K < 1.55 ? 'mid' : 'near';
   if (z !== zoomLevel) { zoomLevel = z; svgEl.dataset.zoom = z; }
   let s = 24 * K;
   while (s < 16) s *= 2;

@@ -1,6 +1,6 @@
 # Wishmap
 
-Wishmap is a wishlist that looks like a map instead of a list. Every item you want to buy is a bubble, and bubbles are pulled toward the categories they belong to, much like the graph view in Obsidian. Zoom out and you see colored clusters. Click a bubble and a product card opens with the photo, price, and a link to the shop.
+Wishmap is a wishlist that looks like a map instead of a list. Every item you want to buy is a bubble. Each main category is laid out as its own round mind map, with subcategories on the inner ring and items on the outer ring, and goals sit next to the category most of their items come from. Zoom out and you see colored clusters. Click a bubble and a product card opens with the photo, price, and a link to the shop.
 
 ## Who it is for
 
