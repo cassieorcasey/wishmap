@@ -23,7 +23,8 @@ It is built for personal use: one person, one private wishlist. It is not a stor
 - Categories can use one of eight preset colors or any color you pick.
 - Search with ⌘K or `/`, switch between the map and a plain list grouped by category, and use the legend (or the stale-price chip) to highlight only stale, bought, alternative, or complementary items.
 - A quiet, native look in the Cherry Vibes palette (cream canvas, cola text, cherry for actions, blush for highlights), in light and dark. It uses the system font, so nothing is downloaded before the map draws. Each top-level category gets one soft region drawn around its items, which keeps panning and zooming smooth on a phone.
-- Keyboard: `+` and `-` zoom, `0` fits the map, `L` opens the legend, `Esc` clears the selection or highlight.
+- Hands-on map: drag a bubble and its neighbours follow on a rubber band, then spring back; double-tap a category to fold its branch into it; right-click or press and hold a bubble for a ring of quick actions (mark bought, open the shop, confirm the price, edit); hover for a price peek; fling the map and it glides to a stop. Works with mouse and touch, and respects reduced motion.
+- Keyboard: `+` and `-` zoom, `0` fits the map, `L` opens the legend, `F` folds the selected category, `B` marks the selected item bought, `Esc` clears the selection or highlight.
 
 ## Running your own copy
 

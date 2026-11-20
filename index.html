@@ -324,7 +324,7 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
   background: var(--glass-solid);
   animation: pop .42s var(--spring);
 }
-@keyframes pop { from { transform: translateY(8px); opacity: 0; } }
+@keyframes pop { from { transform: translateY(12px) scale(.97); opacity: 0; } }
 .card .close {
   position: absolute; top: 10px; right: 10px; z-index: 2;
   width: 32px; height: 32px; border-radius: 10px; border: 0;
@@ -488,8 +488,52 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
 ::selection { background: var(--accent-soft); color: #43322C; }
 .hull path { fill-rule: nonzero; stroke-width: 104px; stroke-linejoin: round; stroke-linecap: round; opacity: var(--terr); pointer-events: none; transition: opacity .2s; }
 #map.focusing .hull path.faded { opacity: calc(var(--terr) * .3); }
-.node .body { transform-box: fill-box; transform-origin: center; transition: transform .16s ease-out; }
-@media (hover: hover) { .node:hover .body { transform: scale(1.08); } }
+/* Gerak simpul: pegas (sedikit melompat lewat), tekan menciut, diangkat saat ditarik. Hanya transform dan opacity. */
+.node .body { transform-box: fill-box; transform-origin: center; transition: transform .42s cubic-bezier(.3,1.6,.5,1); }
+.node.hov .body { transform: scale(1.1); }
+.node.pressed .body { transform: scale(.88); transition: transform .09s ease-out; }
+.node.lifted .body { transform: scale(1.2); transition: transform .2s ease-out; }
+.node.lifted { cursor: grabbing; }
+.node.tucked { opacity: 0; pointer-events: none; transition: opacity .3s; }
+.link.tucked { opacity: 0; transition: opacity .3s; }
+.fold-ring { fill: none; stroke: var(--cc); stroke-width: 1.6; stroke-dasharray: 2 4; stroke-linecap: round; vector-effect: non-scaling-stroke; pointer-events: none; }
+@keyframes bloom { from { transform: scale(0); opacity: 0; } }
+@keyframes fadein { from { opacity: 0; } }
+@keyframes tickdraw { from { stroke-dashoffset: 1; } }
+.node.enter .body { animation: bloom .6s cubic-bezier(.3,1.5,.5,1) backwards; animation-delay: calc(var(--i, 0) * 12ms); }
+.node.enter .label, .node.enter .count, .node.enter .tick { animation: fadein .4s ease-out backwards; animation-delay: calc(var(--i, 0) * 12ms + 160ms); }
+.node .tick.draw { stroke-dasharray: 1; animation: tickdraw .5s ease-out .12s backwards; }
+
+/* Intip harga saat kursor di atas simpul */
+.peek {
+  position: fixed; z-index: 4; left: 0; top: 0; pointer-events: none; max-width: 240px;
+  padding: 7px 11px; border-radius: 10px; background: var(--paper); border: 1px solid var(--glass-line); box-shadow: var(--shadow);
+  font: 500 12.5px/1.35 var(--font-ui); color: var(--fg-2); font-variant-numeric: tabular-nums; animation: fadein .14s ease-out;
+}
+.peek b { display: block; color: var(--fg); font-weight: 650; }
+
+/* Aksi cepat: cincin tombol di sekitar simpul (klik kanan atau tahan) */
+.radial { position: fixed; z-index: 7; left: 0; top: 0; width: 0; height: 0; pointer-events: none; }
+.radial .halo { position: absolute; left: 0; top: 0; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; border: 1.5px dashed var(--accent); opacity: .6; animation: fadein .2s ease-out; }
+.radial button {
+  position: absolute; left: 0; top: 0; width: 46px; height: 46px; margin: -23px 0 0 -23px; padding: 0;
+  border-radius: 50%; border: 1px solid var(--glass-line); background: var(--paper); color: var(--fg);
+  box-shadow: var(--shadow); display: grid; place-items: center; pointer-events: auto; cursor: pointer;
+  transform: translate(var(--tx), var(--ty));
+  animation: rpop .36s cubic-bezier(.3,1.5,.5,1) backwards; animation-delay: calc(var(--i) * 38ms);
+  transition: background-color .12s, color .12s;
+}
+@keyframes rpop { from { transform: translate(0, 0) scale(.3); opacity: 0; } }
+.radial button:hover, .radial button:focus-visible { background: var(--accent); color: var(--on-accent); outline: none; }
+.radial button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.radial button .t {
+  position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; pointer-events: none;
+  font: 600 11px/1 var(--font-ui); color: var(--fg); background: var(--paper); border: 1px solid var(--glass-line); border-radius: 6px; padding: 3px 6px;
+}
+.radial button[data-side="up"] .t { bottom: calc(100% + 5px); }
+.radial button[data-side="down"] .t { top: calc(100% + 5px); }
+.gestures { margin: 8px 0 0; padding: 8px 0 0; border-top: 1px solid var(--hair); display: grid; gap: 4px; font-size: 12.5px; color: var(--fg-2); line-height: 1.4; }
+.gestures b { color: var(--fg); font-weight: 650; }
 
 .btn, .chip-btn, .menu-btn, .zoombar button, .view-seg button, .icon-btn, .mini, .chip, .menu button, .legend button, .rowbtn, .seg button {
   transition: background-color .12s, color .12s, transform .1s ease-out;
@@ -510,7 +554,7 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
 .stat, .rowbtn .pr, .listview h2 .sum, .search li button .pr, .node .label .price, .card .price, .stats .v { font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  .node:hover .body { transform: none; }
+  .node.hov .body, .node.lifted .body, .node.pressed .body { transform: none; }
 }
 </style>
 </head>
@@ -528,6 +572,7 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
       <g id="links"></g>
       <g id="glyphs"></g>
       <g id="nodes"></g>
+      <g id="fx"></g>
     </g>
   </svg>
 </div>
@@ -595,6 +640,13 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
   <h3>Garis</h3>
   <button type="button" data-lens="alternatif" aria-pressed="false"><span class="sw"><svg width="22" height="4" aria-hidden="true"><line x1="0" y1="2" x2="22" y2="2" stroke="var(--fg-2)" stroke-width="1.5" stroke-dasharray="4 3"></line></svg></span>Alternatif · pilih satu</button>
   <button type="button" data-lens="pelengkap" aria-pressed="false"><span class="sw"><svg width="22" height="4" aria-hidden="true"><line x1="0" y1="2" x2="22" y2="2" stroke="var(--fg-2)" stroke-width="2"></line></svg></span>Pelengkap · dipakai bersama</button>
+  <div class="gestures">
+    <span><b>Seret</b> simpul: tetangganya ikut tertarik, lalu pegas kembali</span>
+    <span><b>Klik kanan</b> atau <b>tahan</b>: aksi cepat</span>
+    <span><b>Ketuk dua kali</b> kategori: lipat atau buka cabangnya</span>
+    <span><b>Ketuk dua kali</b> ruang kosong: perbesar</span>
+    <span>Papan ketik: <b>F</b> lipat, <b>B</b> tandai dibeli</span>
+  </div>
 </div>
 
 <main class="listview" id="listview" aria-label="Daftar barang" hidden></main>
@@ -1143,8 +1195,8 @@ const sim = d3.forceSimulation()
   .alphaDecay(0.028)
   // Struktur datang dari tata letak (x/y tujuan); gaya lain hanya merapikan sisa tumpukan
   .force('link', d3.forceLink().id(d => d.id).distance(l => LINK_DIST[l.type]).strength(0.015))
-  .force('charge', d3.forceManyBody().strength(-30).distanceMax(110))
-  .force('collide', d3.forceCollide().radius(d => d.r + (d.kind === 'produk' ? 8 : 16)).iterations(2))
+  .force('charge', d3.forceManyBody().strength(d => (d.tucked ? 0 : -30)).distanceMax(110))
+  .force('collide', d3.forceCollide().radius(d => (d.tucked ? 0 : d.r + (d.kind === 'produk' ? 8 : 16))).iterations(2))
   .force('box', boxCollide())
   .force('x', d3.forceX(d => d.tx ?? 0).strength(0.32))
   .force('y', d3.forceY(d => d.ty ?? 0).strength(0.32))
@@ -1166,8 +1218,10 @@ function boxCollide() {
   const force = () => {
     for (let i = 0; i < ns.length; i++) {
       const a = ns[i];
+      if (a.tucked) continue;
       for (let j = i + 1; j < ns.length; j++) {
         const b = ns[j];
+        if (b.tucked) continue;
         const ox = Math.min(a.x + a.hw, b.x + b.hw) - Math.max(a.x - a.hw, b.x - b.hw);
         if (ox <= 0) continue;
         const oy = Math.min(a.y + a.bot, b.y + b.bot) - Math.max(a.y - a.top, b.y - b.top);
@@ -1281,6 +1335,31 @@ function computeLayout() {
   return out;
 }
 
+/* Kategori yang dilipat: seluruh cabangnya (subkategori dan barang) tersedot ke bulatannya. */
+const folded = new Set();
+try { JSON.parse(localStorage.getItem('wishmap:folded') || '[]').forEach(id => folded.add(id)); } catch (_) { /* tanpa penyimpanan, tetap jalan */ }
+function saveFolded() { try { localStorage.setItem('wishmap:folded', JSON.stringify([...folded])); } catch (_) { /* abaikan */ } }
+/** Kategori terluar yang sedang dilipat dan menyembunyikan simpul ini; null bila terlihat. */
+function foldRoot(id) {
+  const n = byId.get(id);
+  if (!n) return null;
+  let cur = n.kind === 'produk' ? D.home.get(id) : D.parent.get(id), top = null, k = 0;
+  while (cur && k++ < 32) { if (folded.has(cur)) top = cur; cur = D.parent.get(cur); }
+  return top;
+}
+let foldHinted = false;
+function toggleFold(id) {
+  const n = byId.get(id);
+  if (!n || n.kind !== 'kategori') return;
+  if (!(D.children.get(id) || []).length && !productsIn(id).length) return toast('Kategori ini masih kosong, belum ada yang bisa dilipat');
+  const was = folded.has(id);
+  if (was) folded.delete(id); else folded.add(id);
+  saveFolded();
+  refresh(0.7);
+  pulse(id);
+  if (!was && !foldHinted) { foldHinted = true; toast(`${n.nama} dilipat · ketuk dua kali lagi untuk membuka`); }
+}
+
 function radiusOf(n) {
   if (n.kind === 'produk') return n.harga == null ? 10 : rScale(n.harga);
   const base = 20 + Math.min(14, Math.sqrt(productsIn(n.id).length) * 4.5);
@@ -1301,9 +1380,10 @@ function rebuild() {
     .map(n => {
       const r = radiusOf(n), lb = labelBox(n);
       const half = n.kind === 'tujuan' ? r * 0.86 : r;   // tujuan digambar sebagai persegi bersudut 1,72r
-      const t = target.get(n.id);
+      const fr = foldRoot(n.id);
+      const t = target.get(fr || n.id);
       return Object.assign(pos.get(n.id), {
-        id: n.id, kind: n.kind, depth: D.depth.get(n.id) || 0, r, tx: t.x, ty: t.y,
+        id: n.id, kind: n.kind, depth: D.depth.get(n.id) || 0, r, tx: t.x, ty: t.y, tucked: !!fr,
         hw: Math.max(half, lb.w / 2) + 6, top: half + 4, bot: half + lb.gap + lb.h + 4,
       });
     });
@@ -1316,16 +1396,105 @@ function rebuild() {
   sim.force('link').links(simLinks);
 }
 
+/* Tarik simpul seperti tali karet: tetangga langsung ikut tertarik (garisnya dikencangkan selama ditarik),
+   lalu semuanya melenting kembali ke tata letak saat dilepas. Berlaku juga di layar sentuh. */
+let dragMoved = false, dragNodeEl = null;
+const baseLinkDist = l => LINK_DIST[l.type];
+function tugOn(d) {
+  for (const l of simLinks) {
+    const s = idOf(l.source), t = idOf(l.target);
+    if (s === d.id || t === d.id) {
+      const a = pos.get(s), b = pos.get(t);
+      l._rest = Math.hypot(a.x - b.x, a.y - b.y); l._tug = true;
+    }
+  }
+  sim.force('link').distance(l => l._rest ?? baseLinkDist(l)).strength(l => (l._tug ? 0.6 : 0.015));
+}
+function tugOff() {
+  for (const l of simLinks) { l._rest = undefined; l._tug = false; }
+  sim.force('link').distance(baseLinkDist).strength(0.015);
+}
 const drag = d3.drag()
-  .filter(e => !e.button && !(e.type || '').startsWith('touch'))
-  .on('start', (e, d) => { if (!e.active) sim.alphaTarget(0.22).restart(); d.fx = d.x; d.fy = d.y; svgEl.classList.add('dragging'); e.sourceEvent?.target?.closest?.('g.node')?.classList.add('lifted'); })
-  .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
-  .on('end', (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; svgEl.classList.remove('dragging'); gN.selectAll('g.node.lifted').classed('lifted', false); });
+  .filter(e => !e.button && !e.ctrlKey)
+  .clickDistance(6)
+  .on('start', (e, d) => {
+    dragMoved = false;
+    dragNodeEl = e.sourceEvent?.target?.closest?.('g.node') || null;
+    // setelah tahan-lalu-lepas, browser menembakkan mousedown tiruan: jangan ikut menutup cincin
+    if (!holdingRadial()) closeRadial();
+    hidePeek();
+    d.fx = d.x; d.fy = d.y;
+  })
+  .on('drag', (e, d) => {
+    if (!dragMoved) {
+      if (Math.hypot(e.x - d.x, e.y - d.y) < 5) return;
+      dragMoved = true; cancelPress();
+      tugOn(d);
+      if (!reduceMotion) sim.alphaTarget(0.22).restart();
+      svgEl.classList.add('dragging');
+      dragNodeEl?.classList.remove('pressed'); dragNodeEl?.classList.add('lifted');
+    }
+    d.fx = e.x; d.fy = e.y;
+    if (reduceMotion) { sim.tick(); ticked(); }
+  })
+  .on('end', (e, d) => {
+    d.fx = null; d.fy = null;
+    svgEl.classList.remove('dragging');
+    dragNodeEl?.classList.remove('lifted');
+    if (dragMoved) { tugOff(); sim.alphaTarget(0); if (!reduceMotion) sim.alpha(Math.max(sim.alpha(), 0.5)).restart(); else { for (let i = 0; i < 100; i++) sim.tick(); ticked(); } }
+    if (dragMoved) swallowClick();
+    dragNodeEl = null;
+  });
+
+/* Tahan atau klik kanan = aksi cepat. Tekan = simpul menciut. Kursor di atas = intip dan sorot tetangga. */
+let pressTimer = null, pressXY = null, clickSwallowUntil = 0;
+function swallowClick() { clickSwallowUntil = performance.now() + 450; }
+function cancelPress() { clearTimeout(pressTimer); pressTimer = null; pressXY = null; }
+addEventListener('pointermove', e => { if (pressXY && Math.hypot(e.clientX - pressXY[0], e.clientY - pressXY[1]) > 8) cancelPress(); }, { passive: true });
+let liftedAt = 0, radialOpenedAt = 0;
+const holdingRadial = () => !!radialEl && performance.now() - Math.max(radialOpenedAt, liftedAt) < 700;
+addEventListener('pointerup', () => {
+  cancelPress(); gN.selectAll('g.node.pressed').classed('pressed', false);
+  liftedAt = performance.now();
+  if (radialEl) clickSwallowUntil = liftedAt + 500;   // klik susulan setelah tahan-lalu-lepas bukan ketukan baru
+}, { passive: true });
+addEventListener('pointercancel', () => { cancelPress(); gN.selectAll('g.node.pressed').classed('pressed', false); }, { passive: true });
+function pressStart(e, d) {
+  if (e.button !== 0) return;
+  d3.select(e.currentTarget).classed('pressed', true);
+  cancelPress();
+  pressXY = [e.clientX, e.clientY];
+  const x = e.clientX, y = e.clientY;
+  pressTimer = setTimeout(() => {
+    pressTimer = null; pressXY = null;
+    if (dragMoved) return;
+    swallowClick();
+    gN.selectAll('g.node.pressed').classed('pressed', false);
+    if (navigator.vibrate) { try { navigator.vibrate(12); } catch (_) { /* tidak didukung */ } }
+    openRadial(d.id, x, y);
+  }, 480);
+}
+let lastTap = { id: null, t: 0 }, focusTimer = null;
+function tapNode(d) {
+  if (performance.now() < clickSwallowUntil) return;
+  const now = performance.now(), n = byId.get(d.id);
+  clearTimeout(focusTimer);
+  if (lastTap.id === d.id && now - lastTap.t < 340 && n.kind === 'kategori') { lastTap = { id: null, t: 0 }; toggleFold(d.id); return; }
+  lastTap = { id: d.id, t: now };
+  if (n.kind !== 'kategori') return select(d.id);
+  // kategori: kamera menunggu sebentar supaya ketukan kedua tidak meleset karena peta bergeser
+  select(d.id, { focus: false });
+  // kartu belum menerima ketukan selama jendela ketuk-dua-kali, supaya ketukan kedua tetap jatuh di simpul
+  const card = $('#card'); card.style.pointerEvents = 'none';
+  setTimeout(() => { card.style.pointerEvents = ''; }, 360);
+  focusTimer = setTimeout(() => { if (selectedId === d.id) focusNode(d.id); }, 340);
+}
 
 function draw() {
   // Wilayah: satu bidang lembut per kategori akar, dibentuk dari posisi anggotanya. Satu path per kategori,
   // bukan satu gradien per simpul, supaya pan dan zoom tetap ringan di ponsel.
-  const byRoot = d3.group(simNodes.filter(d => terrRoot(d.id)), d => terrRoot(d.id));
+  const byRoot = d3.group(simNodes.filter(d => !d.tucked && terrRoot(d.id)), d => terrRoot(d.id));
+  const tuckedIds = new Set(simNodes.filter(d => d.tucked).map(d => d.id));
   const hulls = [...byRoot].map(([root, ns]) => ({ root, ns, color: cssColor(byId.get(root)?.warna) }));
   const hs = gT.selectAll('path').data(hulls, h => h.root);
   hs.exit().remove();
@@ -1334,7 +1503,7 @@ function draw() {
   const ls = gL.selectAll('line').data(simLinks, d => d.id);
   ls.exit().remove();
   ls.enter().append('line').merge(ls)
-    .attr('class', d => `link ${d.type}`)
+    .attr('class', d => `link ${d.type}${tuckedIds.has(idOf(d.source)) || tuckedIds.has(idOf(d.target)) ? ' tucked' : ''}`)
     .style('stroke', d => (d.type === 'anggota' || d.type === 'induk' ? mapLine(idOf(d.target)) : null));
 
   const gs = gG.selectAll('g.glyph').data(simLinks.filter(l => l.type === 'alternatif' || l.type === 'pelengkap'), d => d.id);
@@ -1354,12 +1523,25 @@ function draw() {
   ns.exit().remove();
   const ne = ns.enter().append('g')
     .attr('tabindex', 0).attr('role', 'button')
-    .on('click', (e, d) => { e.stopPropagation(); select(d.id); })
+    .on('click', (e, d) => { e.stopPropagation(); tapNode(d); })
     .on('keydown', (e, d) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(d.id); } })
-    .on('mouseenter', (e, d) => { if (canHover) { hoverId = d.id; applyHighlight(); } })
-    .on('mouseleave', () => { if (canHover) { hoverId = null; applyHighlight(); } })
+    .on('pointerdown', (e, d) => pressStart(e, d))
+    .on('contextmenu', (e, d) => { e.preventDefault(); e.stopPropagation(); if (!radialEl) { swallowClick(); openRadial(d.id, e.clientX, e.clientY); } })
+    .on('pointerenter', function (e, d) {
+      if (e.pointerType !== 'mouse' || dragMoved) return;
+      this.classList.add('hov'); hoverId = d.id; applyHighlight(); showPeek(d);
+    })
+    .on('pointerleave', function (e) {
+      if (e.pointerType !== 'mouse') return;
+      this.classList.remove('hov'); hidePeek();
+      if (!radialEl) { hoverId = null; applyHighlight(); }
+    })
     .call(drag);
   ne.merge(ns).each(function (d) { paintNode(this, d); }).order();
+  if (!reduceMotion && ne.size()) {
+    ne.classed('enter', true).style('--i', (d, i) => Math.min(i, 60));
+    setTimeout(() => ne.classed('enter', false), 1700);
+  }
 }
 
 function paintNode(el, d) {
@@ -1375,6 +1557,8 @@ function paintNode(el, d) {
   }
   if (n.kind !== 'produk' && D.depth.get(n.id) > 0) cls.push('sub');
   if (n.id === selectedId) cls.push('selected');
+  if (d.tucked) cls.push('tucked');
+  if (el.classList.contains('hov')) cls.push('hov');
   if (HEX.test(D.color.get(n.id) || '')) cls.push('custom');
   g.attr('class', cls.join(' ')).style('--cc', mapColor(n.id)).style('--ink', inkOf(D.color.get(n.id)));
 
@@ -1395,7 +1579,7 @@ function paintNode(el, d) {
     }
     if (n.status === 'dibeli') {
       const k = Math.max(d.r, 9) * 0.5;
-      g.append('path').attr('class', 'tick').attr('d', `M${-k * 0.9},${k * 0.05} L${-k * 0.25},${k * 0.7} L${k * 0.95},${-k * 0.6}`);
+      g.append('path').attr('class', justBought === n.id ? 'tick draw' : 'tick').attr('pathLength', 1).attr('d', `M${-k * 0.9},${k * 0.05} L${-k * 0.25},${k * 0.7} L${k * 0.95},${-k * 0.6}`);
     }
     const t = g.append('text').attr('class', 'label').attr('y', d.r + 5);
     wrapWords(n.nama, 20).forEach((line, i) => t.append('tspan').attr('class', 'name').attr('x', 0).attr('dy', i ? '1.2em' : 0).text(line));
@@ -1404,6 +1588,7 @@ function paintNode(el, d) {
     const count = n.kind === 'kategori' ? productsIn(n.id).length : D.members.get(n.id).length;
     g.attr('aria-label', `${n.kind === 'kategori' ? 'Kategori' : 'Tujuan'} ${labelOf(n)}, ${count} barang`);
     let bottom = d.r;
+    if (folded.has(n.id)) g.append('circle').attr('class', 'fold-ring').attr('r', d.r + 6);
     const body = g.append('g').attr('class', 'body');
     if (n.kind === 'kategori') {
       body.append('circle').attr('class', 'base').attr('r', d.r);
@@ -1447,6 +1632,7 @@ function exitT(a, b) {
 function placeGlyphs() {
   gG.selectAll('g.glyph').each(function (d) {
     if (typeof d.source !== 'object') return;
+    if (d.source.tucked || d.target.tucked) { this.setAttribute('visibility', 'hidden'); return; }
     const t0 = exitT(d.source, d.target), t1 = 1 - exitT(d.target, d.source);
     const len = Math.hypot(px(d.target) - px(d.source), py(d.target) - py(d.source)) * K;
     // Celah garis di luar label terlalu pendek: nama relasi disembunyikan, garisnya sendiri sudah berkode
@@ -1462,9 +1648,47 @@ function placeGlyphs() {
 const zoom = d3.zoom().scaleExtent([0.2, 4]).on('zoom', e => applyZoom(e.transform));
 svg.call(zoom).on('dblclick.zoom', null);
 svg.on('click', e => { if (e.target === svgEl) select(null, { focus: false }); });
+// Ketuk dua kali ruang kosong: perbesar ke titik itu (sentuhan sudah ditangani d3-zoom)
+svg.on('dblclick', e => {
+  if (e.target !== svgEl) return;
+  const p = d3.pointer(e, svgEl);
+  if (reduceMotion) svg.call(zoom.scaleBy, 1.7, p);
+  else svg.transition().duration(320).ease(d3.easeCubicOut).call(zoom.scaleBy, 1.7, p);
+});
+
+/* Geser peta lalu lepas: meluncur dan melambat pelan (momentum), berhenti begitu disentuh lagi. */
+let glide = null, gv = { x: 0, y: 0 }, gLast = null;
+function stopGlide() { if (glide) { glide.stop(); glide = null; } }
+zoom
+  .on('start.glide', e => { if (!e.sourceEvent) return; stopGlide(); gLast = null; gv = { x: 0, y: 0 }; hidePeek(); if (!holdingRadial()) closeRadial(); })
+  .on('zoom.glide', e => {
+    const se = e.sourceEvent;
+    if (!se || se.type === 'wheel') { gLast = null; return; }
+    const t = performance.now(), tr = e.transform;
+    if (gLast && Math.abs(gLast.k - tr.k) < 1e-6) {
+      const dt = Math.max(1, t - gLast.t);
+      gv.x = gv.x * 0.6 + ((tr.x - gLast.x) / dt) * 0.4;
+      gv.y = gv.y * 0.6 + ((tr.y - gLast.y) / dt) * 0.4;
+    } else gv = { x: 0, y: 0 };
+    gLast = { t, x: tr.x, y: tr.y, k: tr.k };
+  })
+  .on('end.glide', () => {
+    if (reduceMotion || !gLast || performance.now() - gLast.t > 70) return;
+    if (Math.hypot(gv.x, gv.y) < 0.25) return;   // px per ms
+    let last = performance.now();
+    glide = d3.timer(() => {
+      const now = performance.now(), dt = Math.min(48, now - last);
+      last = now;
+      const f = Math.exp(-dt / 320);
+      gv.x *= f; gv.y *= f;
+      if (Math.hypot(gv.x, gv.y) < 0.02) return stopGlide();
+      svg.call(zoom.translateBy, (gv.x * dt) / K, (gv.y * dt) / K);
+    });
+  });
 
 function applyZoom(t) {
   T = t; K = t.k;
+  if (peekEl) hidePeek();
   vp.attr('transform', t).style('--inv', (1 / K).toFixed(4));
   const z = K < 0.62 ? 'far' : K < 1.55 ? 'mid' : 'near';
   if (z !== zoomLevel) { zoomLevel = z; svgEl.dataset.zoom = z; }
@@ -1562,12 +1786,27 @@ function applyHighlight() {
 }
 
 /* ───────────── Header ───────────── */
+let shownTotal = null, tweenRaf = 0;
 function renderHeader() {
   const products = nodes.filter(n => n.kind === 'produk').map(n => n.id);
   const est = estimate(products);
-  $('#stat-main').textContent = products.length
-    ? `${est.items} rencana beli · ±Rp ${rpShort(est.total)}`
-    : 'Belum ada barang';
+  const statEl = $('#stat-main');
+  if (!products.length) { statEl.textContent = 'Belum ada barang'; shownTotal = null; }
+  else {
+    const fmt = v => `${est.items} rencana beli · ±Rp ${rpShort(v)}`;
+    if (shownTotal != null && shownTotal !== est.total && !reduceMotion) {
+      // angka total berhitung naik atau turun, bukan melompat
+      const from = shownTotal, to = est.total, t0 = performance.now();
+      cancelAnimationFrame(tweenRaf);
+      const step = now => {
+        const k = Math.min(1, (now - t0) / 520);
+        statEl.textContent = fmt(Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3))));
+        if (k < 1) tweenRaf = requestAnimationFrame(step);
+      };
+      tweenRaf = requestAnimationFrame(step);
+    } else statEl.textContent = fmt(est.total);
+    shownTotal = est.total;
+  }
   const btn = $('#stale-btn');
   btn.hidden = D.stale.size === 0;
   $('#stale-text').textContent = `${D.stale.size} harga perlu dicek`;
@@ -1677,6 +1916,7 @@ function groupCard(n) {
       <div class="btn-row">
         <button type="button" class="btn" data-act="add-here">Tambah barang</button>
         ${isKat ? '<button type="button" class="btn" data-act="add-sub">Tambah subkategori</button>' : ''}
+        ${isKat && (kids.length || ids.length) ? `<button type="button" class="btn" data-act="fold">${folded.has(n.id) ? 'Buka cabang' : 'Lipat cabang'}</button>` : ''}
       </div>
       <div class="card-foot">
         <button type="button" class="btn" data-act="edit">Edit</button>
@@ -1701,9 +1941,142 @@ function select(id, { focus = true } = {}) {
   const changed = id !== selectedId;
   selectedId = id && byId.has(id) ? id : null;
   if (changed) $('#card').scrollTop = 0;
+  // Memilih barang yang sedang terlipat (lewat pencarian atau chip) membuka lipatannya dulu
+  const hidden = selectedId && foldRoot(selectedId);
+  if (hidden) { folded.delete(hidden); saveFolded(); refresh(0.6); }
   renderCard();
   applyHighlight();
-  if (selectedId && focus) focusNode(selectedId);
+  if (selectedId && focus) { const sid = selectedId; if (hidden) setTimeout(() => { if (selectedId === sid) focusNode(sid); }, 450); else focusNode(sid); }
+}
+
+/* ───────────── Intip, aksi cepat, perayaan ───────────── */
+let peekEl = null, radialEl = null;
+const screenOf = d => ({ x: T.applyX(px(d)), y: T.applyY(py(d)) + stageEl.getBoundingClientRect().top });
+function hidePeek() { if (peekEl) { peekEl.remove(); peekEl = null; } }
+function showPeek(d) {
+  hidePeek();
+  if (radialEl || dragMoved) return;
+  const n = byId.get(d.id);
+  if (!n) return;
+  let head = n.nama, sub = '';
+  if (n.kind === 'produk') {
+    const ds = daysSince(n.harga_dicek_pada);
+    const bits = [n.harga == null ? 'Belum ada harga' : rp(n.harga)];
+    if (n.toko && TOKO[n.toko]) bits.push(TOKO[n.toko]);
+    sub = bits.join(' · ');
+    if (D.tergeser.has(n.id)) sub += '\nAlternatif sudah dibeli';
+    else if (n.status !== 'ingin') sub += '\n' + STATUS[n.status];
+    else if (n.harga != null) sub += '\n' + agoText(ds);
+  } else {
+    const ids = n.kind === 'kategori' ? productsIn(n.id) : D.members.get(n.id);
+    const est = estimate(ids);
+    sub = `${ids.length} barang · ±Rp ${rpShort(est.total)} sisa` + (folded.has(n.id) ? '\nDilipat · ketuk dua kali untuk membuka' : '');
+  }
+  const el = document.createElement('div');
+  el.className = 'peek';
+  el.setAttribute('aria-hidden', 'true');
+  el.innerHTML = `<b>${esc(head)}</b>${esc(sub).replace(/\n/g, '<br>')}`;
+  document.body.appendChild(el);
+  const s = screenOf(d), w = el.offsetWidth, h = el.offsetHeight;
+  const reach = (d.r + 10) * K;
+  let x = Math.min(Math.max(s.x - w / 2, 8), innerWidth - w - 8);
+  let y = s.y - reach - h;
+  if (y < 72) y = s.y + reach + 18;   // tidak muat di atas: taruh di bawah label
+  el.style.transform = `translate(${x}px, ${y}px)`;
+  peekEl = el;
+}
+
+const ICON = {
+  buy: '<path d="M4.5 12.5l4.5 4.5L19.5 6.5"/>',
+  open: '<path d="M8 16L17 7M9 7h8v8"/>',
+  fresh: '<path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v4.5h-4.5"/>',
+  edit: '<path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/>',
+  addItem: '<path d="M12 5v14M5 12h14"/>',
+  addSub: '<path d="M6 5v8a3 3 0 0 0 3 3h9M14 12l4 4-4 4"/>',
+  fold: '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/>',
+  unfold: '<circle cx="12" cy="12" r="2.5"/><path d="M12 6V3M12 18v3M6 12H3M18 12h3M8 8L6 6M16 8l2-2M8 16l-2 2M16 16l2 2"/>',
+};
+function radialActions(n) {
+  if (n.kind === 'produk') {
+    const bought = n.status === 'dibeli';
+    return [
+      { act: 'buy', icon: bought ? 'unfold' : 'buy', text: bought ? 'Batal beli' : 'Dibeli' },
+      safeUrl(n.link) ? { act: 'open', icon: 'open', text: 'Buka toko' } : null,
+      n.harga != null ? { act: 'fresh', icon: 'fresh', text: 'Harga sama' } : null,
+      { act: 'edit', icon: 'edit', text: 'Edit' },
+    ].filter(Boolean);
+  }
+  const out = [{ act: 'add-here', icon: 'addItem', text: 'Barang' }];
+  if (n.kind === 'kategori') {
+    out.push({ act: 'add-sub', icon: 'addSub', text: 'Sub' });
+    out.push({ act: 'fold', icon: folded.has(n.id) ? 'unfold' : 'fold', text: folded.has(n.id) ? 'Buka' : 'Lipat' });
+  }
+  out.push({ act: 'edit', icon: 'edit', text: 'Edit' });
+  return out;
+}
+function closeRadial() { if (radialEl) { radialEl.remove(); radialEl = null; hoverId = null; applyHighlight(); } }
+function openRadial(id, cx, cy) {
+  closeRadial(); hidePeek();
+  const n = byId.get(id), d = pos.get(id);
+  if (!n || !d) return;
+  const s = screenOf(d);
+  // pusat cincin = simpul; geser ke dalam bila terlalu dekat tepi layar
+  const R = 62, pad = R + 34;
+  const x = Math.min(Math.max(s.x, pad), innerWidth - pad), y = Math.min(Math.max(s.y, pad + 60), innerHeight - pad);
+  const acts = radialActions(n);
+  const el = document.createElement('div');
+  el.className = 'radial';
+  el.setAttribute('role', 'menu');
+  el.setAttribute('aria-label', `Aksi cepat ${n.nama}`);
+  el.style.transform = `translate(${x}px, ${y}px)`;
+  const start = -Math.PI / 2;   // tombol pertama di atas, searah jarum jam
+  el.innerHTML = '<span class="halo"></span>' + acts.map((a, i) => {
+    const ang = start + (i * 2 * Math.PI) / acts.length;
+    const tx = Math.cos(ang) * R, ty = Math.sin(ang) * R;
+    return `<button type="button" role="menuitem" data-act="${a.act}" aria-label="${esc(a.text)}" data-side="${ty < 0 ? 'up' : 'down'}" style="--tx:${tx.toFixed(1)}px;--ty:${ty.toFixed(1)}px;--i:${i}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[a.icon]}</svg><span class="t">${esc(a.text)}</span></button>`;
+  }).join('');
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    e.stopPropagation();
+    closeRadial();
+    quickAct(b.dataset.act, id);
+  });
+  document.body.appendChild(el);
+  radialEl = el; radialOpenedAt = performance.now();
+  hoverId = id; applyHighlight();
+  el.querySelector('button')?.focus({ preventScroll: true });
+}
+document.addEventListener('pointerdown', e => { if (radialEl && !e.target.closest('.radial')) closeRadial(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && radialEl) { e.stopImmediatePropagation(); closeRadial(); } }, true);
+
+/** Percikan kecil dari simpul: dipakai saat menandai dibeli dan saat melipat atau membuka kategori. */
+function burst(id, n = 10) {
+  if (reduceMotion) return;
+  const d = pos.get(id);
+  if (!d) return;
+  const g = d3.select('#fx').append('g').attr('transform', `translate(${px(d)},${py(d)}) scale(${1 / K})`);
+  const col = mapColor(id);
+  const ring = g.append('circle').attr('r', d.r * K).attr('fill', 'none').attr('stroke', col).attr('stroke-width', 2.5)
+    .style('transform-box', 'fill-box').style('transform-origin', 'center');
+  ring.node().animate([{ transform: 'scale(1)', opacity: 0.9 }, { transform: 'scale(2.3)', opacity: 0 }], { duration: 620, easing: 'cubic-bezier(.2,.8,.2,1)' });
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * 6.283 + Math.random() * 0.5, dist = d.r * K + 26 + Math.random() * 34;
+    const c = g.append('circle').attr('r', 2.6 + Math.random() * 2.4).attr('fill', i % 3 === 0 ? 'var(--accent)' : col)
+      .style('transform-box', 'fill-box').style('transform-origin', 'center');
+    c.node().animate([
+      { transform: `translate(${Math.cos(a) * d.r * K}px, ${Math.sin(a) * d.r * K}px) scale(1)`, opacity: 1 },
+      { transform: `translate(${Math.cos(a) * dist}px, ${Math.sin(a) * dist}px) scale(.2)`, opacity: 0 },
+    ], { duration: 560 + Math.random() * 260, easing: 'cubic-bezier(.15,.8,.25,1)' });
+  }
+  setTimeout(() => g.remove(), 1000);
+}
+/** Kategori menggembung sebentar setelah dilipat atau dibuka. */
+function pulse(id) {
+  if (reduceMotion) return;
+  const body = gN.selectAll('g.node').filter(d => d.id === id).select('.body').node();
+  body?.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.22)' }, { transform: 'scale(.94)' }, { transform: 'scale(1)' }], { duration: 480, easing: 'ease-out' });
+  burst(id, 6);
 }
 
 /* ───────────── Mutasi ───────────── */
@@ -1782,6 +2155,35 @@ async function syncRelations(pid, want) {
   }
 }
 
+/* ───────────── Aksi bersama (kartu, cincin aksi cepat, papan ketik) ───────────── */
+let justBought = null;
+async function changeStatus(n, v) {
+  if (v === n.status) return;
+  const before = D.tergeser.size;
+  justBought = v === 'dibeli' ? n.id : null;
+  try {
+    await saveNode({ ...n, status: v });
+    refresh(0.15);
+    if (v === 'dibeli') burst(n.id, 14);
+    const dimmed = D.tergeser.size - before;
+    toast(v === 'dibeli' && dimmed > 0 ? `Ditandai dibeli · ${dimmed} alternatif ikut diredupkan` : `Status: ${STATUS[v]}`);
+  } catch (err) { failed(err); }
+  setTimeout(() => { if (justBought === n.id) justBought = null; }, 900);
+}
+async function quickAct(act, id) {
+  const n = byId.get(id);
+  if (!n) return;
+  try {
+    if (act === 'buy') return await changeStatus(n, n.status === 'dibeli' ? 'ingin' : 'dibeli');
+    if (act === 'open') { const u = safeUrl(n.link); if (u) window.open(u, '_blank', 'noopener,noreferrer'); return; }
+    if (act === 'fresh') { await saveNode({ ...n, harga_dicek_pada: isoLocal() }); refresh(0.05); return toast('Tanggal cek harga diperbarui'); }
+    if (act === 'edit') return n.kind === 'produk' ? openProductForm(id) : openGroupForm(id);
+    if (act === 'add-here') return openProductForm(null, { groupId: id });
+    if (act === 'add-sub') return openGroupForm(null, { parentId: id });
+    if (act === 'fold') return toggleFold(id);
+  } catch (err) { failed(err); }
+}
+
 /* ───────────── Kartu: aksi ───────────── */
 $('#card').addEventListener('click', async e => {
   const b = e.target.closest('[data-act]');
@@ -1794,16 +2196,8 @@ $('#card').addEventListener('click', async e => {
     if (act === 'add-here') return openProductForm(null, { groupId: n.id });
     if (act === 'add-sub') return openGroupForm(null, { parentId: n.id });
     if (act === 'edit') return n.kind === 'produk' ? openProductForm(n.id) : openGroupForm(n.id);
-    if (act === 'status') {
-      const v = b.dataset.v;
-      if (v === n.status) return;
-      const before = D.tergeser.size;
-      await saveNode({ ...n, status: v });
-      refresh(0.15);
-      const dimmed = D.tergeser.size - before;
-      toast(v === 'dibeli' && dimmed > 0 ? `Ditandai dibeli · ${dimmed} alternatif ikut diredupkan` : `Status: ${STATUS[v]}`);
-      return;
-    }
+    if (act === 'status') return changeStatus(n, b.dataset.v);
+    if (act === 'fold') return toggleFold(n.id);
     if (act === 'fresh') {
       await saveNode({ ...n, harga_dicek_pada: isoLocal() });
       refresh(0.05);
@@ -2263,6 +2657,8 @@ document.addEventListener('keydown', e => {
   else if (e.key === '-' || e.key === '_') $('#zoom-out').click();
   else if (e.key === '0') fit(true);
   else if (e.key.toLowerCase() === 'l') toggleLegend();
+  else if (e.key.toLowerCase() === 'f' && selectedId && byId.get(selectedId)?.kind === 'kategori') toggleFold(selectedId);
+  else if (e.key.toLowerCase() === 'b' && selectedId && byId.get(selectedId)?.kind === 'produk') quickAct('buy', selectedId);
 });
 $('#reset-btn').addEventListener('click', async e => {
   const b = e.currentTarget, label = 'Pulihkan data contoh';
