@@ -650,9 +650,7 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
 .btn:active, .chip-btn:active, .menu-btn:active, .icon-btn:active, .zoombar button:active, .view-seg button:active, .mini:active, .chip:active { transform: scale(.96); }
 .glass { box-shadow: var(--shadow); }
 .brand { padding: 6px 6px 6px 12px; gap: 10px; }
-.brand .cherry { flex: none; transform-origin: 50% 18%; }
-@media (hover: hover) and (prefers-reduced-motion: no-preference) { .brand:hover .cherry { animation: wiggle .8s ease-in-out; } }
-@keyframes wiggle { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-14deg); } 45% { transform: rotate(11deg); } 70% { transform: rotate(-6deg); } }
+.brand .logo { flex: none; }
 .brand h1 { font: 700 17px/1.15 var(--font-ui); letter-spacing: -.015em; color: var(--fg); }
 .view-seg { padding: 3px; }
 .card { animation: pop .22s var(--spring); }
@@ -686,13 +684,12 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
   <div class="left-col">
     <div class="brand-wrap">
     <div class="brand glass">
-      <svg class="cherry" width="34" height="34" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M10.5 15.5C11.5 10 14.5 6.5 18.5 4.5C19.5 9 21 12.5 22 16" stroke="var(--fg-2)" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
-        <path d="M18.5 4.5c2.5-2 5.5-2 8-.5-2.2 2.4-5.2 2.8-8 .5z" fill="var(--c-green)"></path>
-        <circle cx="10" cy="22" r="7" fill="var(--accent)"></circle>
-        <circle cx="22" cy="22.5" r="6.5" fill="var(--c-pink)"></circle>
-        <ellipse cx="7.6" cy="19.5" rx="2.1" ry="1.2" transform="rotate(-35 7.6 19.5)" fill="#fff" fill-opacity=".65"></ellipse>
-        <ellipse cx="19.9" cy="20.2" rx="1.9" ry="1.1" transform="rotate(-35 19.9 20.2)" fill="#fff" fill-opacity=".65"></ellipse>
+      <svg class="logo" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+        <line x1="9" y1="11" x2="20" y2="9" stroke="var(--edge)" stroke-width="1.5"></line>
+        <line x1="9" y1="11" x2="15" y2="22" stroke="var(--edge)" stroke-width="1.5"></line>
+        <circle cx="9" cy="11" r="6.5" fill="#FF2D55"></circle>
+        <circle cx="21" cy="8.5" r="4.5" fill="#5856D6"></circle>
+        <circle cx="16" cy="22" r="5.5" fill="#30B0C7"></circle>
       </svg>
       <div class="brand-text">
         <h1>Wishmap</h1>
