@@ -24,8 +24,13 @@ It is built for personal use: one person, one private wishlist. It is not a stor
 - Search with ⌘K or `/`, switch between the map and a plain list grouped by category, and use the legend (or the stale-price chip) to highlight only stale, bought, alternative, or complementary items.
 - A quiet, native look in the Cherry Vibes palette (cream canvas, cola text, cherry for actions, blush for highlights), in light and dark. It uses the system font, so nothing is downloaded before the map draws. Each top-level category gets one soft region drawn around its items, which keeps panning and zooming smooth on a phone.
 - Hands-on map: drag a bubble and its neighbours follow on a rubber band, then spring back; double-tap a category to fold its branch into it; right-click or press and hold a bubble for a ring of quick actions (mark bought, open the shop, confirm the price, edit); hover for a price peek; fling the map and it glides to a stop. Works with mouse and touch, and respects reduced motion.
+- Edit the map directly: drag an item onto a category to move it there (or onto a goal to add it), and use **Hubungkan** (quick-action ring or card) to draw a line to another item and choose Alternatif or Pelengkap. Every change shows an **Urungkan** (undo) button.
+- Quick updates in the card: tap the price to type a new one (the check date moves to today), tap the note to edit it, compare alternatives side by side, and pick one "for now" to see the total change before you decide. Categories can carry a budget limit with a used + planned bar.
+- The list view works while you shop: tick items bought, confirm stale prices, and filter by All, Not bought, or Stale price. Rows stay in place after you tick them.
 - Keyboard: `+` and `-` zoom, `0` fits the map, `L` opens the legend, `F` folds the selected category, `B` marks the selected item bought, `Esc` clears the selection or highlight.
 
 ## Running your own copy
 
 Wishmap is a single `index.html` with no build step, so it runs on GitHub Pages. Without any setup it stores data in your browser. To sync between devices, connect it to a Supabase project by running `schema.sql` and filling in `CONFIG` at the top of the script in `index.html`.
+
+If you already ran an older `schema.sql`, run the latest one again: it adds the optional `amplop_batas` column (budget limit) without touching your data. Until you do, everything else keeps working; only saving a budget limit will ask you to update the schema.

@@ -41,6 +41,13 @@ create table if not exists public.nodes (
 
 create index if not exists nodes_user_idx on public.nodes (user_id);
 
+-- v2: batas nominal amplop budget (opsional, hanya kategori). Aman dijalankan ulang di database lama.
+alter table public.nodes add column if not exists amplop_batas bigint;
+alter table public.nodes drop constraint if exists amplop_batas_check;
+alter table public.nodes add constraint amplop_batas_check check (
+  amplop_batas is null or (amplop_batas >= 0 and kind = 'kategori')
+);
+
 -- Warna: 8 preset yang ikut tema terang/gelap, atau hex bebas #RRGGBB.
 -- drop + add supaya aman dijalankan ulang di database yang sudah ada.
 alter table public.nodes drop constraint if exists nodes_warna_check;

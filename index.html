@@ -265,6 +265,109 @@ button { cursor: pointer; }
   max-width: calc(100% - 32px); text-align: center;
 }
 .toast.error { color: var(--danger); }
+.toast-act { margin-left: 8px; border: 0; background: none; color: var(--accent-ink); font: 700 14px var(--font-ui); padding: 4px 6px; border-radius: 6px; cursor: pointer; }
+.toast-act:hover { background: var(--fill); }
+
+/* ── manipulasi langsung di kanvas ── */
+.node.drop-target .body { transform: scale(1.2); transition: transform .2s ease-out; }
+.node.drop-target .shape, .node.drop-target .bubble { stroke: var(--accent); stroke-width: 3.5px; }
+.node.wire-src .body { animation: srcpulse 1.1s ease-in-out infinite; }
+@keyframes srcpulse { 50% { transform: scale(1.14); } }
+.wire { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 6 5; stroke-linecap: round; vector-effect: non-scaling-stroke; pointer-events: none; animation: march .6s linear infinite; }
+@keyframes march { to { stroke-dashoffset: -11; } }
+#map.connecting .node.produk { cursor: crosshair; }
+.sim-ring { fill: none; stroke: var(--accent); stroke-width: 2.5; vector-effect: non-scaling-stroke; pointer-events: none; }
+.node.sim-off { opacity: .4; }
+.banner {
+  position: fixed; z-index: 6; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 124px); transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-radius: 12px; max-width: calc(100vw - 32px); box-sizing: border-box;
+  background: var(--paper); border: 1px solid var(--glass-line); box-shadow: var(--shadow); font-size: 13.5px; color: var(--fg-2); animation: fadein .16s ease-out;
+}
+.banner b { color: var(--fg); }
+.relpop {
+  position: fixed; z-index: 7; left: 0; top: 0; display: grid; gap: 6px; padding: 10px; border-radius: 14px; width: 220px; box-sizing: border-box;
+  background: var(--paper); border: 1px solid var(--glass-line); box-shadow: var(--shadow); animation: fadein .14s ease-out;
+}
+.relpop p { margin: 0 2px 2px; font-size: 12.5px; color: var(--fg-2); line-height: 1.35; }
+.relpop p b { color: var(--fg); }
+.relpop .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.relpop button { min-height: 40px; }
+.relpop button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.relpop .sw { display: inline-block; width: 18px; height: 0; border-top: 2px dashed currentColor; vertical-align: middle; margin-right: 6px; }
+.relpop .sw.solid { border-top-style: solid; }
+.relpop .row2 { display: flex; gap: 6px; }
+.relpop .row2 button { flex: 1; }
+
+/* ── edit di tempat (kartu) ── */
+button.price { display: inline-flex; align-items: center; gap: 8px; border: 0; background: none; color: inherit; padding: 2px 6px; margin: 0 -6px; border-radius: 8px; text-align: left; cursor: pointer; }
+button.price:hover, button.catatan:hover { background: var(--fill); }
+button.price .ed { width: 15px; height: 15px; opacity: .55; flex: none; }
+button.catatan { display: block; width: 100%; border: 0; background: none; padding: 6px 8px; margin: 0 -8px; border-radius: 8px; text-align: left; cursor: text; font: inherit; font-size: 14px; color: var(--fg-2); white-space: pre-wrap; }
+.inline-edit { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.inline-edit .money { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1.5px solid var(--accent); border-radius: 10px; background: var(--field); font-weight: 700; }
+.inline-edit .money input { border: 0; outline: 0; background: none; font: 700 22px/1.2 var(--font-ui); width: 9ch; color: var(--fg); font-variant-numeric: tabular-nums; }
+.inline-edit textarea { flex: 1 0 100%; box-sizing: border-box; min-height: 72px; padding: 10px 12px; border: 1.5px solid var(--accent); border-radius: 10px; background: var(--field); font: 15px/1.4 var(--font-ui); color: var(--fg); resize: vertical; }
+.inline-edit .help { font-size: 12px; color: var(--fg-3); }
+.add-note { align-self: flex-start; }
+
+/* ── bandingkan alternatif & simulasi ── */
+.cmp { display: grid; gap: 0; }
+.cmp-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--hair); }
+.cmp-row.me .cmp-nm { font-weight: 700; }
+.cmp-pick { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 0; background: none; display: grid; place-items: center; cursor: pointer; padding: 0; }
+.cmp-pick::before { content: ""; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--edge); box-sizing: border-box; transition: border-width .2s cubic-bezier(.3,1.6,.5,1), border-color .15s; }
+.cmp-pick[aria-pressed="true"]::before { border: 6px solid var(--accent); }
+.cmp-pick:disabled { visibility: hidden; }
+.cmp-nm { flex: 1; min-width: 0; border: 0; background: none; text-align: left; padding: 4px 2px; font: inherit; font-size: 14.5px; color: var(--fg); cursor: pointer; overflow-wrap: anywhere; }
+.cmp-nm .sub { display: block; font-size: 12.5px; color: var(--fg-3); font-weight: 400; }
+.cmp-pr { text-align: right; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 14.5px; }
+.cmp-pr .delta { display: block; font-size: 12px; font-weight: 500; color: var(--fg-3); }
+.cmp-pr .delta.best { color: var(--ok); font-weight: 650; }
+.cmp-row.bought .cmp-pr { color: var(--ok); }
+.cmp-note { margin: 8px 0 0; font-size: 13px; color: var(--fg-2); line-height: 1.45; }
+.cmp-note .mini { margin-left: 6px; }
+.sim-chip { color: var(--accent-ink); font-weight: 650; }
+
+/* ── amplop budget ── */
+.budget { display: grid; gap: 7px; padding: 12px 14px; border-radius: 10px; background: var(--fill); }
+.budget .top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 600; color: var(--fg-2); }
+.budget .bar { height: 10px; border-radius: 99px; background: var(--fill-2); overflow: hidden; }
+.budget .fill { display: flex; height: 100%; transform-origin: left; animation: grow .7s cubic-bezier(.2,.8,.2,1); }
+@keyframes grow { from { transform: scaleX(0); } }
+.budget .used { background: var(--cc); }
+.budget .plan { background: color-mix(in srgb, var(--cc) 40%, transparent); }
+.budget .meta { display: flex; justify-content: space-between; gap: 4px 12px; flex-wrap: wrap; font-size: 12.5px; color: var(--fg-2); font-variant-numeric: tabular-nums; }
+.budget .meta b { color: var(--fg); }
+.budget.over .bar { box-shadow: inset 0 0 0 1.5px var(--danger); }
+.budget.over .left { color: var(--danger); font-weight: 650; }
+
+/* ── daftar: aksi per baris + saringan ── */
+.lfilters { position: sticky; top: -8px; z-index: 1; display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 0 8px; margin: 0 -2px; background: var(--glass-solid); }
+.lfilters button { border: 1px solid var(--glass-line); background: var(--paper); border-radius: 99px; padding: 7px 12px; font: 600 13px var(--font-ui); color: var(--fg); min-height: 36px; cursor: pointer; }
+.lfilters button .n { margin-left: 6px; color: var(--fg-3); font-variant-numeric: tabular-nums; }
+.lfilters button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.lfilters button[aria-pressed="true"] .n { color: inherit; opacity: .8; }
+.lrow { display: flex; align-items: center; gap: 4px; border-bottom: 1px solid var(--hair); }
+.lrow .rowbtn { flex: 1; min-width: 0; border-bottom: 0; }
+.lcheck, .lfresh { flex: none; width: 40px; height: 40px; border: 0; background: none; padding: 0; display: grid; place-items: center; cursor: pointer; color: var(--fg-2); border-radius: 10px; }
+.lcheck .c { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--edge); box-sizing: border-box; display: grid; place-items: center; transition: background-color .15s, border-color .15s; }
+.lcheck svg, .lfresh svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.lfresh svg { width: 19px; height: 19px; stroke-width: 1.9; color: var(--stale); }
+.lfresh:hover, .lcheck:hover { background: var(--fill); }
+.lcheck svg { opacity: 0; transform: scale(.4); transition: opacity .15s, transform .35s cubic-bezier(.3,1.6,.5,1); }
+.lcheck[aria-pressed="true"] .c { background: var(--ok); border-color: var(--ok); color: #fff; }
+.lcheck[aria-pressed="true"] svg { opacity: 1; transform: none; }
+.lcheck.pop .c { animation: checkpop .45s cubic-bezier(.3,1.6,.5,1); }
+@keyframes checkpop { 0% { transform: scale(.7); } 60% { transform: scale(1.15); } 100% { transform: none; } }
+.lcheck:disabled { opacity: .35; cursor: default; }
+.lrow.bought .nm { text-decoration: line-through; text-decoration-color: var(--fg-3); color: var(--fg-2); }
+@media (max-width: 560px) {
+  /* layar sempit: status turun ke bawah nama supaya nama tidak terjepit */
+  .listview .lrow .rowbtn { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 10px; row-gap: 2px; }
+  .listview .lrow .rowbtn .nm { grid-column: 1; grid-row: 1; }
+  .listview .lrow .rowbtn .st { grid-column: 1; grid-row: 2; font-size: 12.5px; }
+  .listview .lrow .rowbtn .pr { grid-column: 2; grid-row: 1 / span 2; align-self: center; min-width: 0; }
+}
 
 .empty {
   position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -612,6 +715,7 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
         <button type="button" id="view-list" aria-pressed="false">Daftar</button>
       </div>
       <button type="button" class="chip-btn glass stale-chip" id="stale-btn" aria-pressed="false" title="Sorot barang yang harganya perlu dicek" hidden><span class="ring"></span><span id="stale-text"></span></button>
+      <button type="button" class="chip-btn glass sim-chip" id="sim-btn" title="Hapus semua pilihan sementara" hidden><span id="sim-text"></span></button>
     </div>
   </div>
   <div class="actions">
@@ -766,7 +870,11 @@ details.more .inner { display: flex; flex-direction: column; gap: 16px; }
       </fieldset>
       <label class="field" id="fg-amplop-field"><span>Amplop budget (opsional)</span>
         <input type="text" id="fg-amplop" autocomplete="off" placeholder="Contoh: Personal Care">
-        <p class="help">Belum tersambung ke sheet budget. Disimpan untuk versi berikutnya.</p>
+        <p class="help">Nama amplop di sheet budget-mu.</p>
+      </label>
+      <label class="field" id="fg-batas-field"><span>Batas amplop (opsional)</span>
+        <span class="money"><span>Rp</span><input type="text" id="fg-batas" inputmode="numeric" autocomplete="off" placeholder="0"></span>
+        <p class="help">Kartu kategori menampilkan bilah terpakai dan rencana beli terhadap batas ini.</p>
       </label>
     </div>
     <footer>
@@ -997,20 +1105,27 @@ const LocalStore = {
   async reset() { memDB = seedData(); lsWrite(); return clone(memDB); },
 };
 
-const NODE_COLS = ['id', 'kind', 'nama', 'link', 'harga', 'harga_dicek_pada', 'toko', 'foto_url', 'catatan', 'status', 'warna', 'amplop'];
+const NODE_COLS = ['id', 'kind', 'nama', 'link', 'harga', 'harga_dicek_pada', 'toko', 'foto_url', 'catatan', 'status', 'warna', 'amplop', 'amplop_batas'];
 const pick = (o, keys) => Object.fromEntries(keys.map(k => [k, o[k] ?? null]));
 async function makeSupabaseStore() {
   await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.1');
   const baseUrl = CONFIG.SUPABASE_URL.replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
   const sb = window.supabase.createClient(baseUrl, CONFIG.SUPABASE_ANON_KEY);
   const must = ({ data, error }) => { if (error) throw new Error(error.message); return data; };
+  let batasCol = false;   // apakah database sudah punya kolom amplop_batas (schema.sql terbaru)
   return {
     mode: 'supabase', sb,
     async load() {
       const [n, r] = await Promise.all([sb.from('nodes').select('*'), sb.from('relations').select('*')]);
-      return { nodes: must(n), relations: must(r) };
+      const rows = must(n);
+      batasCol = rows.some(x => Object.prototype.hasOwnProperty.call(x, 'amplop_batas'));
+      return { nodes: rows, relations: must(r) };
     },
-    async saveNode(n) { return must(await sb.from('nodes').upsert(pick(n, NODE_COLS)).select().single()); },
+    async saveNode(n) {
+      const row = pick(n, NODE_COLS);
+      if (!batasCol && row.amplop_batas == null) delete row.amplop_batas;   // database lama tetap jalan
+      return must(await sb.from('nodes').upsert(row).select().single());
+    },
     async deleteNode(id) { must(await sb.from('nodes').delete().eq('id', id)); },
     async addRelation(r) { return must(await sb.from('relations').insert(pick(r, ['id', 'from_id', 'to_id', 'type'])).select().single()); },
     async deleteRelation(id) { must(await sb.from('relations').delete().eq('id', id)); },
@@ -1136,8 +1251,19 @@ function pathOf(id) {
 const labelOf = n => (n.kind === 'kategori' ? pathOf(n.id) : n.nama);
 
 /** Perkiraan sisa belanja: tiap komponen alternatif dihitung sekali dengan harga termurah. */
+/* Simulasi: pilih sementara satu alternatif; hanya mengubah perkiraan, tidak menyimpan apa pun. */
+const simPick = new Set();
+function pinnedByRoot() {
+  const m = new Map();
+  for (const id of [...simPick]) {
+    const p = byId.get(id);
+    if (!p || p.status !== 'ingin' || D.tergeser.has(id)) { simPick.delete(id); continue; }
+    m.set(D.comp.get(id), id);
+  }
+  return m;
+}
 function estimate(ids) {
-  const comps = new Map();
+  const comps = new Map(), pins = simPick.size ? pinnedByRoot() : null;
   for (const id of ids) {
     const p = byId.get(id);
     if (!p || p.kind !== 'produk' || p.status === 'batal') continue;
@@ -1147,9 +1273,10 @@ function estimate(ids) {
     comps.get(root).push(p);
   }
   let total = 0, unpriced = 0;
-  for (const c of comps.values()) {
-    const priced = c.filter(p => p.harga != null);
-    if (!priced.length) { unpriced++; continue; }
+  for (const [root, c] of comps) {
+    const pinned = pins?.get(root) && c.find(p => p.id === pins.get(root));
+    const priced = pinned ? [pinned] : c.filter(p => p.harga != null);
+    if (!priced.length || priced[0].harga == null) { unpriced++; continue; }
     total += Math.min(...priced.map(p => p.harga));
   }
   return { total, items: comps.size, unpriced };
@@ -1435,6 +1562,7 @@ const drag = d3.drag()
       dragNodeEl?.classList.remove('pressed'); dragNodeEl?.classList.add('lifted');
     }
     d.fx = e.x; d.fy = e.y;
+    if (byId.get(d.id)?.kind === 'produk') setDrop(findDrop(d, e.x, e.y), d);
     if (reduceMotion) { sim.tick(); ticked(); }
   })
   .on('end', (e, d) => {
@@ -1443,6 +1571,9 @@ const drag = d3.drag()
     dragNodeEl?.classList.remove('lifted');
     if (dragMoved) { tugOff(); sim.alphaTarget(0); if (!reduceMotion) sim.alpha(Math.max(sim.alpha(), 0.5)).restart(); else { for (let i = 0; i < 100; i++) sim.tick(); ticked(); } }
     if (dragMoved) swallowClick();
+    const drop = dropTarget;
+    setDrop(null);
+    if (dragMoved && drop) assignTo(d.id, drop.id);
     dragNodeEl = null;
   });
 
@@ -1477,6 +1608,7 @@ function pressStart(e, d) {
 let lastTap = { id: null, t: 0 }, focusTimer = null;
 function tapNode(d) {
   if (performance.now() < clickSwallowUntil) return;
+  if (wire) return connectTo(d.id);
   const now = performance.now(), n = byId.get(d.id);
   clearTimeout(focusTimer);
   if (lastTap.id === d.id && now - lastTap.t < 340 && n.kind === 'kategori') { lastTap = { id: null, t: 0 }; toggleFold(d.id); return; }
@@ -1558,6 +1690,11 @@ function paintNode(el, d) {
   if (n.kind !== 'produk' && D.depth.get(n.id) > 0) cls.push('sub');
   if (n.id === selectedId) cls.push('selected');
   if (d.tucked) cls.push('tucked');
+  if (n.kind === 'produk' && simPick.size) {
+    const pin = pinnedByRoot().get(D.comp.get(n.id));
+    if (pin && pin !== n.id && n.status === 'ingin') cls.push('sim-off');
+  }
+  if (wire && wire.from === n.id) cls.push('wire-src');
   if (el.classList.contains('hov')) cls.push('hov');
   if (HEX.test(D.color.get(n.id) || '')) cls.push('custom');
   g.attr('class', cls.join(' ')).style('--cc', mapColor(n.id)).style('--ink', inkOf(D.color.get(n.id)));
@@ -1566,6 +1703,7 @@ function paintNode(el, d) {
     const hollow = n.status !== 'ingin' || D.tergeser.has(n.id);
     g.attr('aria-label', `${n.nama}, ${n.harga == null ? 'tanpa harga' : rp(n.harga)}, ${D.tergeser.has(n.id) ? 'alternatif sudah dibeli' : STATUS[n.status]}`);
     if (D.stale.has(n.id)) g.append('circle').attr('class', 'stale-ring').attr('r', d.r + 4.5);
+    if (simPick.has(n.id)) g.append('circle').attr('class', 'sim-ring').attr('r', d.r + 6);
     const body = g.append('g').attr('class', 'body');
     body.append('circle').attr('class', 'bubble').attr('r', d.r);
     const foto = hollow ? '' : safeUrl(n.foto_url);
@@ -1619,6 +1757,7 @@ function ticked() {
     .attr('x1', d => px(d.source)).attr('y1', d => py(d.source))
     .attr('x2', d => px(d.target)).attr('y2', d => py(d.target));
   placeGlyphs();
+  if (wire) drawWire();
 }
 /** Titik keluar sinar dari a ke b dari kotak simpul+label a, sebagai fraksi panjang segmen. */
 function exitT(a, b) {
@@ -1647,7 +1786,7 @@ function placeGlyphs() {
 /* Zoom + kanvas titik tak hingga */
 const zoom = d3.zoom().scaleExtent([0.2, 4]).on('zoom', e => applyZoom(e.transform));
 svg.call(zoom).on('dblclick.zoom', null);
-svg.on('click', e => { if (e.target === svgEl) select(null, { focus: false }); });
+svg.on('click', e => { if (e.target !== svgEl) return; if (wire) return cancelConnect(); select(null, { focus: false }); });
 // Ketuk dua kali ruang kosong: perbesar ke titik itu (sentuhan sudah ditangani d3-zoom)
 svg.on('dblclick', e => {
   if (e.target !== svgEl) return;
@@ -1809,6 +1948,9 @@ function renderHeader() {
   }
   const btn = $('#stale-btn');
   btn.hidden = D.stale.size === 0;
+  if (simPick.size) pinnedByRoot();   // buang pilihan yang sudah tidak berlaku
+  $('#sim-btn').hidden = simPick.size === 0;
+  $('#sim-text').textContent = `Simulasi · ${simPick.size} pilihan sementara · Reset`;
   $('#stale-text').textContent = `${D.stale.size} harga perlu dicek`;
   $('#clear-btn').disabled = nodes.length === 0;
 }
@@ -1861,19 +2003,20 @@ function productCard(n) {
     <div class="card-body">
       <div class="eyebrow">${esc(toko || 'Toko belum diisi')} · ${esc(groups.map(labelOf).join(', ') || 'Tanpa kategori')}</div>
       <h2>${esc(n.nama)}</h2>
-      <div class="price">${n.harga == null ? 'Belum ada harga' : rp(n.harga)}</div>
+      <button type="button" class="price" data-act="edit-price" title="Ketuk untuk mengubah harga" aria-label="Ubah harga, sekarang ${n.harga == null ? 'belum ada' : rp(n.harga)}">${n.harga == null ? 'Isi harga' : rp(n.harga)}${pencil}</button>
       ${n.harga == null ? '' : `<div class="checked${stale ? ' is-stale' : ''}"><span>${agoText(ds)}</span><button type="button" class="mini" data-act="fresh">Harga masih sama</button></div>`}
       ${note}
       <div class="seg" role="group" aria-label="Status barang">
         ${Object.keys(STATUS).map(s => `<button type="button" class="s-${s}" data-act="status" data-v="${s}" aria-pressed="${n.status === s}">${STATUS[s]}</button>`).join('')}
       </div>
       ${link ? `<a class="btn primary wide" href="${esc(link)}" target="_blank" rel="noopener noreferrer">Buka di ${esc(toko || 'toko')} ↗</a>` : ''}
-      ${n.catatan ? `<p class="catatan">${esc(n.catatan)}</p>` : ''}
-      ${relSection('Alternatif · pilih salah satu', D.alt.get(n.id))}
+      ${n.catatan ? `<button type="button" class="catatan" data-act="edit-note" title="Ketuk untuk mengubah catatan">${esc(n.catatan)}</button>` : '<button type="button" class="mini add-note" data-act="edit-note">+ Tambah catatan</button>'}
+      ${altCompare(n) || relSection('Alternatif · pilih salah satu', D.alt.get(n.id))}
       ${relSection('Pelengkap · dipakai bersama', D.pel.get(n.id))}
       ${relSection('Kategori &amp; tujuan', groups.map(g => g.id))}
       <div class="card-foot">
         <button type="button" class="btn" data-act="edit">Edit</button>
+        <button type="button" class="btn" data-act="link">Hubungkan</button>
         <button type="button" class="btn danger-text" data-act="delete">Hapus barang</button>
       </div>
     </div>`;
@@ -1910,6 +2053,7 @@ function groupCard(n) {
         <div><span class="k">Perkiraan sisa</span><span class="v">±${rpShort(est.total)}</span></div>
       </div>
       ${est.unpriced ? `<p class="hint">${est.unpriced} rencana belum ada harganya.</p>` : ''}
+      ${budgetBlock(n, ids, est)}
       ${parentId ? relSection('Di dalam', [parentId]) : ''}
       ${relSection('Subkategori', kids, o => o.nama)}
       ${ids.length ? `<div class="rows">${rows}</div>` : '<p class="hint">Belum ada barang di sini.</p>'}
@@ -1992,6 +2136,7 @@ const ICON = {
   fresh: '<path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v4.5h-4.5"/>',
   edit: '<path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/>',
   addItem: '<path d="M12 5v14M5 12h14"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
   addSub: '<path d="M6 5v8a3 3 0 0 0 3 3h9M14 12l4 4-4 4"/>',
   fold: '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/>',
   unfold: '<circle cx="12" cy="12" r="2.5"/><path d="M12 6V3M12 18v3M6 12H3M18 12h3M8 8L6 6M16 8l2-2M8 16l-2 2M16 16l2 2"/>',
@@ -2003,6 +2148,7 @@ function radialActions(n) {
       { act: 'buy', icon: bought ? 'unfold' : 'buy', text: bought ? 'Batal beli' : 'Dibeli' },
       safeUrl(n.link) ? { act: 'open', icon: 'open', text: 'Buka toko' } : null,
       n.harga != null ? { act: 'fresh', icon: 'fresh', text: 'Harga sama' } : null,
+      { act: 'link', icon: 'link', text: 'Hubungkan' },
       { act: 'edit', icon: 'edit', text: 'Edit' },
     ].filter(Boolean);
   }
@@ -2081,13 +2227,19 @@ function pulse(id) {
 
 /* ───────────── Mutasi ───────────── */
 let toastTimer;
-function toast(msg, kind = '') {
+function toast(msg, kind = '', action = null) {
   const t = $('#toast');
   t.textContent = msg;
+  if (action) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'toast-act'; b.textContent = action.label;
+    b.addEventListener('click', () => { t.hidden = true; action.run(); });
+    t.append(' ', b);
+  }
   t.className = `toast glass ${kind}`;
   t.hidden = false;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.hidden = true; }, kind === 'error' ? 6000 : 2600);
+  toastTimer = setTimeout(() => { t.hidden = true; }, kind === 'error' ? 6000 : action ? 6000 : 2600);
 }
 function failed(err) {
   console.error(err);
@@ -2096,7 +2248,8 @@ function failed(err) {
   if (/row-level security|null value in column "user_id"|JWT|not authenticated/i.test(m)) {
     hint = 'Sesi masuk tidak aktif. Masuk lagi lewat link email.';
     if (store?.mode === 'supabase') openLogin();
-  } else if (/does not exist|schema cache/i.test(m)) hint = 'Tabel belum dibuat. Jalankan schema.sql di Supabase.';
+  } else if (/amplop_batas/i.test(m)) hint = 'Kolom batas amplop belum ada. Jalankan schema.sql terbaru di Supabase.';
+  else if (/does not exist|schema cache/i.test(m)) hint = 'Tabel belum dibuat. Jalankan schema.sql di Supabase.';
   else if (/permission denied/i.test(m)) hint = 'Izin tabel belum diberikan. Jalankan ulang schema.sql versi terbaru.';
   toast(`Belum tersimpan: ${m}. ${hint}`, 'error');
 }
@@ -2166,7 +2319,10 @@ async function changeStatus(n, v) {
     refresh(0.15);
     if (v === 'dibeli') burst(n.id, 14);
     const dimmed = D.tergeser.size - before;
-    toast(v === 'dibeli' && dimmed > 0 ? `Ditandai dibeli · ${dimmed} alternatif ikut diredupkan` : `Status: ${STATUS[v]}`);
+    const prev = n.status;
+    toast(v === 'dibeli' && dimmed > 0 ? `Ditandai dibeli · ${dimmed} alternatif ikut diredupkan` : `Status: ${STATUS[v]}`, '', {
+      label: 'Urungkan', run: () => { const cur = byId.get(n.id); if (cur) changeStatus(cur, prev); },
+    });
   } catch (err) { failed(err); }
   setTimeout(() => { if (justBought === n.id) justBought = null; }, 900);
 }
@@ -2181,7 +2337,260 @@ async function quickAct(act, id) {
     if (act === 'add-here') return openProductForm(null, { groupId: id });
     if (act === 'add-sub') return openGroupForm(null, { parentId: id });
     if (act === 'fold') return toggleFold(id);
+    if (act === 'link') return startConnect(id);
   } catch (err) { failed(err); }
+}
+
+/* ───────────── Seret ke kategori & tarik garis relasi ───────────── */
+let dropTarget = null, dropHint = null;
+/** Kategori/tujuan terdekat di bawah barang yang diseret (dalam koordinat peta). */
+function findDrop(d, x, y) {
+  let best = null, bd = Infinity;
+  for (const g of simNodes) {
+    if (g.kind === 'produk' || g.tucked) continue;
+    const dist = Math.hypot(px(g) - x, py(g) - y);
+    if (dist < g.r + 22 && dist < bd) { best = g; bd = dist; }
+  }
+  return best;
+}
+function setDrop(g, d) {
+  if ((g?.id || null) === (dropTarget?.id || null)) return;
+  dropTarget = g;
+  gN.selectAll('g.node').classed('drop-target', x => !!g && x.id === g.id);
+  if (dropHint) { dropHint.remove(); dropHint = null; }
+  if (!g || !d) return;
+  const grp = byId.get(g.id), already = D.memberOf.get(d.id).includes(g.id);
+  const el = document.createElement('div');
+  el.className = 'peek';
+  el.setAttribute('role', 'status');
+  el.innerHTML = already ? `<b>Sudah di ${esc(grp.nama)}</b>Lepas untuk membatalkan`
+    : `<b>Lepas: ${grp.kind === 'kategori' ? 'pindah ke' : 'tambah ke'} ${esc(grp.nama)}</b>${grp.kind === 'kategori' ? 'Kategori lama dilepas' : 'Kategori tetap'}`;
+  document.body.appendChild(el);
+  const s = screenOf(g), w = el.offsetWidth, h = el.offsetHeight;
+  el.style.transform = `translate(${Math.min(Math.max(s.x - w / 2, 8), innerWidth - w - 8)}px, ${Math.max(s.y - g.r * K - h - 16, 8)}px)`;
+  dropHint = el;
+}
+/** Pindahkan barang ke kategori (keanggotaan kategori lama dilepas) atau tambahkan ke tujuan. */
+async function assignTo(pid, gid) {
+  const p = byId.get(pid), g = byId.get(gid);
+  if (!p || !g) return;
+  const cur = [...D.memberOf.get(pid)];
+  if (cur.includes(gid)) return;
+  const groups = g.kind === 'kategori' ? [...cur.filter(id => byId.get(id)?.kind !== 'kategori'), gid] : [...cur, gid];
+  const keep = () => ({ alt: [...D.alt.get(pid)], pel: [...D.pel.get(pid)] });
+  try {
+    await syncRelations(pid, { groups, ...keep() });
+    refresh(0.6);
+    pulse(gid);
+    toast(g.kind === 'kategori' ? `${p.nama} pindah ke ${labelOf(g)}` : `${p.nama} ditambahkan ke ${g.nama}`, '', {
+      label: 'Urungkan',
+      run: async () => { try { await syncRelations(pid, { groups: cur, ...keep() }); refresh(0.6); } catch (err) { failed(err); } },
+    });
+  } catch (err) { failed(err); }
+}
+
+let wire = null, wireBanner = null, relPop = null;
+function startConnect(id) {
+  cancelConnect();
+  const n = byId.get(id);
+  if (!n || n.kind !== 'produk') return;
+  select(null, { focus: false });
+  $('#toast').hidden = true;   // toast di bawah bisa menutupi barang tujuan; banner mengambil alih
+  wire = { from: id, path: d3.select('#fx').append('path').attr('class', 'wire'), x: null, y: null, to: null };
+  svgEl.classList.add('connecting');
+  gN.selectAll('g.node').filter(d => d.id === id).classed('wire-src', true);
+  const b = document.createElement('div');
+  b.className = 'banner';
+  b.setAttribute('role', 'status');
+  b.innerHTML = `<span>Ketuk barang yang mau dihubungkan dengan <b>${esc(n.nama)}</b></span><button type="button" class="btn">Batal</button>`;
+  b.querySelector('button').addEventListener('click', cancelConnect);
+  document.body.appendChild(b);
+  wireBanner = b;
+  drawWire();
+}
+function cancelConnect() {
+  if (relPop) { relPop.remove(); relPop = null; }
+  if (!wire) return;
+  wire.path.remove();
+  gN.selectAll('g.node.wire-src, g.node.drop-target').classed('wire-src', false).classed('drop-target', false);
+  svgEl.classList.remove('connecting');
+  wireBanner?.remove(); wireBanner = null;
+  wire = null;
+}
+function drawWire() {
+  const a = pos.get(wire.from);
+  if (!a) return;
+  const b = wire.to ? pos.get(wire.to) : null;
+  const x = b ? px(b) : wire.x ?? px(a) + 40, y = b ? py(b) : wire.y ?? py(a) - 40;
+  // garis karet sedikit melengkung, seperti tali yang ditarik
+  const mx = (px(a) + x) / 2, my = (py(a) + y) / 2, dx = x - px(a), dy = y - py(a);
+  wire.path.attr('d', `M${px(a)},${py(a)} Q${mx - dy * 0.12},${my + dx * 0.12} ${x},${y}`);
+}
+addEventListener('pointermove', e => {
+  if (!wire || relPop) return;
+  const [x, y] = d3.pointer(e, gN.node());
+  wire.x = x; wire.y = y;
+  const over = e.target.closest?.('g.node.produk')?.__data__?.id;
+  const target = over && over !== wire.from ? over : null;
+  gN.selectAll('g.node').classed('drop-target', d => d.id === target);
+  drawWire();
+}, { passive: true });
+function connectTo(tid) {
+  const n = byId.get(tid), from = byId.get(wire.from);
+  if (tid === wire.from) return;
+  if (!n || n.kind !== 'produk') return toast('Hubungkan ke barang, bukan kategori atau tujuan');
+  wire.to = tid;
+  drawWire();
+  gN.selectAll('g.node').classed('drop-target', d => d.id === tid);
+  const cur = D.alt.get(from.id).includes(tid) ? 'alternatif' : D.pel.get(from.id).includes(tid) ? 'pelengkap' : null;
+  const el = document.createElement('div');
+  el.className = 'relpop';
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-label', 'Jenis hubungan');
+  el.innerHTML = `<p><b>${esc(from.nama)}</b> dan <b>${esc(n.nama)}</b> adalah…</p>
+    <div class="opts">
+      <button type="button" class="btn" data-rel="alternatif" aria-pressed="${cur === 'alternatif'}"><span class="sw"></span>Alternatif</button>
+      <button type="button" class="btn" data-rel="pelengkap" aria-pressed="${cur === 'pelengkap'}"><span class="sw solid"></span>Pelengkap</button>
+    </div>
+    <div class="row2">${cur ? '<button type="button" class="btn danger-text" data-rel="none">Putuskan</button>' : ''}<button type="button" class="btn" data-rel="cancel">Batal</button></div>`;
+  document.body.appendChild(el);
+  const a = screenOf(pos.get(from.id)), b = screenOf(pos.get(tid));
+  const w = el.offsetWidth, h = el.offsetHeight;
+  const x = Math.min(Math.max((a.x + b.x) / 2 - w / 2, 8), innerWidth - w - 8);
+  const y = Math.min(Math.max((a.y + b.y) / 2 - h / 2, 70), innerHeight - h - 8);
+  el.style.transform = `translate(${x}px, ${y}px)`;
+  el.addEventListener('click', e => {
+    const btn = e.target.closest('[data-rel]');
+    if (!btn) return;
+    const v = btn.dataset.rel, src = from.id;
+    cancelConnect();
+    if (v !== 'cancel') setRelation(src, tid, v === 'none' ? null : v);
+  });
+  relPop = el;
+  el.querySelector('button').focus({ preventScroll: true });
+}
+/** Ganti jenis hubungan antara dua barang (null = putuskan), lewat syncRelations supaya rapi. */
+async function setRelation(a, b, type) {
+  const before = { alt: [...D.alt.get(a)], pel: [...D.pel.get(a)] };
+  const alt = new Set(before.alt), pel = new Set(before.pel);
+  alt.delete(b); pel.delete(b);
+  if (type === 'alternatif') alt.add(b);
+  if (type === 'pelengkap') pel.add(b);
+  const groups = [...D.memberOf.get(a)];
+  try {
+    await syncRelations(a, { groups, alt, pel });
+    refresh(0.3);
+    select(a, { focus: false });
+    const nb = byId.get(b).nama;
+    toast(type ? `Terhubung sebagai ${type} dengan ${nb}` : `Hubungan dengan ${nb} diputus`, '', {
+      label: 'Urungkan',
+      run: async () => { try { await syncRelations(a, { groups, ...before }); refresh(0.3); } catch (err) { failed(err); } },
+    });
+  } catch (err) { failed(err); }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && (wire || relPop)) { e.stopImmediatePropagation(); cancelConnect(); } }, true);
+document.addEventListener('pointerdown', e => { if (relPop && !e.target.closest('.relpop')) cancelConnect(); });
+
+/* ───────────── Edit di tempat, simulasi, amplop ───────────── */
+const parseMoney = v => { const d = String(v ?? '').replace(/\D/g, ''); return d ? Number(d) : null; };
+const pencil = '<svg class="ed" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg>';
+function inlineMoney(kind, value, label) {
+  return `<form class="inline-edit" data-form="${kind}"><span class="money"><span>Rp</span><input type="text" inputmode="numeric" autocomplete="off" aria-label="${label}" value="${value != null ? nf.format(value) : ''}" placeholder="0"></span>
+    <button type="submit" class="btn primary">Simpan</button><button type="button" class="btn" data-act="inline-cancel">Batal</button></form>`;
+}
+async function restoreNode(old, msg = 'Dikembalikan') {
+  try { await saveNode(old); refresh(0.2); toast(msg); } catch (err) { failed(err); }
+}
+function togglePick(id) {
+  if (simPick.has(id)) simPick.delete(id);
+  else {
+    for (const x of [...simPick]) if (D.comp.get(x) === D.comp.get(id)) simPick.delete(x);
+    simPick.add(id);
+  }
+  refresh(0.02);
+}
+/** Semua barang dalam satu komponen alternatif, berdampingan: harga, selisih, dan pilihan sementara. */
+function altCompare(n) {
+  const root = D.comp.get(n.id);
+  if (!root) return '';
+  const members = [...D.comp].filter(([, r]) => r === root).map(([id]) => byId.get(id));
+  if (members.length < 2) return '';
+  const bought = D.compBought.get(root), pin = pinnedByRoot().get(root);
+  const prices = members.filter(p => p.harga != null).map(p => p.harga);
+  const low = prices.length ? Math.min(...prices) : null;
+  members.sort((a, b) => (a.harga ?? Infinity) - (b.harga ?? Infinity));
+  const rows = members.map(p => {
+    const delta = p.harga == null || low == null ? '' : p.harga === low ? '<span class="delta best">Termurah</span>' : `<span class="delta">+Rp ${rpShort(p.harga - low)}</span>`;
+    const canPick = !bought && p.status === 'ingin';
+    return `<div class="cmp-row${p.id === n.id ? ' me' : ''}${p.id === bought ? ' bought' : ''}">
+      <button type="button" class="cmp-pick" data-act="sim-pick" data-id="${p.id}" aria-pressed="${pin === p.id}" aria-label="Pilih sementara ${esc(p.nama)}" ${canPick ? '' : 'disabled'}></button>
+      <button type="button" class="cmp-nm" data-act="goto" data-id="${p.id}">${esc(p.nama)}<span class="sub">${esc(p.toko ? TOKO[p.toko] : 'Toko belum diisi')}${p.catatan ? ' · ' + esc(p.catatan) : ''}</span></button>
+      <span class="cmp-pr">${p.id === bought ? 'Dibeli' : p.harga == null ? '—' : rp(p.harga)}${p.id === bought ? '' : delta}</span>
+    </div>`;
+  }).join('');
+  const pinned = pin && byId.get(pin);
+  const note = bought ? `Sudah diputuskan: <b>${esc(byId.get(bought).nama)}</b> dibeli.`
+    : pinned ? `Simulasi: total di atas memakai <b>${esc(pinned.nama)}</b>, bukan yang termurah. Belum ada yang disimpan.<button type="button" class="mini" data-act="sim-clear" data-id="${pinned.id}">Reset</button>`
+    : 'Perkiraan total memakai yang termurah. Ketuk lingkaran untuk mencoba pilihan lain.';
+  return `<section class="rel"><h3>Bandingkan alternatif</h3><div class="cmp">${rows}</div><p class="cmp-note">${note}</p></section>`;
+}
+/** Bilah amplop: terpakai (dibeli) + rencana beli terhadap batas. */
+function budgetBlock(n, ids, est) {
+  if (n.kind !== 'kategori') return '';
+  const lim = n.amplop_batas;
+  if (lim == null) return `<button type="button" class="mini" data-act="edit-limit">Atur batas amplop</button>`;
+  const used = ids.map(id => byId.get(id)).filter(p => p?.status === 'dibeli' && p.harga != null).reduce((a, p) => a + p.harga, 0);
+  const plan = est.total, sum = used + plan, over = sum > lim;
+  const pct = v => (lim > 0 ? Math.max(0, Math.min(100, (v / lim) * 100)) : 100);
+  const uP = pct(used), pP = Math.min(pct(plan), 100 - uP);
+  return `<div class="budget${over ? ' over' : ''}" role="group" aria-label="Amplop budget">
+    <div class="top"><span>Amplop${n.amplop ? ' ' + esc(n.amplop) : ''} · batas ${rp(lim)}</span><button type="button" class="mini" data-act="edit-limit">Ubah</button></div>
+    <div class="bar" role="img" aria-label="Terpakai ${rp(used)}, rencana ${rp(plan)}, dari ${rp(lim)}"><div class="fill"><span class="used" style="width:${uP}%"></span><span class="plan" style="width:${pP}%"></span></div></div>
+    <div class="meta"><span>Terpakai <b>${rp(used)}</b> · rencana <b>±${rp(plan)}</b></span><span class="left">${over ? `Lewat ${rp(sum - lim)}` : `Sisa ${rp(lim - sum)}`}</span></div>
+  </div>`;
+}
+$('#card').addEventListener('submit', async e => {
+  const f = e.target.closest('form.inline-edit');
+  if (!f) return;
+  e.preventDefault();
+  const n = byId.get(selectedId);
+  if (!n) return;
+  const old = { ...n };
+  try {
+    if (f.dataset.form === 'price') {
+      const v = parseMoney(f.querySelector('input').value), diff = (v ?? 0) - (old.harga ?? 0);
+      await saveNode({ ...n, harga: v, harga_dicek_pada: v == null ? null : isoLocal() });
+      refresh(0.25);
+      const msg = v == null ? 'Harga dihapus' : old.harga == null ? `Harga diisi ${rp(v)}` : diff === 0 ? 'Harga sama · tanggal cek diperbarui' : diff < 0 ? `Harga turun ${rp(-diff)}` : `Harga naik ${rp(diff)}`;
+      toast(msg, '', { label: 'Urungkan', run: () => restoreNode(old) });
+    } else if (f.dataset.form === 'note') {
+      const v = f.querySelector('textarea').value.trim() || null;
+      await saveNode({ ...n, catatan: v });
+      refresh(0.02);
+      toast(v ? 'Catatan disimpan' : 'Catatan dihapus', '', { label: 'Urungkan', run: () => restoreNode(old) });
+    } else if (f.dataset.form === 'limit') {
+      const v = parseMoney(f.querySelector('input').value);
+      await saveNode({ ...n, amplop_batas: v });
+      refresh(0.02);
+      toast(v == null ? 'Batas amplop dihapus' : `Batas amplop ${rp(v)}`, '', { label: 'Urungkan', run: () => restoreNode(old) });
+    }
+  } catch (err) { failed(err); }
+});
+$('#card').addEventListener('input', e => { if (e.target.closest('form.inline-edit .money')) formatMoneyInput(e.target); });
+$('#card').addEventListener('keydown', e => {
+  const f = e.target.closest('form.inline-edit');
+  if (!f) return;
+  if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); renderCard(); }
+  else if (e.key === 'Enter' && e.target.tagName === 'TEXTAREA' && !e.shiftKey) { e.preventDefault(); f.requestSubmit(); }
+});
+function openInline(b, html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  const f = tmp.firstElementChild;
+  b.replaceWith(f);
+  const inp = f.querySelector('input, textarea');
+  inp.focus({ preventScroll: true });
+  if (inp.tagName === 'INPUT') inp.select(); else inp.setSelectionRange(inp.value.length, inp.value.length);
 }
 
 /* ───────────── Kartu: aksi ───────────── */
@@ -2198,6 +2607,16 @@ $('#card').addEventListener('click', async e => {
     if (act === 'edit') return n.kind === 'produk' ? openProductForm(n.id) : openGroupForm(n.id);
     if (act === 'status') return changeStatus(n, b.dataset.v);
     if (act === 'fold') return toggleFold(n.id);
+    if (act === 'link') return startConnect(n.id);
+    if (act === 'inline-cancel') return renderCard();
+    if (act === 'edit-price') return openInline(b, inlineMoney('price', n.harga, 'Harga baru'));
+    if (act === 'edit-limit') return openInline(b.closest('.budget') || b, inlineMoney('limit', n.amplop_batas, 'Batas amplop'));
+    if (act === 'edit-note') {
+      return openInline(b, `<form class="inline-edit" data-form="note"><textarea rows="3" aria-label="Catatan" placeholder="Shade, ukuran, varian…">${esc(n.catatan || '')}</textarea>
+        <button type="submit" class="btn primary">Simpan</button><button type="button" class="btn" data-act="inline-cancel">Batal</button><span class="help">Enter simpan · Shift+Enter baris baru</span></form>`);
+    }
+    if (act === 'sim-pick') return togglePick(b.dataset.id);
+    if (act === 'sim-clear') { const r = D.comp.get(b.dataset.id); for (const x of [...simPick]) if (D.comp.get(x) === r) simPick.delete(x); return refresh(0.02); }
     if (act === 'fresh') {
       await saveNode({ ...n, harga_dicek_pada: isoLocal() });
       refresh(0.05);
@@ -2305,6 +2724,7 @@ $('#fp-link').addEventListener('input', e => {
 });
 $('#fp-toko').addEventListener('change', () => { fctx.tokoTouched = true; });
 $('#fp-harga').addEventListener('input', e => formatMoneyInput(e.target));
+$('#fg-batas').addEventListener('input', e => formatMoneyInput(e.target));
 
 $('#form-product').addEventListener('submit', async e => {
   e.preventDefault();
@@ -2365,6 +2785,7 @@ $('#fg-w-custom').addEventListener('change', () => {
 function syncKindUI() {
   const kind = document.querySelector('#form-group input[name="kind"]:checked').value;
   $('#fg-amplop-field').hidden = kind !== 'kategori';
+  $('#fg-batas-field').hidden = kind !== 'kategori';
   $('#fg-parent-field').hidden = kind !== 'kategori' || $('#fg-parent').options.length < 2;
   $('#fg-kind-help').textContent = kind === 'kategori'
     ? 'Kelompok barang sejenis, misalnya Skincare atau Setup Meja.'
@@ -2408,6 +2829,7 @@ function openGroupForm(id = null, preset = {}) {
   setWarna(warna);
   $('#fg-nama').value = n?.nama || '';
   $('#fg-amplop').value = n?.amplop || '';
+  $('#fg-batas').value = n?.amplop_batas != null ? nf.format(n.amplop_batas) : '';
   $('#fg-nama-err').hidden = true;
   $('#fg-title').textContent = n ? 'Edit' : parentId ? `Subkategori baru di ${byId.get(parentId).nama}` : 'Kategori atau tujuan baru';
   syncKindUI();
@@ -2432,6 +2854,7 @@ $('#form-group').addEventListener('submit', async e => {
     id: old?.id || uuid(), kind, nama,
     warna,
     amplop: kind === 'kategori' ? ($('#fg-amplop').value.trim() || null) : null,
+    amplop_batas: kind === 'kategori' ? parseMoney($('#fg-batas').value) : null,
     status: 'ingin', link: null, harga: null, toko: null, harga_dicek_pada: null,
   };
   const btn = $('#fg-submit');
@@ -2515,6 +2938,7 @@ $('#empty-group').addEventListener('click', () => openGroupForm());
 $('#zoom-in').addEventListener('click', () => (reduceMotion ? svg : svg.transition().duration(250)).call(zoom.scaleBy, 1.4));
 $('#zoom-out').addEventListener('click', () => (reduceMotion ? svg : svg.transition().duration(250)).call(zoom.scaleBy, 1 / 1.4));
 $('#zoom-fit').addEventListener('click', () => fit(true));
+$('#sim-btn').addEventListener('click', () => { simPick.clear(); refresh(0.02); toast('Simulasi direset · total kembali memakai harga termurah'); });
 $('#stale-btn').addEventListener('click', () => {
   if (view === 'list') setView('map');
   if (selectedId) select(null, { focus: false });
@@ -2544,7 +2968,7 @@ function setView(v) {
   $('#view-map').setAttribute('aria-pressed', String(v === 'map'));
   $('#view-list').setAttribute('aria-pressed', String(v === 'list'));
   $('#listview').hidden = v !== 'list';
-  if (v === 'list') { toggleLegend(false); select(null, { focus: false }); renderList(); }
+  if (v === 'list') { toggleLegend(false); cancelConnect(); select(null, { focus: false }); renderList(true); }
 }
 $('#view-map').addEventListener('click', () => setView('map'));
 $('#view-list').addEventListener('click', () => setView('list'));
@@ -2553,22 +2977,42 @@ function rootOf(id) {
   while (D.parent.get(g) && k++ < 32) g = D.parent.get(g);
   return g;
 }
-function renderList() {
+const LIST_FILTERS = { semua: 'Semua', belum: 'Belum dibeli', basi: 'Harga basi' };
+let listFilter = 'semua';
+try { const f = localStorage.getItem('wishmap:listFilter'); if (f && LIST_FILTERS[f]) listFilter = f; } catch (_) { /* abaikan */ }
+let listOrder = null, listShown = null;
+const matchFilter = (p, f) => f === 'semua' || (f === 'belum' ? p.status === 'ingin' && !D.tergeser.has(p.id) : D.stale.has(p.id));
+const CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const FRESH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v4.5h-4.5"/></svg>';
+/** reflow = susun ulang urutan & isi saringan. Tanpa reflow (setelah mencentang), baris tidak melompat. */
+function renderList(reflow = false) {
   const el = $('#listview');
   const products = nodes.filter(n => n.kind === 'produk');
   if (!products.length) { el.innerHTML = '<p class="empty-note">Belum ada barang. Tambahkan lewat tombol Barang.</p>'; return; }
+  const order = p => (p.status === 'ingin' && !D.tergeser.has(p.id) ? 0 : p.status === 'dibeli' ? 1 : 2);
+  if (reflow || !listOrder) {
+    const sorted = [...products].sort((a, b) => order(a) - order(b) || (b.harga ?? -1) - (a.harga ?? -1));
+    listOrder = new Map(sorted.map((p, i) => [p.id, i]));
+    listShown = new Set(products.filter(p => matchFilter(p, listFilter)).map(p => p.id));
+  }
+  const rank = p => listOrder.get(p.id) ?? 1e6;
+  const visible = products.filter(p => listShown.has(p.id) || (!listOrder.has(p.id) && matchFilter(p, listFilter)));
+  const counts = { semua: products.length, belum: products.filter(p => matchFilter(p, 'belum')).length, basi: D.stale.size };
+  const filters = `<div class="lfilters" role="group" aria-label="Saring daftar">${Object.entries(LIST_FILTERS).map(([k, t]) =>
+    `<button type="button" data-filter="${k}" aria-pressed="${listFilter === k}">${t}<span class="n">${counts[k]}</span></button>`).join('')}</div>`;
   const groups = new Map();
-  for (const p of products) {
+  for (const p of visible) {
     const home = D.home.get(p.id);
     const key = home ? rootOf(home) : '';
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(p);
   }
-  const order = p => (p.status === 'ingin' && !D.tergeser.has(p.id) ? 0 : p.status === 'dibeli' ? 1 : 2);
   const keys = [...groups.keys()].sort((a, b) => (a === '') - (b === '') || (byId.get(a)?.nama || '').localeCompare(byId.get(b)?.nama || '', 'id'));
-  el.innerHTML = keys.map(key => {
+  // fokus papan ketik bertahan setelah daftar digambar ulang
+  const act = document.activeElement, keepRow = act?.closest?.('.lrow')?.dataset.id, keepAct = act?.dataset?.lact, keepFilter = act?.dataset?.filter;
+  const body = keys.map(key => {
     const g = byId.get(key);
-    const list = groups.get(key).sort((a, b) => order(a) - order(b) || (b.harga ?? -1) - (a.harga ?? -1));
+    const list = groups.get(key).sort((a, b) => rank(a) - rank(b));
     const est = estimate(list.map(p => p.id));
     const sum = est.total ? `±Rp ${esc(rpShort(est.total))}` : '—';
     const head = g
@@ -2580,19 +3024,40 @@ function renderList() {
       const sub = home && home !== key ? pathOf(home).split(' › ').slice(1).join(' › ') : '';
       const stale = D.stale.has(p.id);
       const st = D.tergeser.has(p.id) ? 'Alternatif dibeli' : p.status !== 'ingin' ? STATUS[p.status] : stale ? 'Harga basi' : '';
-      return `<button type="button" class="rowbtn${off ? ' off' : ''}${p.status === 'dibeli' ? ' bought' : ''}" data-id="${p.id}">
-        <span class="nm">${esc(p.nama)}${sub ? `<span class="sub">${esc(sub)}</span>` : ''}</span>
-        ${st ? `<span class="st${stale && p.status === 'ingin' && !off ? ' is-stale' : ''}">${st}</span>` : ''}
-        <span class="pr">${esc(rp(p.harga))}</span></button>`;
+      const bought = p.status === 'dibeli';
+      return `<div class="lrow${off ? ' off' : ''}${bought ? ' bought' : ''}" data-id="${p.id}">
+        <button type="button" class="lcheck" data-lact="buy" aria-pressed="${bought}" aria-label="${bought ? 'Batalkan dibeli' : 'Tandai dibeli'}: ${esc(p.nama)}" ${p.status === 'batal' ? 'disabled' : ''}><span class="c">${CHECK}</span></button>
+        <button type="button" class="rowbtn${off ? ' off' : ''}${bought ? ' bought' : ''}" data-lact="goto">
+          <span class="nm">${esc(p.nama)}${sub ? `<span class="sub">${esc(sub)}</span>` : ''}</span>
+          ${st ? `<span class="st${stale && p.status === 'ingin' && !off ? ' is-stale' : ''}">${st}</span>` : ''}
+          <span class="pr">${esc(rp(p.harga))}</span></button>
+        ${stale && p.status === 'ingin' ? `<button type="button" class="lfresh" data-lact="fresh" aria-label="Harga masih sama: ${esc(p.nama)}" title="Harga masih sama">${FRESH}</button>` : ''}
+      </div>`;
     }).join('');
     return `<section>${head}<div class="rows">${rows}</div></section>`;
   }).join('');
+  el.innerHTML = filters + (body || `<p class="empty-note">${listFilter === 'basi' ? 'Semua harga masih segar.' : 'Semua sudah dibeli. Mantap.'}</p>`);
+  const back = keepFilter ? el.querySelector(`[data-filter="${keepFilter}"]`) : keepRow ? el.querySelector(`.lrow[data-id="${keepRow}"] [data-lact="${keepAct}"]`) : null;
+  back?.focus({ preventScroll: true });
 }
-$('#listview').addEventListener('click', e => {
-  const b = e.target.closest('.rowbtn');
+$('#listview').addEventListener('click', async e => {
+  const f = e.target.closest('[data-filter]');
+  if (f) {
+    listFilter = f.dataset.filter;
+    try { localStorage.setItem('wishmap:listFilter', listFilter); } catch (_) { /* abaikan */ }
+    return renderList(true);
+  }
+  const b = e.target.closest('[data-lact]');
   if (!b) return;
-  setView('map');
-  select(b.dataset.id);
+  const id = b.closest('.lrow').dataset.id, n = byId.get(id);
+  if (!n) return;
+  if (b.dataset.lact === 'goto') { setView('map'); return select(id); }
+  if (b.dataset.lact === 'buy') {
+    await changeStatus(n, n.status === 'dibeli' ? 'ingin' : 'dibeli');
+    $(`#listview .lrow[data-id="${id}"] .lcheck`)?.classList.add('pop');
+    return;
+  }
+  if (b.dataset.lact === 'fresh') return quickAct('fresh', id);
 });
 
 /* ───────────── Pencarian ───────────── */
