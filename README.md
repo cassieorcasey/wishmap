@@ -22,7 +22,7 @@ It is built for personal use: one person, one private wishlist. It is not a stor
 - Each category tints the area around its items, so groups read as regions on a map. Subcategories that share their parent's color get a lighter or darker shade of it.
 - Categories can use one of eight preset colors or any color you pick.
 - Search with ⌘K or `/`, switch between the map and a plain list grouped by category, and use the legend (or the stale-price chip) to highlight only stale, bought, alternative, or complementary items.
-- A look taken from a soda can instead of a UI kit: items are crown caps (the crimped edge is real geometry), categories are larger caps, destinations are tickets, and each category's territory is a halftone print of its color. Panels are flat paper with ink borders, prices are set in a mono face, and headings use a retro soda serif. The palette is Cherry Vibes (cream, blush, cherry, aluminum, cola), in light and dark. Caps spin on hover, and marking something bought pops the cap and lets a little fizz rise. Motion switches off with reduced motion.
+- A quiet, native look in the Cherry Vibes palette (cream canvas, cola text, cherry for actions, blush for highlights), in light and dark. It uses the system font, so nothing is downloaded before the map draws. Each top-level category gets one soft region drawn around its items, which keeps panning and zooming smooth on a phone.
 - Keyboard: `+` and `-` zoom, `0` fits the map, `L` opens the legend, `Esc` clears the selection or highlight.
 
 ## Running your own copy
