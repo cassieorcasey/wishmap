@@ -1,7 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28">
-  <rect width="28" height="28" rx="7" fill="#F3EEEC"/>
-  <path d="M8.5 10.5L19.5 7.5M8.5 10.5L14.5 20.5" stroke="#B9A79F" stroke-width="1.6" stroke-linecap="round"/>
-  <circle cx="8.5" cy="10.5" r="5.5" fill="#B15B64"/>
-  <circle cx="19.5" cy="7.5" r="3.6" fill="#D9778A"/>
-  <circle cx="14.5" cy="20.5" r="4.4" fill="#775E54"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="7" fill="#F3EEEC"/>
+  <path d="M28.20,16.00Q31.26,20.09 26.57,22.10Q27.17,27.17 22.10,26.57Q20.09,31.26 16.00,28.20Q11.91,31.26 9.90,26.57Q4.83,27.17 5.43,22.10Q0.74,20.09 3.80,16.00Q0.74,11.91 5.43,9.90Q4.83,4.83 9.90,5.43Q11.91,0.74 16.00,3.80Q20.09,0.74 22.10,5.43Q27.17,4.83 26.57,9.90Q31.26,11.91 28.20,16.00Z" fill="#B15B64" stroke="#7A2F39" stroke-width="1" stroke-linejoin="round"/>
+  <circle cx="16" cy="16" r="9.6" fill="#fff" fill-opacity=".16" stroke="#fff" stroke-opacity=".6" stroke-width=".9"/>
+  <path d="M16 9.6c.5 3.6 2.8 5.9 6.4 6.4-3.6.5-5.9 2.8-6.4 6.4-.5-3.6-2.8-5.9-6.4-6.4 3.6-.5 5.9-2.8 6.4-6.4z" fill="#F3EEEC"/>
 </svg>
