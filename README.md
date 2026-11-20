@@ -22,6 +22,7 @@ It is built for personal use: one person, one private wishlist. It is not a stor
 - Each category tints the area around its items, so groups read as regions on a map. Subcategories that share their parent's color get a lighter or darker shade of it.
 - Categories can use one of eight preset colors or any color you pick.
 - Search with ⌘K or `/`, switch between the map and a plain list grouped by category, and use the legend (or the stale-price chip) to highlight only stale, bought, alternative, or complementary items.
+- A cherry-soda look: the palette comes from a Cherry Vibes can (Porcelain Cream, Blush Fizz, Cherry Vibes, Crushed Aluminum, Cola Shadow), in light and dark. Bubbles are glossy and bounce on hover, buttons squish when pressed, dragged items tilt, and marking something as bought sets off a little star burst. All of it switches off with reduced motion.
 - Keyboard: `+` and `-` zoom, `0` fits the map, `L` opens the legend, `Esc` clears the selection or highlight.
 
 ## Running your own copy
