@@ -21,7 +21,7 @@ It is built for personal use: one person, one private wishlist. It is not a stor
 - **Detail.** Tap a card for a bottom sheet on the phone (drag down to close) or a side panel on a laptop: full photo, price you can edit in place, "price still the same", status, open in shop, note, and the Alternatives and Complements of that item. Add or remove relations with a searchable picker. Alternatives are listed side by side with the price gap, and you can pick one "for now" to see the total change without saving anything.
 - **Sort** by newest, cheapest, or stale prices first. Search with ⌘K or `/`, press `N` to jump to quick capture, `B` to mark the open item bought, `Esc` to close.
 - Every quick change shows an **Urungkan** (undo) button.
-- Cherry Vibes palette (porcelain cream, cola text, cherry for actions) in light and dark, system font, glass only on floating controls, 44 px touch targets, and reduced motion and reduced transparency respected.
+- Apple colors from the iPhone 17e page (light gray canvas, white cards, near-black text, Apple blue for actions, Apple system colors for categories, soft pink as the signature accent) in light and dark, system font, glass only on floating controls, 44 px touch targets, and reduced motion and reduced transparency respected.
 
 ## Running your own copy
 
