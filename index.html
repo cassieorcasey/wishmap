@@ -252,6 +252,20 @@ main { padding: 12px var(--gutter-r) calc(var(--safe-b) + 112px) var(--gutter-l)
   overflow: hidden; transition: box-shadow .3s var(--spring);
   display: flex; flex-direction: column;
 }
+/* geser kartu: kanan = dibeli, kiri = hapus */
+:root { --sw-buy: #1E7B34; --sw-buy-ink: #FFFFFF; --sw-del: #D70015; --sw-del-ink: #FFFFFF; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --sw-buy: #30D158; --sw-buy-ink: #000000; --sw-del: #FF453A; --sw-del-ink: #000000; } }
+:root[data-theme="dark"] { --sw-buy: #30D158; --sw-buy-ink: #000000; --sw-del: #FF453A; --sw-del-ink: #000000; }
+.item .face { position: relative; z-index: 1; background: var(--paper); border-radius: inherit; touch-action: pan-y; transition: transform .32s var(--spring); }
+.item.swiping .face { transition: none; user-select: none; -webkit-user-select: none; }
+.item .sw { position: absolute; inset: 0; display: none; align-items: center; gap: 8px; padding: 0 22px; font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+.item .sw svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: none; stroke-dashoffset: 0; flex: none; }
+.item .sw > span { transition: transform .2s var(--spring); }
+.sw-buy { background: var(--sw-buy); color: var(--sw-buy-ink); justify-content: flex-start; }
+.sw-del { background: var(--sw-del); color: var(--sw-del-ink); justify-content: flex-end; }
+.item.sw-r .sw-buy, .item.sw-l .sw-del { display: flex; }
+.item.sw-go .sw > span { transform: scale(1.1); }
+.item .ph { -webkit-user-drag: none; user-select: none; }
 .item .open { position: absolute; inset: 0; z-index: 1; border: 0; background: transparent; border-radius: inherit; }
 .item .open:hover ~ * { }
 .item .ph { transition: transform .4s var(--spring); }
@@ -1319,6 +1333,7 @@ $('#scope').addEventListener('click', async e => {
 
 /* ───────────── Kartu papan ───────────── */
 const CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6.5 7l1 13h9l1-13M10 11v6M14 11v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function homeName(p) {
   const h = D.home.get(p.id);
   return h ? byId.get(h).nama : (D.memberOf.get(p.id).length ? byId.get(D.memberOf.get(p.id)[0]).nama : 'Tanpa kategori');
@@ -1340,6 +1355,9 @@ function itemHTML(p, pins) {
   const relTxt = [na && `⇄ ${na} alternatif`, np && `+ ${np} pelengkap`].filter(Boolean).join(' · ');
   const canCheck = p.status !== 'batal';
   return `<article class="${cls}" role="listitem" data-id="${p.id}" style="--cc:${mapColor(p.id)}">
+    <div class="sw sw-buy" aria-hidden="true">${CHECK}<span>${done ? 'Batal dibeli' : 'Dibeli'}</span></div>
+    <div class="sw sw-del" aria-hidden="true"><span>Hapus</span>${TRASH}</div>
+    <div class="face">
     <button type="button" class="open" data-act="open" aria-label="Buka detail ${esc(p.nama)}"></button>
     ${foto ? `<img class="ph" src="${esc(foto)}" alt="" loading="lazy" decoding="async">` : ''}
     <div class="bd">
@@ -1348,6 +1366,7 @@ function itemHTML(p, pins) {
       ${!foto && p.catatan ? `<p class="note-s">${esc(p.catatan)}</p>` : ''}
       <div class="foot">${price}${canCheck ? `<button type="button" class="check" data-act="buy" aria-pressed="${done}" aria-label="${done ? 'Batalkan tanda dibeli' : 'Tandai dibeli'}: ${esc(p.nama)}">${CHECK}</button>` : ''}</div>
       ${relTxt ? `<p class="relt">${relTxt}</p>` : ''}
+    </div>
     </div>
   </article>`;
 }
@@ -1517,6 +1536,87 @@ function quickBuy(id, btn) {
   if (to === 'dibeli') { burst(btn); if (!reduceMotion) item.classList.add('leaving'); }
   changeStatus(n, to, { delay: reduceMotion ? 0 : 900 });
 }
+
+/* ───────────── Geser kartu: kanan = dibeli, kiri = hapus (sentuh/pena) ───────────── */
+async function swipeDelete(id) {
+  const n = byId.get(id);
+  if (!n) return;
+  const rels = relations.filter(r => r.from_id === id || r.to_id === id).map(r => ({ ...r }));
+  try {
+    await removeNode(id);
+    if (selectedId === id) selectedId = null;
+    refresh();
+    toast(`“${n.nama}” dihapus`, '', {
+      label: 'Urungkan', run: async () => {
+        try {
+          await saveNode(n);
+          for (const r of rels) relations.push(await store.addRelation({ ...r, id: uuid() }));
+          refresh();
+          toast('Dikembalikan');
+        } catch (err) { failed(err); refresh(); }
+      },
+    });
+  } catch (err) { failed(err); refresh(); }
+}
+(() => {
+  const THRESH = 88, SLOP = 10;
+  let g = null, swallowUntil = 0;
+  const canRight = id => byId.get(id)?.status !== 'batal';
+  const canLeft = id => !(D.children.get(id)?.size);
+  function done(commit) {
+    const { item, face, dx, id } = g; g = null;
+    swallowUntil = Date.now() + 400;   // ketukan susulan setelah menggeser tidak boleh membuka detail
+    item.classList.remove('swiping', 'sw-go');
+    const clear = () => item.classList.remove('sw-l', 'sw-r');
+    if (!commit) { face.style.transform = ''; setTimeout(clear, 320); return; }
+    if (dx > 0) {
+      face.style.transform = '';
+      setTimeout(clear, 320);
+      const btn = item.querySelector('.check');
+      if (btn) quickBuy(id, btn);
+    } else {
+      face.style.transform = 'translateX(-105%)';
+      setTimeout(() => swipeDelete(id), reduceMotion ? 0 : 200);
+    }
+  }
+  document.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse' || !e.isPrimary || e.target.closest('.check')) return;
+    const face = e.target.closest('.item .face');
+    if (!face) return;
+    const item = face.closest('.item');
+    g = { id: item.dataset.id, item, face, x0: e.clientX, y0: e.clientY, dx: 0, lock: false, pid: e.pointerId };
+  });
+  document.addEventListener('pointermove', e => {
+    if (!g || e.pointerId !== g.pid) return;
+    const dx = e.clientX - g.x0, dy = e.clientY - g.y0;
+    if (!g.lock) {
+      if (Math.abs(dy) > SLOP && Math.abs(dy) > Math.abs(dx)) { g = null; return; }   // itu gulir vertikal
+      if (Math.abs(dx) < SLOP || Math.abs(dx) < Math.abs(dy) * 1.3) return;
+      g.lock = true;
+      g.item.classList.add('swiping');
+      try { g.face.setPointerCapture(e.pointerId); } catch {}
+    }
+    const allowed = dx > 0 ? canRight(g.id) : canLeft(g.id);
+    const a = Math.abs(dx);
+    // Melewati ambang, gerakan makin berat; arah yang tidak diizinkan hanya bergeser sedikit
+    const shown = allowed ? (a <= THRESH ? a : THRESH + (a - THRESH) * .35) : Math.min(a * .15, 18);
+    g.dx = allowed ? dx : 0;
+    g.face.style.transform = `translateX(${Math.sign(dx) * shown}px)`;
+    g.item.classList.toggle('sw-r', allowed && dx > 0);
+    g.item.classList.toggle('sw-l', allowed && dx < 0);
+    g.item.classList.toggle('sw-go', allowed && a >= THRESH);
+  });
+  const end = e => {
+    if (!g || e.pointerId !== g.pid) return;
+    if (!g.lock) { g = null; return; }
+    done(e.type === 'pointerup' && g.dx !== 0 && Math.abs(g.dx) >= THRESH);
+  };
+  document.addEventListener('pointerup', end);
+  document.addEventListener('pointercancel', end);
+  $('main').addEventListener('click', e => {
+    if (Date.now() < swallowUntil) { e.stopPropagation(); e.preventDefault(); }
+  }, true);
+})();
 
 /* ───────────── Detail barang ───────────── */
 const xIcon = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>';
