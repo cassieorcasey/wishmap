@@ -1,36 +1,30 @@
 # Wishmap
 
-Wishmap is a wishlist that looks like a map instead of a list. Every item you want to buy is a bubble. Each main category is laid out as its own round mind map, with subcategories on the inner ring and items on the outer ring, and goals sit next to the category most of their items come from. Zoom out and you see colored clusters. Click a bubble and a product card opens with the photo, price, and a link to the shop.
+Wishmap is a pocket curation desk for the things you want to buy. Every item is a card on a masonry board. Items with a photo show as gallery cards; items without one become compact receipt-style cards with a stripe in their category color, so no space is wasted on empty image boxes. The estimated total at the top is always honest: alternatives count once, at the cheapest price.
 
 ## Who it is for
 
-Wishmap is for people who keep a long, messy list of things to buy and want to see how the items relate to each other. It works best if you:
+Wishmap is for people who keep a long, messy list of things to buy and want it light enough to update every day. It works best if you:
 
 - shop on Shopee or TikTok Shop and want your links and prices in one place;
 - compare options before buying, such as three sunscreens when you only need one;
-- think in groups, like a skincare routine or a desk setup, rather than in a flat checklist;
+- think in groups, like a skincare routine or a desk setup, rather than one flat checklist;
 - use both a laptop and an iPhone and want the list to stay in sync.
 
 It is built for personal use: one person, one private wishlist. It is not a store, it does not track prices automatically, and it does not share lists between users.
 
 ## What it does
 
-- Categories can contain subcategories, for example Skincare › Sunscreen and Skincare › Facial Wash.
-- Each item stores a shop link, a price, and the date the price was last checked. Prices older than 30 days are marked as stale.
-- Items can be linked as alternatives (pick one) or complements (used together). Once one alternative is marked as bought, the others fade out and drop from the estimated total.
-- Zoom changes what you see: colored regions and bubbles from far away, then names, prices, and photos at medium range, and relation tags up close.
-- Each category tints the area around its items, so groups read as regions on a map. Subcategories that share their parent's color get a lighter or darker shade of it.
-- Categories can use one of eight preset colors or any color you pick.
-- Search with ⌘K or `/`, switch between the map and a plain list grouped by category, and use the legend (or the stale-price chip) to highlight only stale, bought, alternative, or complementary items.
-- A quiet, native look in the Cherry Vibes palette (cream canvas, cola text, cherry for actions, blush for highlights), in light and dark. It uses the system font, so nothing is downloaded before the map draws. Each top-level category gets one soft region drawn around its items, which keeps panning and zooming smooth on a phone.
-- Hands-on map: drag a bubble and its neighbours follow on a rubber band, then spring back; double-tap a category to fold its branch into it; right-click or press and hold a bubble for a ring of quick actions (mark bought, open the shop, confirm the price, edit); hover for a price peek; fling the map and it glides to a stop. Works with mouse and touch, and respects reduced motion.
-- Edit the map directly: drag an item onto a category to move it there (or onto a goal to add it), and use **Hubungkan** (quick-action ring or card) to draw a line to another item and choose Alternatif or Pelengkap. Every change shows an **Urungkan** (undo) button.
-- Quick updates in the card: tap the price to type a new one (the check date moves to today), tap the note to edit it, compare alternatives side by side, and pick one "for now" to see the total change before you decide. Categories can carry a budget limit with a used + planned bar.
-- The list view works while you shop: tick items bought, confirm stale prices, and filter by All, Not bought, or Stale price. Rows stay in place after you tick them.
-- Keyboard: `+` and `-` zoom, `0` fits the map, `L` opens the legend, `F` folds the selected category, `B` marks the selected item bought, `Esc` clears the selection or highlight.
+- **Quick capture.** Paste a Shopee or TikTok link, or type one line such as `Azarine Sunscreen 65rb #skincare`. Wishmap splits it into name, price (`65rb`, `1,2jt`, `Rp65.000`, `150000`) and category before you press Enter, and shows the result as you type. On a phone the bar floats at the bottom within thumb reach; on a laptop it sits in the header. With no hashtag, a new item goes into the category you are looking at. When the browser has already allowed clipboard access, a "Paste the link from Shopee?" pill appears so one tap adds it.
+- **Filter pills.** One row for All, stale prices, each category and each goal, with counts. Picking a category shows its subcategories in a second row, and a summary with its planned total, budget limit (used + planned bar) and actions.
+- **Cards.** Category dot and name, shop badge, title, price in tabular numbers, a small amber dot when the price is more than 30 days old, and a check button to mark it bought. Bought items move to a **Sudah dibeli** drawer at the bottom and the total counts down. Alternatives of a bought item fade and leave the total.
+- **Detail.** Tap a card for a bottom sheet on the phone (drag down to close) or a side panel on a laptop: full photo, price you can edit in place, "price still the same", status, open in shop, note, and the Alternatives and Complements of that item. Add or remove relations with a searchable picker. Alternatives are listed side by side with the price gap, and you can pick one "for now" to see the total change without saving anything.
+- **Sort** by newest, cheapest, or stale prices first. Search with ⌘K or `/`, press `N` to jump to quick capture, `B` to mark the open item bought, `Esc` to close.
+- Every quick change shows an **Urungkan** (undo) button.
+- Cherry Vibes palette (porcelain cream, cola text, cherry for actions) in light and dark, system font, glass only on floating controls, 44 px touch targets, and reduced motion and reduced transparency respected.
 
 ## Running your own copy
 
-Wishmap is a single `index.html` with no build step, so it runs on GitHub Pages. Without any setup it stores data in your browser. To sync between devices, connect it to a Supabase project by running `schema.sql` and filling in `CONFIG` at the top of the script in `index.html`.
+Wishmap is a single `index.html` with no build step and no libraries to load, so it runs on GitHub Pages. Without any setup it stores data in your browser. To sync between devices, connect it to a Supabase project by running `schema.sql` and filling in `CONFIG` at the top of the script in `index.html`.
 
 If you already ran an older `schema.sql`, run the latest one again: it adds the optional `amplop_batas` column (budget limit) without touching your data. Until you do, everything else keeps working; only saving a budget limit will ask you to update the schema.
