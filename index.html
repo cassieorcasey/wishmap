@@ -133,7 +133,6 @@ button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 }
 .tool:hover, .tool[aria-expanded="true"] { background: var(--fill); color: var(--fg); }
 .tool svg { width: 19px; height: 19px; }
-.tool kbd { font: 600 11.5px/1 var(--font-ui); color: var(--fg-2); border: 1px solid var(--hair); border-radius: calc(var(--r-control) - 6px); padding: 3px 5px; display: none; }
 .menu-wrap { position: relative; }
 .menu {
   position: absolute; top: calc(100% + 6px); right: 0; z-index: 30;
@@ -196,11 +195,11 @@ button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
   display: flex; flex-direction: column; gap: 6px;
 }
 /* hero: ringkasan editorial terbuka, tanpa kotak warna */
-.hero { display: grid; grid-template-columns: 1fr auto; column-gap: 24px; row-gap: 4px; align-items: end; padding: 30px 0 22px; }
+.hero { display: grid; grid-auto-flow: dense; grid-template-columns: 1fr auto; column-gap: 24px; row-gap: 4px; align-items: end; padding: 30px 0 22px; }
 .hero .kicker { grid-column: 1 / -1; margin: 0; display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: var(--fg-2); letter-spacing: -.005em; }
-.hero h2 { margin: 0; font-size: clamp(28px, 4vw, 40px); line-height: 1.08; font-weight: 600; letter-spacing: -.028em; overflow-wrap: anywhere; }
+.hero h2 { grid-column: 1; margin: 0; font-size: clamp(28px, 4vw, 40px); line-height: 1.08; font-weight: 600; letter-spacing: -.028em; overflow-wrap: anywhere; }
 .hero .sub { grid-column: 1; margin: 4px 0 0; font-size: 15px; color: var(--fg-2); font-variant-numeric: tabular-nums; }
-.hero .fig { grid-column: 2; grid-row: 2 / span 2; margin: 0; text-align: right; }
+.hero .fig { grid-column: 2; grid-row: span 2; margin: 0; text-align: right; }
 .hero .fig b { display: block; font-size: clamp(28px, 4vw, 40px); line-height: 1.08; font-weight: 600; letter-spacing: -.028em; white-space: nowrap; }
 .hero .fig span { display: block; margin-top: 4px; font-size: 13px; color: var(--fg-2); }
 .hero .budget, .hero .scope-actions { grid-column: 1 / -1; margin-top: 14px; }
@@ -546,7 +545,7 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
   .brand h1 { font-size: 17px; }
   .brand { gap: 7px; }
   .top-row { gap: 6px; }
-  .tlabel, .tool kbd { display: none; }
+  .tlabel { display: none; }
   .hero { grid-template-columns: 1fr; padding: 22px 0 18px; }
   .hero .fig { grid-column: 1; grid-row: auto; text-align: left; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-top: 6px; order: 3; }
   .hero .fig b { font-size: 26px; }
@@ -570,7 +569,6 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
   .qc-box input { height: 44px; font-size: 17px; }
   .qc-preview, .clip-pill { position: absolute; top: calc(100% + 8px); left: 0; right: 0; }
   .clip-pill { right: auto; left: 50%; transform: translateX(-50%); }
-  .tool kbd { display: inline-block; }
   main { padding-bottom: 56px; }
   body.detail-open main { padding-right: calc(var(--gutter-r) + 404px); max-width: none; }
   .scrim { display: none; }
@@ -604,9 +602,9 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
     </div>
     <div class="tools">
       <button type="button" class="tool" id="search-btn" aria-label="Cari barang atau kategori" title="Cari (⌘K atau /)">
-        <svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.8" cy="7.8" r="5" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M11.6 11.6l3.6 3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg><span class="tlabel">Cari</span><kbd>⌘K</kbd>
+        <svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.8" cy="7.8" r="5" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M11.6 11.6l3.6 3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg><span class="tlabel">Cari</span>
       </button>
-      <button type="button" class="btn primary add" id="add-btn" title="Form lengkap: link, foto, catatan, relasi">
+      <button type="button" class="btn primary add" id="add-btn">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path></svg>Tambah
       </button>
       <div class="menu-wrap">
@@ -627,7 +625,7 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
 </header>
 
 <main id="main">
-  <section class="hero" id="scope" aria-live="polite"><p class="kicker">Wishlist</p><h2>Semua Rencana</h2><p class="sub" id="stat-main">Memuat…</p></section>
+  <section class="hero" id="scope" aria-live="polite"><h2>Semua barang</h2><p class="sub" id="stat-main">Memuat…</p></section>
   <form class="capture" id="qc" autocomplete="off" novalidate>
       <div class="clip-pill" id="clip" hidden>
         <button type="button" id="clip-use"></button>
@@ -692,14 +690,14 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
       </div>
       <fieldset class="field"><legend>Kategori</legend><div class="chips" id="fp-kat"></div></fieldset>
       <fieldset class="field"><legend>Tujuan</legend><div class="chips" id="fp-tuj"></div></fieldset>
-      <fieldset class="field"><legend>Alternatif (nanti pilih salah satu)</legend>
+      <fieldset class="field"><legend>Alternatif</legend>
         <div class="picker" id="fp-alt">
           <div class="chips sel"></div>
           <input type="search" id="fp-alt-q" placeholder="Cari barang lain…" autocomplete="off">
           <div class="chips res"></div>
         </div>
       </fieldset>
-      <fieldset class="field"><legend>Pelengkap (dipakai bersama)</legend>
+      <fieldset class="field"><legend>Pelengkap</legend>
         <div class="picker" id="fp-pel">
           <div class="chips sel"></div>
           <input type="search" id="fp-pel-q" placeholder="Cari barang lain…" autocomplete="off">
@@ -739,11 +737,9 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
           <label><input type="radio" name="kind" value="kategori" id="fg-kind-kategori" checked><span>Kategori</span></label>
           <label><input type="radio" name="kind" value="tujuan" id="fg-kind-tujuan"><span>Tujuan</span></label>
         </div>
-        <p class="help" id="fg-kind-help">Kelompok barang sejenis, misalnya Skincare atau Setup Meja.</p>
       </fieldset>
       <label class="field" id="fg-parent-field"><span>Di dalam kategori</span>
         <select id="fg-parent"></select>
-        <p class="help">Pilih induk untuk menjadikannya subkategori, misalnya Sunscreen di dalam Skincare.</p>
       </label>
       <label class="field"><span>Nama</span>
         <input type="text" id="fg-nama" autocomplete="off" placeholder="Contoh: Skincare">
@@ -754,7 +750,6 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
         <div class="custom-row">
           <input type="color" id="fg-picker" value="#d9778a" aria-label="Pilih warna bebas">
           <input type="text" id="fg-hex" maxlength="7" placeholder="#FF6B9D" spellcheck="false" autocomplete="off" aria-label="Kode warna hex">
-          <span class="help">Atau ketik kode hex</span>
         </div>
         <p class="err" id="fg-hex-err" hidden>Format kode warna: # lalu 6 karakter, misalnya #FF6B9D.</p>
       </fieldset>
@@ -764,7 +759,6 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
       </label>
       <label class="field" id="fg-batas-field"><span>Batas amplop (opsional)</span>
         <span class="money"><span>Rp</span><input type="text" id="fg-batas" inputmode="numeric" autocomplete="off" placeholder="0"></span>
-        <p class="help">Kartu kategori menampilkan bilah terpakai dan rencana beli terhadap batas ini.</p>
       </label>
     </div>
     <footer>
@@ -850,9 +844,9 @@ const safeUrl = u => (/^https?:\/\//i.test(u || '') ? u : '');
 const pad = n => String(n).padStart(2, '0');
 const isoLocal = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 const nf = new Intl.NumberFormat('id-ID');
-const rp = n => (n == null ? '—' : 'Rp ' + nf.format(n));
+const rp = n => (n == null ? 'Tanpa harga' : 'Rp ' + nf.format(n));
 function rpShort(n) {
-  if (n == null) return '—';
+  if (n == null) return 'Tanpa harga';
   if (n >= 1e6) return (Math.round(n / 1e4) / 100).toLocaleString('id-ID', { maximumFractionDigits: 2 }) + 'jt';
   if (n >= 1e3) return Math.round(n / 1e3) + 'rb';
   return String(n);
@@ -1324,12 +1318,12 @@ function renderScope() {
   const isKat = g?.kind === 'kategori';
   const label = !g ? '' : !isKat ? 'Tujuan' : D.parent.get(id) ? 'Subkategori' : 'Kategori';
   el.style.cssText = g ? `--cc:${mapColor(id)}` : '';
-  const sub = !loaded ? 'Memuat…' : !ids.length ? 'Belum ada barang' : `${est.items} rencana${est.unpriced ? ` · ${est.unpriced} belum ada harga` : ''}${fStale ? ' · hanya harga basi' : ''}`;
+  const sub = !loaded ? 'Memuat…' : !ids.length ? 'Belum ada barang' : `${est.items} barang${est.unpriced ? ` · ${est.unpriced} belum ada harga` : ''}${fStale ? ' · hanya harga basi' : ''}`;
   el.innerHTML = `
-    <p class="kicker">${g ? `<span class="dot"></span>${label}${isKat && D.parent.get(id) ? ' · ' + esc(pathOf(D.parent.get(id))) : ''}` : 'Wishlist'}</p>
-    <h2>${g ? esc(g.nama) : 'Semua Rencana'}</h2>
+    ${isKat && D.parent.get(id) ? `<p class="kicker"><span class="dot"></span>${esc(pathOf(D.parent.get(id)))} ›</p>` : ''}
+    <h2>${g ? esc(g.nama) : 'Semua barang'}</h2>
     <p class="sub" id="stat-main">${sub}</p>
-    <p class="fig" title="Barang dalam satu grup alternatif dihitung sekali, pakai harga termurah"><b id="stat-total" class="num"></b><span>Estimasi termurah</span></p>
+    <p class="fig" title="Barang dalam satu grup alternatif dihitung sekali, pakai harga termurah"><b id="stat-total" class="num"></b><span>Perkiraan total</span></p>
     ${g ? budgetBlock(g, ids, est) : ''}
     ${g ? `<div class="scope-actions">
       <button type="button" class="link" data-act="add-here">+ Barang di sini</button>
@@ -1480,19 +1474,19 @@ function renderBoard() {
   if (!loaded) em.hidden = true;
   else if (noProducts) {
     em.innerHTML = `<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="10" width="22" height="30" rx="6" fill="var(--fill-2)"/><rect x="34" y="10" width="22" height="18" rx="6" fill="var(--blush)"/><rect x="34" y="32" width="22" height="22" rx="6" fill="var(--fill-2)"/><rect x="8" y="44" width="22" height="10" rx="5" fill="var(--fill)"/></svg>
-      <h2>Mejamu masih kosong</h2><p>Tempel link Shopee atau TikTok di bilah catat cepat, atau ketik seperti <b>Azarine Sunscreen 65rb #skincare</b>.</p>
+      <h2>Belum ada barang</h2><p>Tempel link Shopee atau TikTok, atau ketik nama dan harganya.</p>
       <div class="row"><button type="button" class="btn" data-act="new-group">Buat kategori</button><button type="button" class="btn primary" data-act="focus-qc">Catat barang pertama</button></div>`;
     em.hidden = false;
   } else if (!active.length) {
     const g = sid && byId.get(sid);
-    em.innerHTML = fStale ? '<h2>Semua harga masih segar</h2><p>Tidak ada harga yang perlu dicek ulang di sini.</p>'
-      : `<h2>${g ? `Belum ada rencana di ${esc(g.nama)}` : 'Semua sudah terbeli'}</h2><p>${g ? 'Ketik barang di bilah catat cepat: barang baru otomatis masuk ke sini.' : 'Lihat laci Sudah dibeli di bawah.'}</p>`;
+    em.innerHTML = fStale ? '<h2>Tidak ada harga basi</h2>'
+      : `<h2>${g ? `Belum ada barang di ${esc(g.nama)}` : 'Semua sudah dibeli'}</h2>`;
     em.hidden = false;
   } else em.hidden = true;
   // Simulasi
   const sb = $('#sim-bar');
   sb.hidden = !simPick.size;
-  if (simPick.size) sb.innerHTML = `<span><b>Simulasi</b> · ${simPick.size} pilihan sementara. Total di atas memakai pilihanmu; belum ada yang disimpan.</span><button type="button" class="btn" data-act="sim-reset">Reset</button>`;
+  if (simPick.size) sb.innerHTML = `<span><b>Simulasi</b> · ${simPick.size} pilihan, belum disimpan</span><button type="button" class="btn" data-act="sim-reset">Reset</button>`;
   if (lastAdded) {
     const el = $(`#board .item[data-id="${lastAdded}"]`);
     if (el && !reduceMotion) el.classList.add('fresh-new');
@@ -1505,7 +1499,7 @@ $('#drawer').addEventListener('toggle', () => {
   drawerOpen = dr.open; lsSet('wishmap:drawer', drawerOpen);
   if (drawerOpen && dr._list) fillBoard($('#board-done'), dr._list, null);
 });
-$('#sim-bar').addEventListener('click', e => { if (e.target.closest('[data-act="sim-reset"]')) { simPick.clear(); refresh(); toast('Simulasi direset · total kembali memakai harga termurah'); } });
+$('#sim-bar').addEventListener('click', e => { if (e.target.closest('[data-act="sim-reset"]')) { simPick.clear(); refresh(); toast('Simulasi direset'); } });
 $('#empty').addEventListener('click', e => {
   const b = e.target.closest('[data-act]');
   if (!b) return;
@@ -1698,22 +1692,22 @@ function altBlock(n) {
       return `<div class="cmp-row${p.id === n.id ? ' me' : ''}${p.id === bought ? ' bought' : ''}">
         <button type="button" class="cmp-pick" data-act="sim-pick" data-id="${p.id}" aria-pressed="${pin === p.id}" aria-label="Pilih sementara ${esc(p.nama)}" ${canPick ? '' : 'disabled'}></button>
         <button type="button" class="cmp-nm" data-act="goto" data-id="${p.id}">${esc(p.nama)}<span class="sub">${esc(p.toko ? TOKO[p.toko] : 'Toko belum diisi')}${p.id === n.id ? ' · barang ini' : ''}</span></button>
-        <span class="cmp-pr">${p.id === bought ? 'Dibeli' : p.harga == null ? '—' : rp(p.harga)}${p.id === bought ? '' : delta}</span>
+        <span class="cmp-pr">${p.id === bought ? 'Dibeli' : rp(p.harga)}${p.id === bought ? '' : delta}</span>
         <button type="button" class="rm" data-act="rel-rm" data-id="${p.id}" data-type="alternatif" aria-label="Lepas ${esc(p.nama)} dari alternatif" ${direct.has(p.id) ? '' : 'disabled'}>×</button>
       </div>`;
     }).join('');
     const pinned = pin && byId.get(pin);
     const note = bought ? `Sudah diputuskan: <b>${esc(byId.get(bought).nama)}</b> dibeli.`
       : pinned ? `Simulasi: total memakai <b>${esc(pinned.nama)}</b>, bukan yang termurah.<button type="button" class="mini" data-act="sim-clear" data-id="${pinned.id}">Reset</button>`
-      : 'Total memakai yang termurah. Ketuk lingkaran untuk mencoba pilihan lain tanpa menyimpan.';
-    body = `<div class="cmp">${rows}</div><p class="cmp-note">${note}</p>`;
+      : '';
+    body = `<div class="cmp">${rows}</div>${note ? `<p class="cmp-note">${note}</p>` : ''}`;
   }
-  return `<section class="rel" id="rel-alt"><div class="rel-h"><h3>Alternatif · pilih salah satu</h3><button type="button" class="mini" data-act="rel-add" data-type="alternatif" aria-expanded="${relOpen === 'alternatif'}">${relOpen === 'alternatif' ? 'Selesai' : '+ Tambah'}</button></div>${relOpen === 'alternatif' ? relPickerHTML('alternatif') : ''}${body}</section>`;
+  return `<section class="rel" id="rel-alt"><div class="rel-h"><h3>Alternatif</h3><button type="button" class="mini" data-act="rel-add" data-type="alternatif" aria-expanded="${relOpen === 'alternatif'}">${relOpen === 'alternatif' ? 'Selesai' : '+ Tambah'}</button></div>${relOpen === 'alternatif' ? relPickerHTML('alternatif') : ''}${body}</section>`;
 }
 function pelBlock(n) {
   const list = D.pel.get(n.id).map(id => byId.get(id)).filter(Boolean);
-  const body = list.length ? `<div class="chips">${list.map(o => relChip(o, true, 'pelengkap')).join('')}</div>` : '<p class="hint">Belum ada barang yang dipakai bersama ini.</p>';
-  return `<section class="rel" id="rel-pel"><div class="rel-h"><h3>Pelengkap · dipakai bersama</h3><button type="button" class="mini" data-act="rel-add" data-type="pelengkap" aria-expanded="${relOpen === 'pelengkap'}">${relOpen === 'pelengkap' ? 'Selesai' : '+ Tambah'}</button></div>${relOpen === 'pelengkap' ? relPickerHTML('pelengkap') : ''}${body}</section>`;
+  const body = list.length ? `<div class="chips">${list.map(o => relChip(o, true, 'pelengkap')).join('')}</div>` : '<p class="hint">Belum ada.</p>';
+  return `<section class="rel" id="rel-pel"><div class="rel-h"><h3>Pelengkap</h3><button type="button" class="mini" data-act="rel-add" data-type="pelengkap" aria-expanded="${relOpen === 'pelengkap'}">${relOpen === 'pelengkap' ? 'Selesai' : '+ Tambah'}</button></div>${relOpen === 'pelengkap' ? relPickerHTML('pelengkap') : ''}${body}</section>`;
 }
 function productDetail(n) {
   const groups = D.memberOf.get(n.id).map(id => byId.get(id));
@@ -1949,7 +1943,7 @@ let fctx = null;
 function chipToggle(container, kind, set) {
   const groups = nodes.filter(n => n.kind === kind).sort((a, b) => labelOf(a).localeCompare(labelOf(b), 'id'));
   if (!groups.length) {
-    container.innerHTML = `<p class="help">Belum ada ${kind}. Buat lewat pill “+ Kategori”.</p>`;
+    container.innerHTML = `<p class="help">Belum ada ${kind}.</p>`;
     return;
   }
   container.innerHTML = groups.map(g =>
@@ -2089,9 +2083,6 @@ function syncKindUI() {
   $('#fg-amplop-field').hidden = true;   // belum tersambung ke sheet budget
   $('#fg-batas-field').hidden = kind !== 'kategori';
   $('#fg-parent-field').hidden = kind !== 'kategori' || $('#fg-parent').options.length < 2;
-  $('#fg-kind-help').textContent = kind === 'kategori'
-    ? 'Kelompok barang sejenis, misalnya Skincare atau Setup Meja.'
-    : 'Satu keperluan yang butuh beberapa barang, misalnya Rutinitas Pagi atau Kado Ulang Tahun.';
   $('#fg-nama').placeholder = kind === 'kategori' ? 'Contoh: Skincare' : 'Contoh: Rutinitas Pagi';
 }
 document.querySelectorAll('#form-group input[name="kind"]').forEach(i => i.addEventListener('change', syncKindUI));
@@ -2355,7 +2346,7 @@ $('#card').addEventListener('click', async e => {
     if (act === 'edit-price') return openInline(b, inlineMoney('price', n.harga, 'Harga baru'));
     if (act === 'edit-note') {
       return openInline(b, `<form class="inline-edit" data-form="note"><textarea rows="3" aria-label="Catatan" placeholder="Shade, ukuran, varian…">${esc(n.catatan || '')}</textarea>
-        <button type="submit" class="btn primary">Simpan</button><button type="button" class="btn" data-act="inline-cancel">Batal</button><span class="help">Enter simpan · Shift+Enter baris baru</span></form>`);
+        <button type="submit" class="btn primary">Simpan</button><button type="button" class="btn" data-act="inline-cancel">Batal</button></form>`);
     }
     if (act === 'rel-add') { relOpen = relOpen === b.dataset.type ? null : b.dataset.type; return renderCard(); }
     if (act === 'rel-pick') { const t = relOpen; relOpen = null; return setRelation(n.id, b.dataset.id, t); }
@@ -2438,7 +2429,6 @@ function renderPreview() {
   for (const id of p.groups) { const g = byId.get(id); toks.push(`<span class="tok" style="--cc:${mapColor(id)}"><span class="dot"></span>${esc(g.nama)}${p.auto ? '' : ''}</span>`); }
   if (p.toko) toks.push(`<span class="tok">${TOKO[p.toko]}</span>`);
   for (const t of p.unknown) toks.push(`<span class="tok bad">#${esc(t)} belum ada</span>`);
-  toks.push('<span class="kbd">Enter simpan</span>');
   qcPrev.innerHTML = toks.join('');
   qcPrev.hidden = false;
 }
