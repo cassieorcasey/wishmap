@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F7C9D3">
+<meta name="color-scheme" content="light">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Wishmap">
 <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
@@ -16,37 +16,69 @@
    Papan kartu masonry: kartu galeri (berfoto) dan kartu struk-swatch (tanpa foto) berdampingan.
    Kaca hanya untuk lapisan kontrol mengambang (header, bilah catat cepat), tidak pernah untuk kartu isi. */
 :root {
-  /* Pewarnaan ala halaman iPhone 17e di apple.com: kanvas abu terang, kartu putih, teks hampir hitam,
-     biru aksi Apple, warna sistem Apple untuk kategori, dan soft pink (finishing iPhone 17e) sebagai aksen khas. */
-  --bg: #F5F5F7;
+  /* Romantic gradient: kanvas gradasi difus (rose, petal, lavender, sky) yang diam di belakang,
+     kartu kaca-susu putih di atasnya, teks tinta plum. Semua netral sedikit condong ke mauve supaya menyatu. */
+  --bg: #F7C9D3;      /* warna dasar gradasi; juga dipakai sebagai warna padat bila perlu */
+  --bg-mesh:
+    radial-gradient(62% 48% at 0% 0%, rgb(184 215 238 / .95), transparent 70%),
+    radial-gradient(72% 62% at 20% 44%, rgb(232 166 179 / .85), transparent 72%),
+    radial-gradient(58% 48% at 100% 16%, rgb(255 255 255 / .9), transparent 70%),
+    radial-gradient(62% 56% at 88% 78%, rgb(181 171 204 / .8), transparent 72%),
+    radial-gradient(50% 40% at 100% 100%, rgb(184 215 238 / .8), transparent 70%),
+    radial-gradient(48% 42% at 8% 100%, rgb(255 255 255 / .7), transparent 70%),
+    #F7C9D3;
   --paper: #FFFFFF;
-  --glass: rgba(251, 251, 253, .78);
+  --card: rgba(255, 255, 255, .8);     /* kartu & panel di atas gradasi */
+  --chip: rgba(255, 255, 255, .7);     /* pill & tombol kecil di atas gradasi */
+  --glass: rgba(255, 255, 255, .5);
   --glass-solid: #FFFFFF;
-  --fg: #1D1D1F;
-  --fg-2: #636366;
-  --fg-3: #86868B;   /* hanya placeholder & ikon dekoratif; teks memakai --fg-2 */
-  --hair: rgba(0, 0, 0, .07);
-  --fill: rgba(118, 118, 128, .10);
-  --fill-2: rgba(118, 118, 128, .18);
+  --fg: #241C26;
+  --fg-2: #5E5060;
+  --fg-3: #8C7F8E;   /* hanya placeholder & ikon dekoratif; teks memakai --fg-2 */
+  --hair: rgba(90, 60, 95, .12);
+  --fill: rgba(110, 80, 115, .08);
+  --fill-2: rgba(110, 80, 115, .15);
   --field: #FFFFFF;
-  --shadow-1: 0 2px 8px rgba(0, 0, 0, .03);
-  --shadow-2: 0 8px 28px rgba(0, 0, 0, .08);
-  --scrim: rgba(0, 0, 0, .32);
-  --edge: rgba(60, 60, 67, .28);
+  --shadow-1: 0 1px 2px rgba(90, 50, 90, .06), 0 4px 14px rgba(90, 50, 90, .06);
+  --shadow-2: 0 14px 36px rgba(90, 50, 90, .16);
+  --scrim: rgba(40, 20, 45, .34);
+  --edge: rgba(80, 55, 85, .32);
+  /* Teks langsung di atas gradasi: dihitung terhadap titik tergelap (lavender & rose penuh), ≥ 4.6:1 */
+  --fg-2-on-mesh: #4B3E4D; --link-on-mesh: #003A9D; --danger-on-mesh: #8B0000;
+  --glare: rgba(255, 255, 255, .55);
+  /* ── Thermal Cooling Aura: suhu keputusan dari hangat (impuls) ke sejuk (kepala dingin) ──
+     Pastel = permukaan saja (aura, kerudung, lencana). Garis/cincin memakai --ink-* (≥ 3:1 di --paper & --bg),
+     teks berwarna memakai --ink-*-text (≥ 4.5:1). Titik antara gradasi diambil dari interpolasi OKLCH
+     (bukan sRGB) supaya bagian tengah tidak kusam. */
+  --aura-warm: #E8A6B3;      /* Warm Impulse: baru dicatat, 0–33% masa endap, anggaran terpakai */
+  --aura-petal: #F7C9D3;     /* Soft Pause: transisi, bar simulasi, aura kartu menunggu */
+  --aura-lavender: #B5ABCC;  /* Contemplative Lavender: menimbang, Adu guna, rencana anggaran */
+  --aura-breeze: #B8D7EE;    /* Rational Clarity: masa endap tuntas, siap diputus */
+  --ink-warm: #D25C7B;       --ink-warm-text: #B23F60;
+  --ink-lavender: #8D79B5;   --ink-lavender-text: #725E98;
+  --ink-breeze: #4E89B2;     --ink-breeze-text: #326E95;
+  --grad-cooling: linear-gradient(135deg, #E8A6B3 0%, #F0B7C3 17.5%, #F7C9D3 35%, #D8B8D3 52.5%, #B5ABCC 70%, #B5C1E1 85%, #B8D7EE 100%);
+  --grad-cooling-ink: linear-gradient(135deg, #D25C7B 0%, #B26AA7 27%, #8D79B5 55%, #6F81BA 77%, #4E89B2 100%);
+  --veil-breeze: rgb(184 215 238 / .5); --veil-lavender: rgb(181 171 204 / .5); --veil-petal: rgb(247 201 211 / .5);
+  --badge-ready: #DFECF4;    /* breeze 45% di atas --paper */
+  --grad-duel-left: radial-gradient(circle at 20% 20%, rgb(247 201 211 / .55), rgb(232 166 179 / .18) 70%, transparent 100%);
+  --grad-duel-right: radial-gradient(circle at 80% 20%, rgb(184 215 238 / .55), rgb(181 171 204 / .18) 70%, transparent 100%);
+  /* Teks & tautan di atas kerudung aura hero (kasus terburuk: lavender 50% di atas --bg) */
+  --on-aura-link: #0051B6; --on-aura-danger: #AF0000;
   --accent: #0071E3;
   --accent-hover: #0077ED;
-  --accent-ink: #0066CC;
+  --accent-ink: #0051B6;   /* 5.0:1 di latar petal */
   --accent-soft: #F2D4D7;
-  --blush: #F2D4D7;
+  --blush: #F7C9D3;   /* = --aura-petal: DNA soft pink Wishmap */
   --blush-ink: #7D3140;
   --on-accent: #FFFFFF;
   --on-bubble: #1D1D1F;
   --seg-on: #FFFFFF;
-  --sel-bg: #F2D4D7; --sel-fg: #1D1D1F;
+  --sel-bg: #F7C9D3; --sel-fg: #1E1B17;
   --ok: #1E7B34;
   --ok-fill: #34C759;
-  --stale: #9A4300;
-  --danger: #D70015;
+  --stale: #8A3C00;
+  --danger: #AF0000;       /* 5.05:1 di latar petal */
   --tint: 7%;
   --c-pink: #FF2D55; --c-orange: #FF9500; --c-yellow: #FFCC00; --c-green: #34C759; --c-teal: #30B0C7; --c-blue: #007AFF; --c-indigo: #5856D6; --c-purple: #AF52DE; --c-none: #8E8E93;
 
@@ -61,37 +93,8 @@
   --tap: 36px;
 }
 @media (pointer: coarse) { :root { --tap: 44px; } }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #000000; --paper: #1C1C1E; --glass: rgba(28, 28, 30, .78); --glass-solid: #1C1C1E;
-    --fg: #F5F5F7; --fg-2: #A1A1A6; --fg-3: #8E8E93;
-    --hair: rgba(255, 255, 255, .09); --fill: rgba(118, 118, 128, .24); --fill-2: rgba(118, 118, 128, .36);
-    --field: #2C2C2E;
-    --shadow-1: none; --shadow-2: 0 8px 32px rgba(0, 0, 0, .6);
-    --scrim: rgba(0, 0, 0, .6); --edge: rgba(235, 235, 245, .3);
-    --accent: #0071E3; --accent-ink: #0A84FF; --accent-hover: #0077ED; --accent-soft: #6B4450; --on-accent: #FFFFFF;
-    --blush: #4A2E35; --blush-ink: #F5C2CB;
-    --sel-bg: #7A4A55; --sel-fg: #F5F5F7;
-    --seg-on: #636366; --ok: #30D158; --ok-fill: #30D158; --stale: #FF9F0A; --danger: #FF453A; --tint: 10%;
-    --c-pink: #FF375F; --c-orange: #FF9F0A; --c-yellow: #FFD60A; --c-green: #30D158; --c-teal: #40C8E0; --c-blue: #0A84FF; --c-indigo: #5E5CE6; --c-purple: #BF5AF2; --c-none: #98989D;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #000000; --paper: #1C1C1E; --glass: rgba(28, 28, 30, .78); --glass-solid: #1C1C1E;
-  --fg: #F5F5F7; --fg-2: #A1A1A6; --fg-3: #8E8E93;
-  --hair: rgba(255, 255, 255, .09); --fill: rgba(118, 118, 128, .24); --fill-2: rgba(118, 118, 128, .36);
-  --field: #2C2C2E;
-  --shadow-1: none; --shadow-2: 0 8px 32px rgba(0, 0, 0, .6);
-  --scrim: rgba(0, 0, 0, .6); --edge: rgba(235, 235, 245, .3);
-  --accent: #0071E3; --accent-ink: #0A84FF; --accent-hover: #0077ED; --accent-soft: #6B4450; --on-accent: #FFFFFF;
-  --blush: #4A2E35; --blush-ink: #F5C2CB;
-  --sel-bg: #7A4A55; --sel-fg: #F5F5F7;
-  --seg-on: #636366; --ok: #30D158; --ok-fill: #30D158; --stale: #FF9F0A; --danger: #FF453A; --tint: 10%;
-  --c-pink: #FF375F; --c-orange: #FF9F0A; --c-yellow: #FFD60A; --c-green: #30D158; --c-teal: #40C8E0; --c-blue: #0A84FF; --c-indigo: #5E5CE6; --c-purple: #BF5AF2; --c-none: #98989D;
-  color-scheme: dark;
-}
-@media (prefers-reduced-transparency: reduce) { :root { --glass: var(--glass-solid); } }
+:root { color-scheme: light; }   /* hanya tema terang */
+@media (prefers-reduced-transparency: reduce) { :root { --glass: var(--glass-solid); --card: #FFFFFF; --chip: #FFFFFF; } }
 
 [hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
@@ -101,6 +104,12 @@ body {
   font: 500 15px/1.4 var(--font-ui);
   -webkit-font-smoothing: antialiased;
 }
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: var(--bg-mesh); }
+/* Teks yang duduk langsung di gradasi memakai tinta lebih pekat */
+.hero, .filters .sort, .drawer > summary, .empty, dialog.duel > header, .duel-stage .vs, .duel-after {
+  --fg-2: var(--fg-2-on-mesh); --accent-ink: var(--link-on-mesh); --danger: var(--danger-on-mesh);
+}
+.hero .budget { --fg-2: #5E5060; --accent-ink: #0051B6; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2.5px solid var(--accent); outline-offset: 2px; }
@@ -155,10 +164,10 @@ button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
   scroll-padding-inline: var(--gutter-l);
 }
 .subpills { margin: -8px calc(-1 * var(--gutter-r)) 18px calc(-1 * var(--gutter-l)); padding-right: var(--gutter-r); }
-.pill.plus { width: var(--tap); padding: 0; justify-content: center; color: var(--accent-ink); background: transparent; box-shadow: inset 0 0 0 1px var(--hair); }
+.pill.plus { width: var(--tap); padding: 0; justify-content: center; color: var(--accent-ink); }
 .pill.plus svg { width: 15px; height: 15px; }
 .sort { position: relative; flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: var(--tap); padding: 0 26px 0 12px; border-radius: var(--r-pill); font-size: 14px; font-weight: 500; color: var(--fg-2); cursor: pointer; }
-.sort:hover { background: var(--fill); color: var(--fg); }
+.sort:hover { background: var(--chip); color: var(--fg); }
 .sort.on { background: color-mix(in srgb, var(--stale) 12%, var(--paper)); color: var(--stale); }
 .sort select { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; font-size: 16px; }
 .sort::after { content: ""; position: absolute; right: 11px; top: 50%; width: 6px; height: 6px; margin-top: -5px; border: solid currentColor; border-width: 0 1.6px 1.6px 0; transform: rotate(45deg); }
@@ -176,7 +185,8 @@ button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
   font-size: 14px; font-weight: 500; letter-spacing: -.01em; color: var(--fg); white-space: nowrap;
   transition: background .15s, border-color .15s, transform .12s;
 }
-.pill:hover { background: var(--fill-2); }
+.pill { background: var(--chip); }
+.pill:hover { background: var(--paper); }
 .pill:active { transform: scale(.96); }
 .pill .n { font-size: 12px; font-weight: 600; color: var(--fg-2); font-variant-numeric: tabular-nums; }
 .pill[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg); }
@@ -195,6 +205,8 @@ button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
   display: flex; flex-direction: column; gap: 6px;
 }
 /* hero: ringkasan editorial terbuka, tanpa kotak warna */
+main { overflow-x: clip; }
+.hero { position: relative; }
 .hero { display: grid; grid-auto-flow: dense; grid-template-columns: 1fr auto; column-gap: 24px; row-gap: 4px; align-items: end; padding: 30px 0 22px; }
 .hero .kicker { grid-column: 1 / -1; margin: 0; display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: var(--fg-2); letter-spacing: -.005em; }
 .hero h2 { grid-column: 1; margin: 0; font-size: clamp(28px, 4vw, 40px); line-height: 1.08; font-weight: 600; letter-spacing: -.028em; overflow-wrap: anywhere; }
@@ -203,12 +215,13 @@ button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .hero .fig b { display: block; font-size: clamp(28px, 4vw, 40px); line-height: 1.08; font-weight: 600; letter-spacing: -.028em; white-space: nowrap; }
 .hero .fig span { display: block; margin-top: 4px; font-size: 13px; color: var(--fg-2); }
 .hero .budget, .hero .scope-actions { grid-column: 1 / -1; margin-top: 14px; }
+.hero .budget { padding: 12px 14px; border-radius: var(--r-control); background: var(--card); box-shadow: var(--shadow-1); }
 .link { min-height: 36px; padding: 0 10px; margin-left: -10px; border: 0; background: transparent; border-radius: var(--r-pill); font-size: 14px; font-weight: 500; color: var(--accent-ink); }
-.link:hover { background: var(--fill); }
+.link:hover { background: var(--chip); }
 .link.danger { color: var(--danger); margin-left: auto; }
 .qc-box {
   display: flex; align-items: center; gap: 4px; padding: 5px; border-radius: var(--r-card);
-  background: var(--glass); border: 1px solid var(--hair); box-shadow: var(--shadow-2);
+  background: rgba(255, 255, 255, .84); border: 1px solid var(--hair); box-shadow: var(--shadow-2);
   -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
 }
 .qc-box:focus-within { box-shadow: 0 0 0 3.5px color-mix(in srgb, var(--accent) 30%, transparent), var(--shadow-2); }
@@ -236,6 +249,7 @@ button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .qc-preview .tok.nm { background: transparent; padding-left: 2px; font-weight: 700; overflow-wrap: anywhere; }
 .qc-preview .tok.rp { font-variant-numeric: tabular-nums; }
 .qc-preview .tok.bad { background: transparent; color: var(--stale); font-weight: 600; }
+.qc-preview .tok.need { background: transparent; box-shadow: inset 0 0 0 1px var(--edge); }
 .qc-preview .kbd { margin-left: auto; font-size: 12px; color: var(--fg-2); }
 .clip-pill {
   align-self: center; order: -2; display: inline-flex; align-items: center; gap: 2px; padding: 3px;
@@ -253,16 +267,14 @@ main { padding: 12px var(--gutter-r) calc(var(--safe-b) + 112px) var(--gutter-l)
 .board.ready .item { transition: transform .32s var(--spring), opacity .25s; }
 .item {
   position: absolute; left: 0; top: 0; box-sizing: border-box;
-  background: var(--paper); border-radius: var(--r-card); box-shadow: var(--shadow-1);
+  background: transparent; border-radius: var(--r-card); box-shadow: var(--shadow-1);
   overflow: hidden; transition: box-shadow .3s var(--spring);
   display: flex; flex-direction: column;
 }
 /* geser kartu: kanan = dibeli, kiri = hapus */
 :root { --sw-buy: #1E7B34; --sw-buy-ink: #FFFFFF; --sw-del: #D70015; --sw-del-ink: #FFFFFF; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --sw-buy: #30D158; --sw-buy-ink: #000000; --sw-del: #FF453A; --sw-del-ink: #000000; } }
-:root[data-theme="dark"] { --sw-buy: #30D158; --sw-buy-ink: #000000; --sw-del: #FF453A; --sw-del-ink: #000000; }
-.item .face { position: relative; z-index: 1; background: var(--paper); border-radius: inherit; touch-action: pan-y; transition: transform .32s var(--spring); }
-.item.swiping .face { transition: none; user-select: none; -webkit-user-select: none; }
+.item .face { position: relative; z-index: 1; background: var(--card); border-radius: inherit; touch-action: pan-y; transition: transform .32s var(--spring); }
+.item.swiping .face { background: var(--paper); transition: none; user-select: none; -webkit-user-select: none; }
 .item .sw { position: absolute; inset: 0; display: none; align-items: center; gap: 8px; padding: 0 22px; font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
 .item .sw svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: none; stroke-dashoffset: 0; flex: none; }
 .item .sw > span { transition: transform .2s var(--spring); }
@@ -274,8 +286,8 @@ main { padding: 12px var(--gutter-r) calc(var(--safe-b) + 112px) var(--gutter-l)
 .item .open { position: absolute; inset: 0; z-index: 1; border: 0; background: transparent; border-radius: inherit; }
 .item .open:hover ~ * { }
 .item .ph { transition: transform .4s var(--spring); }
-@media (hover: hover) { .item:has(.open:hover) { box-shadow: var(--shadow-2); } .item:has(.open:hover) .ph { transform: scale(1.03); } }
-.item .ph { display: block; width: 100%; max-height: 280px; object-fit: cover; background: var(--fill); }
+@media (hover: hover) { .item:has(.open:hover) { box-shadow: var(--shadow-2); } }
+.item .ph { display: block; width: calc(100% - 12px); margin: 6px 6px 0; max-height: 280px; object-fit: cover; background: var(--fill); border-radius: calc(var(--r-card) - 6px); outline: 1px solid var(--hair); outline-offset: -1px; }
 .item .bd { display: flex; flex-direction: column; gap: 6px; padding: 14px 14px 8px; }
 /* Varian struk & swatch: garis tepi warna kategori + semburat lembut */
 /* Kartu tanpa foto: putih yang sama, dibedakan oleh judul yang lebih tegas */
@@ -285,8 +297,12 @@ main { padding: 12px var(--gutter-r) calc(var(--safe-b) + 112px) var(--gutter-l)
   margin: 0; font-size: 16px; font-weight: 600; line-height: 1.3; letter-spacing: -.016em;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere;
 }
-.item.swatch h3 { font-size: 17px; line-height: 1.28; letter-spacing: -.018em; }
+/* Kartu indeks (tanpa foto): kepala metadata bergaya kartu arsip, tepi atas warna kategori, judul & harga lebih berwibawa */
 .item.swatch .bd { padding-top: 16px; gap: 7px; }
+
+.item.swatch h3 { font-size: 18px; font-weight: 650; line-height: 1.24; letter-spacing: -.022em; }
+.item.swatch .price { font-size: 17px; font-weight: 650; letter-spacing: -.02em; }
+.item.swatch .price.none { font-size: 14px; font-weight: 500; letter-spacing: 0; }
 .item .note-s { margin: 0; font-size: 13px; line-height: 1.4; color: var(--fg-2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
 .foot { display: flex; align-items: center; gap: 6px; min-height: 44px; margin: 0 -4px 0 0; }
 .price { font-size: 15px; font-weight: 600; letter-spacing: -.01em; font-variant-numeric: tabular-nums; display: inline-flex; align-items: center; gap: 6px; min-width: 0; white-space: nowrap; }
@@ -304,8 +320,42 @@ main { padding: 12px var(--gutter-r) calc(var(--safe-b) + 112px) var(--gutter-l)
 .check[aria-pressed="true"]::before { background: var(--ok-fill); border-color: var(--ok-fill); transform: scale(1.08); }
 .check[aria-pressed="true"] svg { stroke-dashoffset: 0; stroke: #FFFFFF; }
 .relt { margin: -2px 0 6px; font-size: 12px; font-weight: 500; color: var(--fg-2); }
+/* Status keputusan: cincin masa endap + tingkat kebutuhan */
+.util { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 10px; margin: 0; font-size: 12px; font-weight: 500; color: var(--fg-2); }
+.estate { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.estate.ready { color: var(--fg); font-weight: 650; }
+.ering { width: 16px; height: 16px; flex: none; }
+.ering circle { fill: none; stroke-width: 2; }
+.ering .trk { stroke: var(--fill-2); }
+.ering .val { stroke-linecap: round; stroke-dasharray: 37.7; stroke-dashoffset: var(--off); transition: stroke .6s var(--spring);
+  /* Suhu masa endap: 0–33% hangat, 34–99% bergeser ke lavender (--t 0→1), 100% sejuk */
+  stroke: var(--ink-warm);
+  stroke: color-mix(in oklch, var(--ink-lavender) calc(var(--t, 0) * 100%), var(--ink-warm)); }
+.estate.ready .ering .val { stroke: var(--ink-breeze); }
+.ering .ok { fill: none; stroke: var(--ink-breeze); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.board.intro .ering .val { animation: ring-in 1.1s var(--spring) both; }
+@keyframes ring-in { from { stroke-dashoffset: 37.7; } }
+/* Masa endap: kartu lebih tenang. Siap diputus: penanda tegas. */
+.item.endap .price { color: var(--fg-2); font-weight: 550; }
+.item.ready .check::before { border-color: var(--fg); }
+/* Tahan untuk beli: cincin progres di sekeliling tombol, kartu sedikit tertekan */
+.check { -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; touch-action: none; }
+.check svg.hring { width: 34px; height: 34px; stroke: var(--ink-lavender); stroke: url(#wm-cool); stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 69.12; stroke-dashoffset: 69.12; opacity: 0; transition: stroke-dashoffset .25s ease-out, opacity .2s; }
+.check.holding svg.hring { opacity: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 1.5s cubic-bezier(.3, .1, .25, 1), opacity .1s; }
+.check.full::before { animation: pop .4s var(--bounce); }
+@keyframes pop { 50% { transform: scale(1.04); } }
+.check.nudge::before { animation: nudge .38s var(--bounce); }
+@keyframes nudge { 40% { transform: scale(.86); } }
+.item { scale: 1; }
+.board.ready .item { transition: transform .32s var(--spring), opacity .25s, scale .25s var(--spring); }
+.item.pressing { scale: .985; }
+.hold-tip { position: absolute; z-index: 4; right: 8px; bottom: 52px; padding: 6px 10px; border-radius: var(--r-control); background: var(--fg); color: var(--bg); font-size: 12px; font-weight: 600; white-space: nowrap; pointer-events: none; animation: tip 1.8s var(--spring) forwards; }
+@keyframes tip { 0% { opacity: 0; transform: translateY(4px); } 12%, 82% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+/* Kilau lembut saat kartu dimiringkan (hanya perangkat dengan kursor) */
+.item .face::after { content: ""; position: absolute; inset: 0; z-index: 3; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .3s; background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), var(--glare), transparent 60%); }
+.item .face.tilting { transition: transform .12s linear; }
+.item .face.tilting::after { opacity: 1; }
 .item.done { opacity: .62; }
-.item.done h3::before { content: "✓ "; color: var(--ok); }
 .item.off { opacity: .5; }
 .item.off h3 { text-decoration: line-through; text-decoration-thickness: 1px; }
 .item.sim-pin { box-shadow: 0 0 0 2.5px var(--accent), var(--shadow-2); }
@@ -318,7 +368,7 @@ main { padding: 12px var(--gutter-r) calc(var(--safe-b) + 112px) var(--gutter-l)
 .spark { position: absolute; z-index: 3; width: 6px; height: 6px; border-radius: 50%; pointer-events: none; animation: spark .62s ease-out forwards; }
 @keyframes spark { from { transform: translate(0, 0) scale(1); opacity: 1; } to { transform: translate(var(--dx), var(--dy)) scale(.3); opacity: 0; } }
 
-.sim-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: -6px 0 16px; padding: 8px 8px 8px 16px; border-radius: var(--r-card); background: var(--blush); color: var(--fg); font-size: 13.5px; color: var(--fg); }
+.sim-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: -6px 0 16px; padding: 8px 8px 8px 16px; border-radius: var(--r-card); background: var(--card); color: var(--fg); font-size: 13.5px; box-shadow: inset 0 0 0 1.5px var(--ink-lavender); }
 .sim-bar b { font-weight: 700; }
 .sim-bar .btn { margin-left: auto; min-height: 36px; }
 
@@ -374,7 +424,8 @@ main { padding: 12px var(--gutter-r) calc(var(--safe-b) + 112px) var(--gutter-l)
 @keyframes fade { from { opacity: 0; } }
 .card {
   position: fixed; z-index: 40; left: 0; right: 0; bottom: 0; max-height: 88vh; overflow: auto; overscroll-behavior: contain;
-  background: var(--glass-solid); border-radius: var(--r-sheet) var(--r-sheet) 0 0; box-shadow: var(--shadow-2);
+  background: rgba(255, 255, 255, .9); border-radius: var(--r-sheet) var(--r-sheet) 0 0; box-shadow: var(--shadow-2);
+  -webkit-backdrop-filter: saturate(160%) blur(28px); backdrop-filter: saturate(160%) blur(28px);
   padding-bottom: var(--safe-b); animation: sheet .34s var(--spring);
 }
 @keyframes sheet { from { transform: translateY(40px); opacity: 0; } }
@@ -457,11 +508,11 @@ button.catatan { display: block; width: 100%; border: 0; background: none; paddi
 .inline-edit .help { font-size: 12px; color: var(--fg-2); }
 .budget { display: grid; gap: 8px; max-width: 560px; }
 .budget .btop { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 600; color: var(--fg-2); }
-.budget .bar { height: 6px; border-radius: var(--r-pill); background: var(--fill-2); overflow: hidden; }
-.budget .fill { display: flex; height: 100%; transform-origin: left; animation: grow .7s var(--spring); }
+.budget .bar { height: 8px; border-radius: var(--r-pill); background: var(--veil-breeze); box-shadow: inset 0 0 0 1.5px var(--ink-breeze); overflow: hidden; }
+.budget .fill { display: flex; gap: 2px; height: 100%; transform-origin: left; animation: grow .7s var(--spring); }
 @keyframes grow { from { transform: scaleX(0); } }
-.budget .used { background: var(--blush-ink); }
-.budget .plan { background: var(--blush); }
+.budget .used { background: var(--ink-warm); }
+.budget .plan { background: var(--ink-lavender); }
 .budget .meta { display: flex; justify-content: space-between; gap: 4px 12px; flex-wrap: wrap; font-size: 12.5px; color: var(--fg-2); font-variant-numeric: tabular-nums; }
 .budget .meta b { color: var(--fg); }
 .budget.over .bar { box-shadow: inset 0 0 0 1.5px var(--danger); }
@@ -539,6 +590,92 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
 .search .none { padding: 14px 12px; color: var(--fg-2); }
 .search .keys { padding: 10px 16px 14px; border-top: 1px solid var(--hair); font-size: 12.5px; color: var(--fg-2); }
 
+
+/* ── meja kurasi: tombol Adu guna, detail keputusan, Gerbang Refleksi, Adu guna ── */
+.duel-btn { flex: none; display: inline-flex; align-items: center; gap: 7px; min-height: var(--tap); padding: 0 13px; border: 0; border-radius: var(--r-pill); background: var(--chip); box-shadow: none; font-size: 14px; font-weight: 600; letter-spacing: -.01em; color: var(--fg); }
+.duel-btn svg { width: 17px; height: 17px; flex: none; }
+.duel-btn:hover { background: var(--paper); }
+.duel-btn:active { transform: scale(.96); }
+.duel-btn:disabled { color: var(--fg-2); background: rgba(255, 255, 255, .4); cursor: not-allowed; transform: none; }
+.decide { display: flex; flex-direction: column; gap: 10px; }
+.estate-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0; font-size: 13.5px; font-weight: 550; color: var(--fg-2); }
+.estate-row .score { font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.endap-opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.endap-opts .mini { color: var(--fg); }
+.seg.seg-wrap { grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); }
+.gate .gate-h { min-width: 0; }
+.gate-why { margin: 0 0 2px; font-size: 13px; font-weight: 600; color: var(--fg-2); }
+.gate h2 { font-size: 20px; line-height: 1.2; overflow-wrap: anywhere; }
+.gate .fields { gap: 18px; }
+.gate-price { margin: -6px 0 0; font-size: 30px; font-weight: 650; letter-spacing: -.026em; font-variant-numeric: tabular-nums; }
+.gimpact { display: grid; gap: 8px; }
+.gbar { display: flex; gap: 2px; height: 10px; border-radius: var(--r-pill); background: var(--veil-breeze); box-shadow: inset 0 0 0 1.5px var(--ink-breeze); overflow: hidden; }
+.gbar span { height: 100%; transform-origin: left; animation: grow .7s var(--spring); }
+.gbar .u { background: var(--ink-warm); }
+.gbar .t { background: var(--ink-lavender); }
+.gbar .t.over { background: var(--danger); }
+.glegend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0; font-size: 12.5px; color: var(--fg-2); font-variant-numeric: tabular-nums; }
+.glegend span { display: inline-flex; align-items: center; gap: 6px; }
+.glegend .k { width: 8px; height: 8px; border-radius: 2px; }
+.glegend .k.u { background: var(--ink-warm); }
+.glegend .k.t { background: var(--ink-lavender); }
+.glegend .k.s { background: var(--veil-breeze); box-shadow: inset 0 0 0 1.5px var(--ink-breeze); }
+.glegend .over { color: var(--danger); font-weight: 650; }
+.gcost h3 { margin: 0 0 4px; font-size: 13px; font-weight: 650; color: var(--fg-2); }
+.gcost ul { list-style: none; margin: 0; padding: 0; }
+.gcost li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--hair); font-size: 14px; }
+.gcost li:last-child { border-bottom: 0; }
+.gcost .nm { min-width: 0; overflow-wrap: anywhere; }
+.gcost .sub, .gcost .fit, .gcost .out { display: block; font-size: 12px; color: var(--fg-2); font-weight: 500; }
+.gcost .pr { text-align: right; white-space: nowrap; font-weight: 600; font-variant-numeric: tabular-nums; }
+.gcost .out { color: var(--stale); font-weight: 650; }
+.gate-choices { display: grid; gap: 8px; }
+.choice { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 58px; padding: 11px 16px; box-sizing: border-box; border: 1px solid var(--hair); border-radius: var(--r-control); background: var(--paper); text-align: left; transition: transform .15s var(--spring), border-color .15s; }
+.choice b { font-size: 15px; font-weight: 650; letter-spacing: -.01em; }
+.choice span { font-size: 13px; color: var(--fg-2); }
+.choice:hover { border-color: var(--edge); }
+.choice:active { transform: scale(.985); }
+.choice.calm { background: var(--fill); border-color: transparent; }
+.choice:disabled { opacity: .6; cursor: not-allowed; transform: none; border-color: var(--hair); }
+dialog.duel { width: min(860px, calc(100% - 32px)); background: var(--bg-mesh); }
+.duel header, .duel footer { background: rgba(255, 255, 255, .4); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); }
+.duel header .hint { margin-top: 2px; }
+.duel-stage { position: relative; isolation: isolate; overflow: clip; display: grid; grid-template-columns: 1fr auto 1fr; align-items: stretch; gap: 14px; padding: 22px 20px 12px; }
+.vs { align-self: center; font-size: 12px; font-weight: 650; color: var(--fg-2); text-transform: uppercase; letter-spacing: .08em; transition: opacity .3s; }
+.dcard { position: relative; min-width: 0; display: flex; flex-direction: column; overflow: hidden; background: var(--paper); border-radius: var(--r-card); box-shadow: var(--shadow-2); transition: transform .55s var(--spring), opacity .45s, scale .55s var(--spring); animation: din-a .6s var(--spring) backwards; }
+.dcard.b { animation-name: din-b; animation-delay: .06s; }
+@keyframes din-a { from { opacity: 0; transform: translateX(-40px) rotate(-3deg); } }
+@keyframes din-b { from { opacity: 0; transform: translateX(40px) rotate(3deg); } }
+.dph { display: block; width: calc(100% - 12px); margin: 6px 6px 0; aspect-ratio: 4 / 3; object-fit: cover; border-radius: calc(var(--r-card) - 6px); }
+.dhead { margin: 0; padding: 11px 16px 9px; border-bottom: 1px solid var(--hair); box-shadow: inset 0 3px 0 var(--cc, var(--c-none)); font-size: 11px; font-weight: 600; color: var(--fg-2); text-transform: uppercase; letter-spacing: .06em; }
+.dph + .dhead { box-shadow: none; }
+.dbd { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 14px 16px 16px; }
+.dcard h3 { margin: 0; font-size: 19px; font-weight: 650; line-height: 1.25; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.dprice { margin: 0; font-size: 22px; font-weight: 650; letter-spacing: -.022em; font-variant-numeric: tabular-nums; }
+.dfacts { display: grid; gap: 0; margin: 2px 0 8px; font-size: 13.5px; }
+.dfacts div { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid var(--hair); }
+.dfacts dt { color: var(--fg-2); }
+.dfacts dd { margin: 0; font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+.dcard .pick { margin-top: auto; }
+.dcard .pick:disabled { background: transparent; box-shadow: inset 0 0 0 1px var(--hair); }
+.duel-stage[data-win="a"] .dcard.a { transform: translateX(calc(50% + 14px)); scale: 1.04; z-index: 2; }
+.duel-stage[data-win="b"] .dcard.b { transform: translateX(calc(-50% - 14px)); scale: 1.04; z-index: 2; }
+.duel-stage[data-win="a"] .dcard.b, .duel-stage[data-win="b"] .dcard.a { opacity: .35; scale: .94; }
+.duel-stage[data-win="a"] .vs, .duel-stage[data-win="b"] .vs { opacity: 0; }
+.duel-after { display: grid; gap: 10px; padding: 4px 20px 14px; }
+.dres { margin: 0; font-size: 15px; }
+.dlose { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13.5px; color: var(--fg-2); }
+.dlose > span { flex: 1 0 100%; }
+.dlose .mini { color: var(--fg); }
+@media (max-width: 640px) {
+  .duel-btn { width: var(--tap); padding: 0; justify-content: center; }
+  .duel-btn span { display: none; }
+  .duel-stage { grid-template-columns: 1fr; gap: 10px; padding: 16px 16px 10px; }
+  .vs { justify-self: center; }
+  .dph { aspect-ratio: 16 / 9; }
+  .dfacts { margin-bottom: 4px; }
+  .duel-stage[data-win="a"] .dcard.a, .duel-stage[data-win="b"] .dcard.b { transform: none; scale: 1.02; }
+}
 @media (max-width: 640px) {
   dialog.sheet { width: 100%; max-width: 100%; margin: auto 0 0; max-height: 94%; border-radius: var(--r-sheet) var(--r-sheet) 0 0; }
   dialog.search { margin-top: 8vh; }
@@ -583,6 +720,8 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; transition-duration: .01ms !important; }
   .board.ready .item { transition: none; }
+  .check.holding svg.hring { transition: stroke-dashoffset 1.5s linear !important; }
+  .item .face.tilting { transform: none !important; }
 }
 </style>
 </head>
@@ -644,6 +783,9 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
     </form>
   <div class="filters">
     <nav class="pills" id="pills" aria-label="Saring kategori dan tujuan"></nav>
+    <button type="button" class="duel-btn" id="duel-btn" aria-label="Adu guna: bandingkan dua barang">
+      <svg viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="1.8" y="4.2" width="7.4" height="10" rx="1.8" transform="rotate(-6 5.5 9.2)"></rect><rect x="8.8" y="3.6" width="7.4" height="10" rx="1.8" transform="rotate(6 12.5 8.6)"></rect></svg><span>Adu guna</span>
+    </button>
     <label class="sort"><span class="vh">Urutkan</span><span id="sort-label">Urutkan</span><select id="sort" aria-label="Urutkan dan saring barang"></select></label>
   </div>
   <div class="pills subpills" id="subpills" role="group" aria-label="Subkategori" hidden></div>
@@ -659,6 +801,10 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
 <div class="scrim" id="scrim" hidden></div>
 <aside class="card" id="card" role="dialog" aria-modal="false" aria-label="Detail barang" hidden></aside>
 <div class="toast" id="toast" role="status" hidden></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <linearGradient id="wm-cool" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: var(--ink-warm)"/><stop offset=".55" style="stop-color: var(--ink-lavender)"/><stop offset="1" style="stop-color: var(--ink-breeze)"/></linearGradient>
+</defs></svg>
+<p class="vh" id="hold-desc">Tekan dan tahan 1,5 detik. Dengan papan ketik: tahan Spasi atau Enter.</p>
 
 
 <!-- Form barang -->
@@ -688,6 +834,22 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
           </div>
         </fieldset>
       </div>
+      <fieldset class="field"><legend>Kebutuhan</legend>
+        <div class="seg" id="fp-need">
+          <label><input type="radio" name="need" value="wajib"><span>Wajib</span></label>
+          <label><input type="radio" name="need" value="penunjang"><span>Penunjang</span></label>
+          <label><input type="radio" name="need" value="keinginan"><span>Keinginan</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="field"><legend>Masa endap</legend>
+        <div class="seg seg-wrap" id="fp-endap">
+          <label><input type="radio" name="endap" value="0"><span>Tanpa endap</span></label>
+          <label><input type="radio" name="endap" value="24"><span>24 jam</span></label>
+          <label><input type="radio" name="endap" value="72"><span>3 hari</span></label>
+          <label><input type="radio" name="endap" value="168"><span>7 hari</span></label>
+        </div>
+        <p class="help" id="fp-endap-now" hidden></p>
+      </fieldset>
       <fieldset class="field"><legend>Kategori</legend><div class="chips" id="fp-kat"></div></fieldset>
       <fieldset class="field"><legend>Tujuan</legend><div class="chips" id="fp-tuj"></div></fieldset>
       <fieldset class="field"><legend>Alternatif</legend>
@@ -745,7 +907,7 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
         <input type="text" id="fg-nama" autocomplete="off" placeholder="Contoh: Skincare">
         <p class="err" id="fg-nama-err" hidden>Nama wajib diisi.</p>
       </label>
-      <fieldset class="field"><legend>Warna</legend>
+      <fieldset class="field" id="fg-warna-field"><legend>Warna</legend>
         <div class="swatches" id="fg-warna"></div>
         <div class="custom-row">
           <input type="color" id="fg-picker" value="#d9778a" aria-label="Pilih warna bebas">
@@ -766,6 +928,23 @@ dialog.search { width: min(560px, calc(100% - 32px)); margin-top: 12vh; }
       <button type="submit" class="btn primary" id="fg-submit">Simpan</button>
     </footer>
   </form>
+</dialog>
+
+<!-- Gerbang Refleksi -->
+<dialog class="sheet gate" id="dlg-gate" aria-labelledby="gt-title"><div id="gate-body"></div></dialog>
+
+<!-- Adu guna -->
+<dialog class="sheet duel" id="dlg-duel" aria-labelledby="duel-title">
+  <header>
+    <div><h2 id="duel-title">Adu guna</h2><p class="hint">Mana yang lebih berguna sekarang?</p></div>
+    <button type="button" class="icon-btn" data-close aria-label="Tutup"><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
+  </header>
+  <div class="duel-stage" id="duel-stage"></div>
+  <div class="duel-after" id="duel-after" aria-live="polite" hidden></div>
+  <footer>
+    <button type="button" class="btn" id="duel-skip">Lewati pasangan</button>
+    <button type="button" class="btn" data-close>Selesai</button>
+  </footer>
 </dialog>
 
 <!-- Hapus semua -->
@@ -834,6 +1013,23 @@ const ccStyle = c => `--cc: ${cssColor(c)}; --ink: ${inkOf(c)}`;
 const SHADES = [['white', 32], ['black', 22], ['white', 50], ['black', 36]];
 const TOKO = { shopee: 'Shopee', tiktok: 'TikTok Shop', lainnya: 'Toko lain' };
 const STATUS = { ingin: 'Ingin', dibeli: 'Dibeli', batal: 'Batal' };
+/* Meja kurasi: tingkat kebutuhan, masa endap, skor guna */
+const NEED = { wajib: 'Wajib', penunjang: 'Penunjang', keinginan: 'Keinginan' };
+const NEED_W = { wajib: 40, penunjang: 25, keinginan: 10 };
+const WIN_W = 8;                                  // bonus skor per kemenangan Adu guna
+const HOUR = 36e5, ENDAP_DEF = 72;                // masa endap bawaan: 72 jam
+const ENDAP_OPT = [[0, 'Tanpa endap'], [24, '24 jam'], [72, '3 hari'], [168, '7 hari']];
+const HOLD_MS = 1500;
+const needOf = p => (NEED[p.kebutuhan] ? p.kebutuhan : 'penunjang');
+const endapAt = h => (h > 0 ? new Date(Date.now() + h * HOUR).toISOString() : null);
+/** Batas masa endap (ms). Data lama tanpa kolom: dihitung dari created_at + 72 jam, atau dianggap selesai. */
+function endapUntil(p) {
+  if (Object.prototype.hasOwnProperty.call(p, 'endap_hingga')) return p.endap_hingga ? Date.parse(p.endap_hingga) : null;
+  return p.created_at ? Date.parse(p.created_at) + ENDAP_DEF * HOUR : null;
+}
+const leftShort = ms => { const h = Math.ceil(ms / HOUR); return h < 48 ? `${h}j` : `${Math.ceil(h / 24)} hari`; };
+const leftLong = ms => { const h = Math.ceil(ms / HOUR); return h < 48 ? `${h} jam` : `${Math.ceil(h / 24)} hari`; };
+const dayFmt = new Intl.DateTimeFormat('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const canHover = matchMedia('(hover: hover)').matches;
 
@@ -920,8 +1116,15 @@ function seedData() {
     nodes.push({
       id: id[key], kind: 'produk', nama, harga, toko,
       harga_dicek_pada: dicek == null ? null : ago(dicek),
-      link: (toko === 'tiktok' ? tiktok : shopee)(nama), foto_url: null, catatan: null, status: 'ingin', ...extra,
+      link: (toko === 'tiktok' ? tiktok : shopee)(nama), foto_url: null, catatan: null, status: 'ingin',
+      kebutuhan: 'penunjang', endap_hingga: null, guna_menang: 0, ...extra,
     });
+    // endap: sisa jam masa endap; dicatat 72 jam sebelum batasnya
+    if (extra.endap != null) {
+      const until = Date.now() + extra.endap * 36e5;
+      Object.assign(nodes[nodes.length - 1], { endap_hingga: new Date(until).toISOString(), created_at: new Date(until - 72 * 36e5).toISOString() });
+      delete nodes[nodes.length - 1].endap;
+    }
   };
   const R = (type, a, b) => relations.push({ id: uuid(), type, from_id: id[a], to_id: id[b] });
 
@@ -933,20 +1136,20 @@ function seedData() {
   G('pagi', 'tujuan', 'Rutinitas Pagi', 'teal');
   G('trav', 'tujuan', 'Travel Kit', 'green');
 
-  P('aqua', 'Skin Aqua UV Moisture Gel', 89000, 'shopee', 6, { catatan: 'Ukuran 110 g' });
-  P('azar', 'Azarine Hydrasoothe Sunscreen Gel', 65000, 'tiktok', 41);
-  P('cera', 'Skintific 5X Ceramide Moisturizer', 139000, 'shopee', 12);
+  P('aqua', 'Skin Aqua UV Moisture Gel', 89000, 'shopee', 6, { catatan: 'Ukuran 110 g', kebutuhan: 'wajib' });
+  P('azar', 'Azarine Hydrasoothe Sunscreen Gel', 65000, 'tiktok', 41, { kebutuhan: 'wajib' });
+  P('cera', 'Skintific 5X Ceramide Moisturizer', 139000, 'shopee', 12, { endap: 20 });
   P('hada', 'Hada Labo Gokujyun Lotion', 45000, 'shopee', 52);
   P('niac', 'Somethinc Niacinamide Serum', 99000, 'tiktok', 3, { status: 'dibeli' });
   P('arm', 'Lengan Monitor Gas Spring', 349000, 'shopee', 9);
-  P('kchr', 'Keychron K2 Wireless', 1250000, 'shopee', 20);
+  P('kchr', 'Keychron K2 Wireless', 1250000, 'shopee', 20, { kebutuhan: 'keinginan', endap: 30 });
   P('rexs', 'Rexus Legionare MX5', 459000, 'tiktok', 8, { status: 'dibeli' });
-  P('lamp', 'Monitor Light Bar', 279000, 'shopee', 33);
-  P('mat', 'Desk Mat Kulit 80 cm', 75000, 'shopee', 15);
-  P('tote', 'Tote Bag Kanvas', 129000, 'tiktok', 5);
-  P('sand', 'Sandal EVA Ringan', 159000, 'shopee', 2);
+  P('lamp', 'Monitor Light Bar', 279000, 'shopee', 33, { endap: 46 });
+  P('mat', 'Desk Mat Kulit 80 cm', 75000, 'shopee', 15, { kebutuhan: 'keinginan' });
+  P('tote', 'Tote Bag Kanvas', 129000, 'tiktok', 5, { kebutuhan: 'keinginan', endap: 64 });
+  P('sand', 'Sandal EVA Ringan', 159000, 'shopee', 2, { kebutuhan: 'wajib' });
   P('botl', 'Botol Travel Silikon Set', 35000, 'shopee', null, { status: 'batal' });
-  P('pouch', 'Pouch Skincare Transparan', null, 'tiktok', null);
+  P('pouch', 'Pouch Skincare Transparan', null, 'tiktok', null, { kebutuhan: 'keinginan' });
 
   R('induk', 'sun', 'skin');
   R('induk', 'pel', 'skin');
@@ -993,7 +1196,8 @@ const LocalStore = {
   async reset() { memDB = seedData(); lsWrite(); return clone(memDB); },
 };
 
-const NODE_COLS = ['id', 'kind', 'nama', 'link', 'harga', 'harga_dicek_pada', 'toko', 'foto_url', 'catatan', 'status', 'warna', 'amplop', 'amplop_batas'];
+const KURASI_COLS = ['kebutuhan', 'endap_hingga', 'guna_menang'];
+const NODE_COLS = ['id', 'kind', 'nama', 'link', 'harga', 'harga_dicek_pada', 'toko', 'foto_url', 'catatan', 'status', 'warna', 'amplop', 'amplop_batas', ...KURASI_COLS];
 const pick = (o, keys) => Object.fromEntries(keys.map(k => [k, o[k] ?? null]));
 async function makeSupabaseStore() {
   await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.1');
@@ -1001,17 +1205,22 @@ async function makeSupabaseStore() {
   const sb = window.supabase.createClient(baseUrl, CONFIG.SUPABASE_ANON_KEY);
   const must = ({ data, error }) => { if (error) throw new Error(error.message); return data; };
   let batasCol = false;   // apakah database sudah punya kolom amplop_batas (schema.sql terbaru)
+  let kurasiCol = false;  // apakah database sudah punya kebutuhan, endap_hingga, guna_menang (schema v3)
   return {
     mode: 'supabase', sb,
     async load() {
       const [n, r] = await Promise.all([sb.from('nodes').select('*'), sb.from('relations').select('*')]);
       const rows = must(n);
       batasCol = rows.some(x => Object.prototype.hasOwnProperty.call(x, 'amplop_batas'));
+      // Tabel kosong tidak memperlihatkan kolom, jadi kolom kurasi diperiksa langsung
+      kurasiCol = rows.length ? rows.some(x => Object.prototype.hasOwnProperty.call(x, 'kebutuhan'))
+        : !(await sb.from('nodes').select(KURASI_COLS.join(',')).limit(1)).error;
       return { nodes: rows, relations: must(r) };
     },
     async saveNode(n) {
       const row = pick(n, NODE_COLS);
       if (!batasCol && row.amplop_batas == null) delete row.amplop_batas;   // database lama tetap jalan
+      if (!kurasiCol || n.kind !== 'produk') KURASI_COLS.forEach(k => delete row[k]);
       return must(await sb.from('nodes').upsert(row).select().single());
     },
     async deleteNode(id) { must(await sb.from('nodes').delete().eq('id', id)); },
@@ -1036,7 +1245,9 @@ function derive() {
     parent: new Map(), children: new Map(), depth: new Map(),
     home: new Map(), shade: new Map(),
     tergeser: new Set(), stale: new Set(),
+    endap: new Map(), score: new Map(), tujuan: new Map(),
   };
+  const now = Date.now();
   for (const n of nodes) {
     if (n.kind === 'produk') { d.memberOf.set(n.id, []); d.alt.set(n.id, []); d.pel.set(n.id, []); }
     else { d.members.set(n.id, []); d.children.set(n.id, []); }
@@ -1055,12 +1266,13 @@ function derive() {
     while (cur && k < 32) { k++; cur = d.parent.get(cur); }
     d.depth.set(n.id, k);
   }
-  // Subkategori yang warnanya sama dengan induknya diberi turunan warna (urut id supaya stabil antar muat)
+  // Subkategori selalu mengikuti warna kategori utamanya, diberi turunan warna (urut id supaya stabil antar muat)
+  const rootWarna = id => { let g = id, k = 0; while (d.parent.get(g) && k++ < 32) g = d.parent.get(g); return byId.get(g)?.warna || 'none'; };
   for (const n of nodes) {
     if (n.kind !== 'kategori') continue;
     const par = byId.get(d.parent.get(n.id));
-    if (!par || (par.warna || 'none') !== (n.warna || 'none')) continue;
-    const sibs = d.children.get(par.id).filter(id => (byId.get(id).warna || 'none') === (par.warna || 'none')).sort();
+    if (!par) continue;
+    const sibs = d.children.get(par.id).filter(id => byId.get(id)?.kind === 'kategori').sort();
     d.shade.set(n.id, sibs.indexOf(n.id) + d.depth.get(n.id) - 1);
   }
   // Komponen terhubung pada sisi "alternatif" (union-find) → satu keputusan beli per komponen
@@ -1074,11 +1286,22 @@ function derive() {
     if (p.status === 'dibeli' && !d.compBought.has(root)) d.compBought.set(root, p.id);
   }
   for (const n of nodes) {
-    if (n.kind !== 'produk') { d.color.set(n.id, n.warna || 'none'); continue; }
+    if (n.kind !== 'produk') { d.color.set(n.id, n.kind === 'kategori' ? rootWarna(n.id) : n.warna || 'none'); continue; }
     const groups = d.memberOf.get(n.id).map(id => byId.get(id));
     const home = groups.filter(g => g.kind === 'kategori').sort((a, b) => d.depth.get(b.id) - d.depth.get(a.id))[0] || groups[0];
-    d.color.set(n.id, home?.warna || 'none');
+    d.color.set(n.id, home ? (home.kind === 'kategori' ? rootWarna(home.id) : home.warna || 'none') : 'none');
     if (home) d.home.set(n.id, home.id);
+    // Masa endap: sisa waktu dan seberapa penuh cincinnya
+    const until = endapUntil(n);
+    const start = n.created_at ? Date.parse(n.created_at) : until != null ? until - ENDAP_DEF * HOUR : null;
+    const left = until == null ? 0 : Math.max(0, until - now);
+    const span = until != null && start != null ? Math.max(HOUR, until - start) : HOUR;
+    d.endap.set(n.id, { until, start, left, frac: left ? Math.min(1, Math.max(0, 1 - left / span)) : 1 });
+    // Skor guna: kebutuhan + tujuan + pelengkap yang sudah dibeli + selesai endap + kemenangan Adu guna
+    const tj = groups.filter(g => g.kind === 'tujuan');
+    d.tujuan.set(n.id, tj.map(g => g.id));
+    const pelB = d.pel.get(n.id).filter(id => byId.get(id)?.status === 'dibeli').length;
+    d.score.set(n.id, NEED_W[needOf(n)] + tj.length * 25 + pelB * 15 + (left ? 0 : 10) + (Number(n.guna_menang) || 0) * WIN_W);
     if (n.status === 'ingin') {
       if (d.compBought.has(d.comp.get(n.id))) d.tergeser.add(n.id);
       const ds = daysSince(n.harga_dicek_pada);
@@ -1158,7 +1381,7 @@ const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v == n
 const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* mode privat */ } };
 let fCat = lsGet('wishmap:fcat', null), fSub = lsGet('wishmap:fsub', null), fStale = false;
 let sortBy = lsGet('wishmap:sort', 'baru');
-const SORTS = { baru: 'Terbaru', murah: 'Termurah', basi: 'Harga basi dulu' };
+const SORTS = { baru: 'Terbaru', murah: 'Termurah', basi: 'Harga basi dulu', guna: 'Paling berguna' };
 let drawerOpen = lsGet('wishmap:drawer', false);
 function saveFilter() { lsSet('wishmap:fcat', fCat); lsSet('wishmap:fsub', fSub); }
 
@@ -1245,6 +1468,7 @@ function renderPills() {
   sel.value = fStale ? 'stale' : sortBy;
   $('#sort-label').textContent = fStale ? `Harga basi · ${D.stale.size}` : SORTS[sortBy];
   sel.closest('.sort').classList.toggle('on', fStale);
+  $('#duel-btn').disabled = duelPool().length < 2;
   // Baris kedua: subkategori dari kategori yang dipilih
   const sub = $('#subpills');
   const kids = fCat && byId.get(fCat)?.kind === 'kategori' ? subtree(fCat).slice(1) : [];
@@ -1371,12 +1595,32 @@ function homeName(p) {
   return h ? byId.get(h).nama : (D.memberOf.get(p.id).length ? byId.get(D.memberOf.get(p.id)[0]).nama : 'Tanpa kategori');
 }
 const shopShort = { shopee: 'Shopee', tiktok: 'TikTok', lainnya: 'Toko lain' };
+/** Cincin masa endap 16×16: busur terisi sesuai waktu yang sudah lewat; penuh + centang bila siap diputus. */
+const RING_C = 37.7;   // 2π × 6
+/** Suhu keputusan 0..1: tetap hangat sampai 33% masa endap, lalu bergeser ke lavender. */
+const tempOf = frac => (frac <= 1 / 3 ? 0 : Math.min(1, (frac - 1 / 3) / (2 / 3))).toFixed(3);
+function ringSVG(frac, ready) {
+  return `<svg class="ering" viewBox="0 0 16 16" aria-hidden="true" style="--t:${tempOf(frac)}"><circle class="trk" cx="8" cy="8" r="6"/><circle class="val" cx="8" cy="8" r="6" transform="rotate(-90 8 8)" style="--off:${(RING_C * (1 - frac)).toFixed(2)}"/>${ready ? '<path class="ok" d="M5.5 8.2l1.7 1.7 3.3-3.5"/>' : ''}</svg>`;
+}
+/** Status keputusan barang aktif: masa endap atau siap diputus (null untuk yang sudah dibeli/batal/tergeser). */
+function decideState(p) {
+  if (p.status !== 'ingin' || D.tergeser.has(p.id)) return null;
+  const e = D.endap.get(p.id);
+  return e.left ? { endap: true, ...e, text: `Endap · ${leftShort(e.left)}`, long: `Masa endap, sisa ${leftLong(e.left)}` }
+    : { endap: false, ...e, text: 'Siap diputus', long: 'Siap diputus' };
+}
+function needText(p) {
+  const nt = D.tujuan.get(p.id).length;
+  return `${NEED[needOf(p)]}${nt ? ` · ${nt} tujuan` : ''}`;
+}
+const HOLD_RING = '<svg class="hring" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="11" transform="rotate(-90 14 14)"/></svg>';
 function itemHTML(p, pins) {
   const foto = safeUrl(p.foto_url);
   const done = p.status === 'dibeli', off = p.status === 'batal' || D.tergeser.has(p.id);
   const stale = D.stale.has(p.id);
   const root = D.comp.get(p.id), pin = pins?.get(root);
-  const cls = ['item', foto ? 'photo' : 'swatch', done && 'done', off && 'off', pin && (pin === p.id ? 'sim-pin' : 'sim-off'), p.id === selectedId && 'is-sel'].filter(Boolean).join(' ');
+  const st = decideState(p);
+  const cls = ['item', foto ? 'photo' : 'swatch', done && 'done', off && 'off', st && (st.endap ? 'endap' : 'ready'), pin && (pin === p.id ? 'sim-pin' : 'sim-off'), p.id === selectedId && 'is-sel'].filter(Boolean).join(' ');
   let price;
   if (done) price = '<span class="badge-ok">Dibeli</span>';
   else if (p.status === 'batal') price = '<span class="badge-off">Batal</span>';
@@ -1384,10 +1628,10 @@ function itemHTML(p, pins) {
   else if (p.harga == null) price = '<span class="price none">Tanpa harga</span>';
   else price = `<span class="price">${stale ? '<span class="stale-dot" role="img" aria-label="Harga perlu dicek ulang" title="Harga perlu dicek ulang"></span>' : ''}Rp ${nf.format(p.harga)}</span>`;
   const na = D.alt.get(p.id).length, np = D.pel.get(p.id).length;
-  const relTxt = [na && `⇄ ${na} alternatif`, np && `+ ${np} pelengkap`].filter(Boolean).join(' · ');
+  const relTxt = [na && `${na} alternatif`, np && `${np} pelengkap`].filter(Boolean).join(' · ');
   const canCheck = p.status !== 'batal';
-  return `<article class="${cls}" role="listitem" data-id="${p.id}" style="--cc:${mapColor(p.id)}">
-    <div class="sw sw-buy" aria-hidden="true">${CHECK}<span>${done ? 'Batal dibeli' : 'Dibeli'}</span></div>
+  return `<article class="${cls}" role="listitem" data-id="${p.id}" style="--cc:${mapColor(p.id)}${st?.endap ? `;--t:${tempOf(st.frac)}` : ''}">
+    <div class="sw sw-buy" aria-hidden="true">${CHECK}<span>${done ? 'Batal dibeli' : 'Putuskan'}</span></div>
     <div class="sw sw-del" aria-hidden="true"><span>Hapus</span>${TRASH}</div>
     <div class="face">
     <button type="button" class="open" data-act="open" aria-label="Buka detail ${esc(p.nama)}"></button>
@@ -1395,8 +1639,9 @@ function itemHTML(p, pins) {
     <div class="bd">
       <p class="meta"><span class="cat">${esc(homeName(p))}</span>${p.toko ? `<span class="shop"> · ${shopShort[p.toko]}</span>` : ''}</p>
       <h3>${esc(p.nama)}</h3>
+      ${st ? `<p class="util"><span class="estate${st.endap ? '' : ' ready'}" title="${st.long}">${ringSVG(st.frac, !st.endap)}<span aria-hidden="true">${st.text}</span><span class="vh">${st.long}</span></span><span class="need">${needText(p)}</span></p>` : ''}
       ${!foto && p.catatan ? `<p class="note-s">${esc(p.catatan)}</p>` : ''}
-      <div class="foot">${price}${canCheck ? `<button type="button" class="check" data-act="buy" aria-pressed="${done}" aria-label="${done ? 'Batalkan tanda dibeli' : 'Tandai dibeli'}: ${esc(p.nama)}">${CHECK}</button>` : ''}</div>
+      <div class="foot">${price}${canCheck ? `<button type="button" class="check" data-act="buy" aria-pressed="${done}" aria-label="${done ? 'Batalkan tanda dibeli' : 'Tahan untuk beli'}: ${esc(p.nama)}"${done ? '' : ' aria-describedby="hold-desc"'}>${done ? '' : HOLD_RING}${CHECK}</button>` : ''}</div>
       ${relTxt ? `<p class="relt">${relTxt}</p>` : ''}
     </div>
     </div>
@@ -1437,6 +1682,7 @@ function relayoutSoon() { clearTimeout(relayTimer); relayTimer = setTimeout(() =
 
 function sortList(list) {
   const cmpNew = (a, b) => ageKey(b) - ageKey(a);
+  if (sortBy === 'guna') return list.sort((a, b) => D.score.get(b.id) - D.score.get(a.id) || cmpNew(a, b));
   if (sortBy === 'murah') return list.sort((a, b) => (a.harga ?? Infinity) - (b.harga ?? Infinity) || cmpNew(a, b));
   if (sortBy === 'basi') {
     const age = p => (D.stale.has(p.id) ? 1e6 + (daysSince(p.harga_dicek_pada) ?? 1e5) : 0);
@@ -1445,7 +1691,7 @@ function sortList(list) {
   return list.sort(cmpNew);
 }
 
-let lastAdded = null;
+let lastAdded = null, lastIntro = null;
 function renderBoard() {
   const sid = scopeId();
   const inScope = sid ? scopeProducts(sid) : null;
@@ -1457,6 +1703,13 @@ function renderBoard() {
   sortList(active);
   const doneList = all.filter(p => !isActive(p)).sort((a, b) => (a.status === 'batal') - (b.status === 'batal') || ageKey(b) - ageKey(a));
   fillBoard($('#board'), active, pins);
+  const introKey = `${sid}|${sortBy}|${fStale}`;
+  if (active.length && introKey !== lastIntro && !reduceMotion) {
+    lastIntro = introKey;
+    const bd = $('#board');
+    bd.classList.add('intro');
+    setTimeout(() => bd.classList.remove('intro'), 1300);
+  }
   // Laci "Sudah dibeli"
   const dr = $('#drawer');
   dr.hidden = fStale || !doneList.length;
@@ -1536,7 +1789,11 @@ $('main').addEventListener('click', e => {
   const id = item.dataset.id, act = b.dataset.act;
   if (act === 'open') return select(id);
   if (act === 'rel') return select(id, { to: 'rel' });
-  if (act === 'buy') return quickBuy(id, b);
+  if (act === 'buy') {
+    // Barang aktif dibeli lewat tahan; ketukan biasa hanya untuk membatalkan tanda dibeli
+    const n = byId.get(id);
+    if (n?.status === 'dibeli' && Date.now() > holdQuietUntil) changeStatus(n, 'ingin');
+  }
 });
 
 /* ───────────── Status ───────────── */
@@ -1559,15 +1816,185 @@ async function changeStatus(n, v, { quiet = false, delay = 0 } = {}) {
     } else finish();
   } catch (err) { failed(err); refresh(); }
 }
-function quickBuy(id, btn) {
+/** Tandai dibeli dengan efek centang; dipanggil setelah tahan penuh atau dari Gerbang Refleksi. */
+function buyNow(id, btn = null) {
   const n = byId.get(id);
-  if (!n) return;
-  const to = n.status === 'dibeli' ? 'ingin' : 'dibeli';
-  const item = btn.closest('.item');
-  btn.setAttribute('aria-pressed', String(to === 'dibeli'));
-  if (to === 'dibeli') { burst(btn); if (!reduceMotion) item.classList.add('leaving'); }
-  changeStatus(n, to, { delay: reduceMotion ? 0 : 900 });
+  if (!n || n.status === 'dibeli') return;
+  btn = btn?.isConnected ? btn : document.querySelector(`#board .item[data-id="${id}"] .check`);
+  if (btn) {
+    btn.classList.remove('holding', 'full');
+    btn.setAttribute('aria-pressed', 'true');
+    burst(btn);
+    if (!reduceMotion) btn.closest('.item').classList.add('leaving');
+  }
+  changeStatus(n, 'dibeli', { delay: btn && !reduceMotion ? 900 : 0 });
 }
+/** Semua jalan menuju "dibeli" lewat sini: masih endap atau makan porsi besar amplop → Gerbang Refleksi dulu. */
+function requestBuy(n, btn = null, { force = false } = {}) {
+  const gi = gateInfo(n);
+  if (gi.need || force) return openGate(n, gi, btn);
+  buyNow(n.id, btn);
+}
+
+/* ───────────── Tahan untuk beli (1,5 dtk) ───────────── */
+let hold = null, holdQuietUntil = 0;
+function holdBegin(btn) {
+  const item = btn.closest('.item'), n = item && byId.get(item.dataset.id);
+  if (!n || n.status !== 'ingin' || hold) return;
+  btn.classList.remove('full', 'nudge');
+  void btn.offsetWidth;   // mulai ulang transisi cincin
+  btn.classList.add('holding');
+  item.classList.add('pressing');
+  hold = { btn, item, id: n.id, t0: performance.now(), timer: setTimeout(holdDone, HOLD_MS) };
+}
+function holdEnd(released) {
+  if (!hold) return;
+  const { btn, item, t0, timer } = hold;
+  hold = null;
+  clearTimeout(timer);
+  btn.classList.remove('holding');
+  item.classList.remove('pressing');
+  if (released && performance.now() - t0 < 400) holdHint(btn, item);
+}
+function holdHint(btn, item) {
+  btn.classList.remove('nudge'); void btn.offsetWidth; btn.classList.add('nudge');
+  const face = item.querySelector('.face');
+  face.querySelector('.hold-tip')?.remove();
+  const tip = document.createElement('span');
+  tip.className = 'hold-tip'; tip.setAttribute('role', 'status'); tip.textContent = 'Tahan 1,5 dtk untuk beli';
+  face.appendChild(tip);
+  setTimeout(() => tip.remove(), 1900);
+}
+function holdDone() {
+  const { btn, item, id } = hold;
+  hold = null;
+  holdQuietUntil = Date.now() + 700;   // klik/keyup susulan dari tahanan ini tidak dihitung sebagai ketukan
+  item.classList.remove('pressing');
+  btn.classList.add('full');
+  const n = byId.get(id);
+  if (n) requestBuy(n, btn);
+}
+$('main').addEventListener('pointerdown', e => {
+  const btn = e.target.closest('.check');
+  if (!btn || e.button > 0 || byId.get(btn.closest('.item')?.dataset.id)?.status !== 'ingin') return;
+  e.preventDefault();
+  holdBegin(btn);
+});
+document.addEventListener('pointerup', () => holdEnd(true));
+document.addEventListener('pointercancel', () => holdEnd(false));
+$('main').addEventListener('pointerout', e => { if (hold && e.target.closest('.check') === hold.btn && !hold.btn.contains(e.relatedTarget)) holdEnd(false); });
+$('main').addEventListener('contextmenu', e => { if (e.target.closest('.check')) e.preventDefault(); });
+$('main').addEventListener('keydown', e => {
+  if ((e.key !== ' ' && e.key !== 'Enter') || !e.target.classList?.contains('check')) return;
+  if (byId.get(e.target.closest('.item').dataset.id)?.status !== 'ingin') return;   // sudah dibeli: Enter/Spasi biasa membatalkan
+  e.preventDefault();
+  if (!e.repeat) holdBegin(e.target);
+});
+$('main').addEventListener('keyup', e => {
+  if ((e.key === ' ' || e.key === 'Enter') && hold?.btn === e.target) { e.preventDefault(); holdEnd(true); }
+});
+
+/* ───────────── Gerbang Refleksi ───────────── */
+/** Kategori terdekat (barang itu sendiri atau induknya) yang punya batas amplop. */
+function budgetCat(p) {
+  for (const gid of D.memberOf.get(p.id)) {
+    let g = gid, k = 0;
+    while (g && k++ < 32) { const n = byId.get(g); if (n?.kind === 'kategori' && n.amplop_batas != null) return n; g = D.parent.get(g); }
+  }
+  return null;
+}
+function gateInfo(p) {
+  const e = D.endap.get(p.id), cat = budgetCat(p);
+  let budget = null;
+  if (cat) {
+    const ids = [...scopeProducts(cat.id)];
+    const used = ids.map(id => byId.get(id)).filter(x => x?.status === 'dibeli' && x.harga != null).reduce((a, x) => a + x.harga, 0);
+    const sisa = cat.amplop_batas - used;
+    budget = { cat, ids, used, sisa, big: p.harga != null && (p.harga > sisa || p.harga >= sisa * .4) };
+  }
+  return { endap: e.left > 0, left: e.left, until: e.until, budget, need: e.left > 0 || !!budget?.big };
+}
+const dlgGate = $('#dlg-gate');
+let kbdMode = false;
+document.addEventListener('keydown', () => { kbdMode = true; }, true);
+document.addEventListener('pointerdown', () => { kbdMode = false; }, true);
+let gateCtx = null;
+function openGate(n, gi, btn) {
+  gateCtx = { id: n.id, btn, bought: false };
+  const b = gi.budget, price = n.harga ?? 0;
+  const why = [];
+  if (gi.endap) why.push(`Masih masa endap, sisa ${leftLong(gi.left)}`);
+  if (b?.big) why.push(b.sisa > 0 ? `Mengambil ${Math.min(100, Math.round((price / b.sisa) * 100))}% sisa amplop ${esc(b.cat.nama)}` : `Amplop ${esc(b.cat.nama)} sudah habis`);
+  if (!why.length) why.push('Siap diputus');
+  // Dampak amplop: terpakai, barang ini, sisa setelahnya
+  let impact = '';
+  if (b) {
+    const lim = Math.max(1, b.cat.amplop_batas), after = b.sisa - price;
+    const pc = v => Math.max(0, Math.min(100, (v / lim) * 100)).toFixed(1);
+    const uP = pc(b.used), tP = Math.min(100 - uP, pc(price));
+    impact = `<section class="gimpact" aria-label="Dampak ke amplop ${esc(b.cat.nama)}">
+      <div class="gbar" role="img" aria-label="Terpakai ${rp(b.used)}, barang ini ${rp(price)}, dari batas ${rp(b.cat.amplop_batas)}"><span class="u" style="width:${uP}%"></span><span class="t${after < 0 ? ' over' : ''}" style="width:${tP}%"></span></div>
+      <p class="glegend"><span><i class="k u"></i>Terpakai ${rp(b.used)}</span><span><i class="k t"></i>Barang ini ${rp(price)}</span><span>${after >= 0 ? `<i class="k s"></i>Sisa ${rp(after)}` : `<b class="over">Lewat ${rp(-after)}</b>`}</span></p>
+    </section>`;
+  }
+  // Pengorbanan: barang lain yang menunggu di kategori yang sama
+  const pool = b ? b.ids : D.home.get(n.id) ? [...(scopeProducts(D.home.get(n.id)) || [])] : [];
+  const others = pool.map(id => byId.get(id))
+    .filter(o => o && o.id !== n.id && o.status === 'ingin' && !D.tergeser.has(o.id) && D.comp.get(o.id) !== D.comp.get(n.id))
+    .sort((x, y) => D.score.get(y.id) - D.score.get(x.id)).slice(0, 4);
+  let room = b ? b.sisa - price : Infinity;
+  const rows = others.map(o => {
+    const fits = o.harga == null || o.harga <= room;
+    if (fits && o.harga != null) room -= o.harga;
+    return `<li><span class="nm">${esc(o.nama)}<span class="sub">${NEED[needOf(o)]}</span></span><span class="pr">${rp(o.harga)}${b ? `<span class="${fits ? 'fit' : 'out'}">${fits ? 'Masih muat' : 'Tidak muat lagi'}</span>` : ''}</span></li>`;
+  }).join('');
+  const where = b ? b.cat.nama : D.home.get(n.id) ? byId.get(D.home.get(n.id)).nama : '';
+  const cost = rows ? `<section class="gcost"><h3>${b ? `Barang lain di amplop ${esc(where)}` : `Masih menunggu di ${esc(where)}`}</h3><ul>${rows}</ul></section>` : '';
+  const tj = D.tujuan.get(n.id).map(id => byId.get(id).nama);
+  const until = new Date(Math.max(Date.now(), gi.until || 0) + 72 * HOUR);
+  $('#gate-body').innerHTML = `
+    <header>
+      <div class="gate-h"><p class="gate-why">${why.join(' · ')}</p><h2 id="gt-title">${esc(n.nama)}</h2></div>
+      <button type="button" class="icon-btn" data-close aria-label="Tutup">${xIcon}</button>
+    </header>
+    <div class="fields">
+      <p class="gate-price">${rp(n.harga)}</p>
+      ${impact}${cost}
+      <div class="gate-choices" role="group" aria-label="Alasan keputusan">
+        <button type="button" class="choice" data-gate="butuh"><b>Memang dibutuhkan</b><span>Kebutuhan pokok, atau pengganti yang rusak</span></button>
+        <button type="button" class="choice" data-gate="tujuan"${tj.length ? '' : ' disabled'}><b>Mendukung tujuan</b><span>${tj.length ? esc(tj.join(', ')) : 'Belum terhubung ke tujuan mana pun'}</span></button>
+        <button type="button" class="choice calm" data-gate="endap"><b>Endapkan 3 hari lagi</b><span>Diputus lagi ${dayFmt.format(until)}</span></button>
+      </div>
+    </div>`;
+  dlgGate.showModal();
+  // Dari papan ketik: fokus langsung ke pilihan pertama. Dari sentuh/kursor: tidak ada pilihan yang tampak "terpilih".
+  if (kbdMode) dlgGate.querySelector('.choice:not(:disabled)')?.focus();
+}
+dlgGate.addEventListener('close', () => {
+  const c = gateCtx;
+  gateCtx = null;
+  if (c && !c.bought && c.btn?.isConnected) c.btn.classList.remove('holding', 'full');
+});
+dlgGate.addEventListener('click', async e => {
+  const b = e.target.closest('[data-gate]');
+  if (!b || !gateCtx) return;
+  const n = byId.get(gateCtx.id);
+  if (!n) return dlgGate.close();
+  if (b.dataset.gate === 'endap') {
+    const old = { ...n }, until = new Date(Math.max(Date.now(), endapUntil(n) || 0) + 72 * HOUR);
+    dlgGate.close();
+    try {
+      await saveNode({ ...n, endap_hingga: until.toISOString() });
+      refresh();
+      toast(`Ditunda sampai ${dayFmt.format(until)}`, '', { label: 'Urungkan', run: () => restoreNode(old) });
+    } catch (err) { failed(err); }
+    return;
+  }
+  gateCtx.bought = true;
+  const btn = gateCtx.btn;
+  dlgGate.close();
+  buyNow(n.id, btn);
+});
 
 /* ───────────── Geser kartu: kanan = dibeli, kiri = hapus (sentuh/pena) ───────────── */
 async function swipeDelete(id) {
@@ -1604,8 +2031,9 @@ async function swipeDelete(id) {
     if (dx > 0) {
       face.style.transform = '';
       setTimeout(clear, 320);
-      const btn = item.querySelector('.check');
-      if (btn) quickBuy(id, btn);
+      const n = byId.get(id), btn = item.querySelector('.check');
+      if (n?.status === 'dibeli') changeStatus(n, 'ingin');
+      else if (n) requestBuy(n, btn, { force: true });
     } else {
       face.style.transform = 'translateX(-105%)';
       setTimeout(() => swipeDelete(id), reduceMotion ? 0 : 200);
@@ -1709,6 +2137,14 @@ function pelBlock(n) {
   const body = list.length ? `<div class="chips">${list.map(o => relChip(o, true, 'pelengkap')).join('')}</div>` : '<p class="hint">Belum ada.</p>';
   return `<section class="rel" id="rel-pel"><div class="rel-h"><h3>Pelengkap</h3><button type="button" class="mini" data-act="rel-add" data-type="pelengkap" aria-expanded="${relOpen === 'pelengkap'}">${relOpen === 'pelengkap' ? 'Selesai' : '+ Tambah'}</button></div>${relOpen === 'pelengkap' ? relPickerHTML('pelengkap') : ''}${body}</section>`;
 }
+/** Detail: status masa endap, skor guna, tingkat kebutuhan, dan pengatur durasi endap. */
+function decideBlock(n) {
+  const st = decideState(n);
+  const head = st ? `<p class="estate-row"><span class="estate${st.endap ? '' : ' ready'}">${ringSVG(st.frac, !st.endap)}<span>${st.endap ? `Endap · sisa ${leftLong(st.left)}` : 'Siap diputus'}</span></span><span class="score">Skor guna ${D.score.get(n.id)}</span></p>` : '';
+  const need = `<div class="seg" role="group" aria-label="Tingkat kebutuhan">${Object.entries(NEED).map(([k, v]) => `<button type="button" data-act="need" data-v="${k}" aria-pressed="${needOf(n) === k}">${v}</button>`).join('')}</div>`;
+  const opts = n.status === 'ingin' ? `<div class="endap-opts" role="group" aria-label="Atur masa endap, dihitung dari sekarang">${ENDAP_OPT.map(([h, t]) => `<button type="button" class="mini" data-act="endap" data-h="${h}">${t}</button>`).join('')}</div>` : '';
+  return `<section class="decide" aria-label="Keputusan">${head}${need}${opts}</section>`;
+}
 function productDetail(n) {
   const groups = D.memberOf.get(n.id).map(id => byId.get(id));
   const ds = daysSince(n.harga_dicek_pada), stale = D.stale.has(n.id);
@@ -1729,6 +2165,7 @@ function productDetail(n) {
       <button type="button" class="bigprice" data-act="edit-price" title="Ketuk untuk mengubah harga" aria-label="Ubah harga, sekarang ${n.harga == null ? 'belum ada' : rp(n.harga)}">${n.harga == null ? 'Isi harga' : rp(n.harga)}${pencil}</button>
       ${n.harga == null ? '' : `<div class="checked${stale ? ' is-stale' : ''}"><span>${stale ? 'Perlu dicek · ' : ''}${agoText(ds)}</span><button type="button" class="mini" data-act="fresh">Harga masih sama</button></div>`}
       ${note}
+      ${decideBlock(n)}
       <div class="seg" role="group" aria-label="Status barang">
         ${Object.keys(STATUS).map(s => `<button type="button" class="s-${s}" data-act="status" data-v="${s}" aria-pressed="${n.status === s}">${STATUS[s]}</button>`).join('')}
       </div>
@@ -1947,7 +2384,7 @@ function chipToggle(container, kind, set) {
     return;
   }
   container.innerHTML = groups.map(g =>
-    `<button type="button" class="chip toggle" data-id="${g.id}" aria-pressed="${set.has(g.id)}" style="${ccStyle(g.warna)}"><span class="dot"></span><span class="nm">${esc(labelOf(g))}</span></button>`).join('');
+    `<button type="button" class="chip toggle" data-id="${g.id}" aria-pressed="${set.has(g.id)}" style="--cc:${mapColor(g.id)}"><span class="dot"></span><span class="nm">${esc(labelOf(g))}</span></button>`).join('');
 }
 function renderPicker(which) {
   const root = $(`#fp-${which}`), set = fctx[which], other = fctx[which === 'alt' ? 'pel' : 'alt'];
@@ -2002,6 +2439,12 @@ function openProductForm(id = null, preset = {}) {
   $('#fp-foto').value = n?.foto_url || '';
   $('#fp-catatan').value = n?.catatan || '';
   $('#fp-more').open = !!(n?.foto_url || n?.catatan);
+  document.querySelectorAll('#fp-need input').forEach(i => { i.checked = i.value === (n ? needOf(n) : 'penunjang'); });
+  // Barang baru: 3 hari. Edit: tidak ada yang dipilih = masa endap tetap; pilihan baru dihitung dari sekarang.
+  document.querySelectorAll('#fp-endap input').forEach(i => { i.checked = !n && i.value === String(ENDAP_DEF); });
+  const left = n ? D.endap.get(n.id).left : 0;
+  $('#fp-endap-now').hidden = !n;
+  if (n) $('#fp-endap-now').textContent = left ? `Sisa ${leftLong(left)}. Pilihan baru dihitung dari sekarang.` : 'Sudah siap diputus. Pilih durasi untuk mengendapkan lagi.';
   $('#fp-nama-err').hidden = true;
   $('#fp-alt-q').value = ''; $('#fp-pel-q').value = '';
   chipToggle($('#fp-kat'), 'kategori', fctx.groups);
@@ -2037,7 +2480,13 @@ $('#form-product').addEventListener('submit', async e => {
     foto_url: $('#fp-foto').value.trim() || null,
     catatan: $('#fp-catatan').value.trim() || null,
     status: old?.status || 'ingin', warna: null, amplop: null,
+    kebutuhan: document.querySelector('#fp-need input:checked')?.value || 'penunjang',
+    guna_menang: old?.guna_menang || 0,
   };
+  const eh = document.querySelector('#fp-endap input:checked')?.value;
+  if (eh != null) row.endap_hingga = endapAt(Number(eh));
+  else if (!old) row.endap_hingga = endapAt(ENDAP_DEF);
+  if (!old) row.created_at = new Date().toISOString();
   if (harga == null) row.harga_dicek_pada = null;
   else if (!old || old.harga !== harga || !old.harga_dicek_pada) row.harga_dicek_pada = isoLocal();
   const btn = $('#fp-submit');
@@ -2083,6 +2532,8 @@ function syncKindUI() {
   $('#fg-amplop-field').hidden = true;   // belum tersambung ke sheet budget
   $('#fg-batas-field').hidden = kind !== 'kategori';
   $('#fg-parent-field').hidden = kind !== 'kategori' || $('#fg-parent').options.length < 2;
+  // Subkategori memakai warna kategori utamanya; hanya kategori utama dan tujuan yang memilih warna
+  $('#fg-warna-field').hidden = kind === 'kategori' && !!$('#fg-parent').value;
   $('#fg-nama').placeholder = kind === 'kategori' ? 'Contoh: Skincare' : 'Contoh: Rutinitas Pagi';
 }
 document.querySelectorAll('#form-group input[name="kind"]').forEach(i => i.addEventListener('change', syncKindUI));
@@ -2101,11 +2552,7 @@ function setWarna(warna) {
   if (HEX.test(warna)) setCustom(warna);
   else { $(`#fg-w-${warna}`).checked = true; $('#fg-hex').value = ''; }
 }
-$('#fg-parent').addEventListener('change', e => {
-  // subkategori baru ikut warna induk, kecuali warnanya sudah dipilih sendiri
-  const par = byId.get(e.target.value);
-  if (!gctxId && !colorTouched && par?.warna) setWarna(par.warna);
-});
+$('#fg-parent').addEventListener('change', syncKindUI);
 ['#fg-warna', '#fg-picker', '#fg-hex'].forEach(sel => $(sel).addEventListener('input', () => { colorTouched = true; }));
 $('#fg-warna').addEventListener('change', () => { colorTouched = true; });
 
@@ -2135,8 +2582,10 @@ $('#form-group').addEventListener('submit', async e => {
   const nama = $('#fg-nama').value.trim();
   if (!nama) { $('#fg-nama-err').hidden = false; $('#fg-nama').focus(); return; }
   const kind = document.querySelector('#form-group input[name="kind"]:checked').value;
+  const parentSel = kind === 'kategori' ? $('#fg-parent').value || null : null;
   let warna = document.querySelector('#fg-warna input:checked')?.value || 'blue';
-  if (warna === 'custom') {
+  if (parentSel) warna = D.color.get(parentSel) || 'none';   // subkategori: warna bawaan dari kategori utama
+  else if (warna === 'custom') {
     const typed = normHex($('#fg-hex').value);
     if ($('#fg-hex').value.trim() && !HEX.test(typed)) { $('#fg-hex-err').hidden = false; $('#fg-hex').focus(); return; }
     warna = (HEX.test(typed) ? typed : $('#fg-picker').value).toUpperCase();
@@ -2341,7 +2790,7 @@ $('#card').addEventListener('click', async e => {
     if (act === 'goto') return select(b.dataset.id);
     if (act === 'goto-group') return select(b.dataset.id);
     if (act === 'edit') return openProductForm(n.id);
-    if (act === 'status') return changeStatus(n, b.dataset.v);
+    if (act === 'status') return b.dataset.v === 'dibeli' && n.status !== 'dibeli' ? requestBuy(n) : changeStatus(n, b.dataset.v);
     if (act === 'inline-cancel') return renderCard();
     if (act === 'edit-price') return openInline(b, inlineMoney('price', n.harga, 'Harga baru'));
     if (act === 'edit-note') {
@@ -2352,6 +2801,15 @@ $('#card').addEventListener('click', async e => {
     if (act === 'rel-pick') { const t = relOpen; relOpen = null; return setRelation(n.id, b.dataset.id, t); }
     if (act === 'rel-rm') return setRelation(n.id, b.dataset.id, null);
     if (act === 'sim-pick') return togglePick(b.dataset.id);
+    if (act === 'need' || act === 'endap') {
+      const old = { ...n };
+      const row = act === 'need' ? { ...n, kebutuhan: b.dataset.v } : { ...n, endap_hingga: endapAt(Number(b.dataset.h)) };
+      if (act === 'need' && b.dataset.v === needOf(n)) return;
+      await saveNode(row);
+      refresh();
+      const msg = act === 'need' ? `Kebutuhan: ${NEED[b.dataset.v]}` : Number(b.dataset.h) ? `Diendapkan sampai ${dayFmt.format(new Date(row.endap_hingga))}` : 'Masa endap dilewati';
+      return toast(msg, '', { label: 'Urungkan', run: () => restoreNode(old) });
+    }
     if (act === 'sim-clear') { const r = D.comp.get(b.dataset.id); for (const x of [...simPick]) if (D.comp.get(x) === r) simPick.delete(x); return refresh(); }
     if (act === 'fresh') {
       const old = { ...n };
@@ -2403,13 +2861,20 @@ function parsePrice(raw) {
   return null;
 }
 function parseCapture(raw) {
-  const out = { nama: '', harga: null, groups: [], unknown: [], link: null, toko: null, auto: false };
+  const out = { nama: '', harga: null, groups: [], unknown: [], link: null, toko: null, auto: false, need: null };
   let s = ' ' + raw.trim() + ' ';
   const um = s.match(/https?:\/\/[^\s]+/i);
   if (um) { out.link = um[0].replace(/[),.;]+$/, ''); out.toko = detectToko(out.link); s = s.replace(um[0], ' '); }
   s = s.replace(/(^|\s)#([\p{L}\p{N}_&-]+)/gu, (m0, sp, tag) => {
     const g = findGroup(tag);
     if (g) { if (!out.groups.includes(g.id)) out.groups.push(g.id); } else out.unknown.push(tag);
+    return ' ';
+  });
+  // !wajib, !penunjang, !keinginan (cukup 3 huruf awal: !waj, !pen, !kei)
+  s = s.replace(/(^|\s)!(\p{L}{3,})/gu, (m0, sp, w) => {
+    const k = Object.keys(NEED).find(x => x.startsWith(w.toLowerCase()));
+    if (!k) return m0;
+    out.need = k;
     return ' ';
   });
   const pr = parsePrice(s);
@@ -2426,6 +2891,7 @@ function renderPreview() {
   const toks = [];
   toks.push(`<span class="tok nm">${esc(p.nama || 'Tanpa nama')}</span>`);
   if (p.harga != null) toks.push(`<span class="tok rp">Rp ${nf.format(p.harga)}</span>`);
+  if (p.need) toks.push(`<span class="tok need">${NEED[p.need]}</span>`);
   for (const id of p.groups) { const g = byId.get(id); toks.push(`<span class="tok" style="--cc:${mapColor(id)}"><span class="dot"></span>${esc(g.nama)}${p.auto ? '' : ''}</span>`); }
   if (p.toko) toks.push(`<span class="tok">${TOKO[p.toko]}</span>`);
   for (const t of p.unknown) toks.push(`<span class="tok bad">#${esc(t)} belum ada</span>`);
@@ -2443,6 +2909,7 @@ async function quickAdd(raw) {
     id: uuid(), kind: 'produk', nama: p.nama, link: p.link, harga: p.harga, toko: p.toko,
     foto_url: null, catatan: null, status: 'ingin', warna: null, amplop: null,
     harga_dicek_pada: p.harga == null ? null : isoLocal(), created_at: new Date().toISOString(),
+    kebutuhan: p.need || 'penunjang', endap_hingga: endapAt(ENDAP_DEF), guna_menang: 0,
   };
   try {
     const saved = await saveNode(row);
@@ -2505,6 +2972,137 @@ $('#clip-x').addEventListener('click', dismissClip);
 addEventListener('focus', checkClipboard);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) checkClipboard(); });
 
+/* ───────────── Adu guna ───────────── */
+const dlgDuel = $('#dlg-duel');
+let duel = null;
+/** Barang aktif di saringan yang sedang dibuka; kalau kurang dari dua, semua barang aktif. */
+function duelPool() {
+  const all = nodes.filter(n => n.kind === 'produk' && n.status === 'ingin' && !D.tergeser.has(n.id));
+  const sid = scopeId(), inScope = sid ? scopeProducts(sid) : null;
+  const scoped = inScope ? all.filter(n => inScope.has(n.id)) : all;
+  return scoped.length >= 2 ? scoped : all;
+}
+/** Pasangan bertetangga dalam urutan skor: keputusan yang paling tipis selisihnya. */
+function nextPair() {
+  const pool = duelPool().sort((x, y) => D.score.get(y.id) - D.score.get(x.id) || x.id.localeCompare(y.id));
+  if (pool.length < 2) return null;
+  let pair, key;
+  for (let t = 0; t < 8; t++) {
+    const i = Math.floor(Math.random() * (pool.length - 1));
+    pair = Math.random() < .5 ? [pool[i], pool[i + 1]] : [pool[i + 1], pool[i]];
+    key = [pair[0].id, pair[1].id].sort().join();
+    if (key !== duel?.key) break;
+  }
+  return { a: pair[0], b: pair[1], key };
+}
+function dcardHTML(p, side) {
+  const st = decideState(p), foto = safeUrl(p.foto_url), e = D.endap.get(p.id);
+  const tj = D.tujuan.get(p.id).map(id => byId.get(id).nama);
+  const days = e.start != null ? Math.floor((Date.now() - e.start) / 864e5) : null;
+  return `<article class="dcard ${side}" data-side="${side}" style="--cc:${mapColor(p.id)}" aria-label="${esc(p.nama)}">
+    ${foto ? `<img class="dph" src="${esc(foto)}" alt="">` : ''}
+    <p class="dhead">${esc(homeName(p))}</p>
+    <div class="dbd">
+      <p class="util"><span class="estate${st.endap ? '' : ' ready'}">${ringSVG(st.frac, !st.endap)}<span>${st.text}</span></span></p>
+      <h3>${esc(p.nama)}</h3>
+      <p class="dprice">${rp(p.harga)}</p>
+      <dl class="dfacts">
+        <div><dt>Kebutuhan</dt><dd>${NEED[needOf(p)]}</dd></div>
+        <div><dt>Tujuan</dt><dd>${tj.length ? esc(tj.join(', ')) : 'Belum ada'}</dd></div>
+        ${days != null ? `<div><dt>Diendapkan</dt><dd>${days > 0 ? `${days} hari` : 'Kurang dari sehari'}</dd></div>` : ''}
+        ${p.guna_menang ? `<div><dt>Menang adu</dt><dd>${p.guna_menang} kali</dd></div>` : ''}
+      </dl>
+      <button type="button" class="btn wide pick" data-pick="${side}">Ini lebih berguna</button>
+    </div>
+  </article>`;
+}
+function renderDuel() {
+  const pr = nextPair();
+  if (!pr) { if (dlgDuel.open) dlgDuel.close(); return; }
+  duel = { ...pr, picked: null };
+  const stage = $('#duel-stage');
+  stage.dataset.win = '';
+  stage.innerHTML = `${dcardHTML(pr.a, 'a')}<span class="vs" aria-hidden="true">vs</span>${dcardHTML(pr.b, 'b')}`;
+  $('#duel-after').hidden = true;
+  $('#duel-skip').textContent = 'Lewati pasangan';
+  $('#duel-skip').classList.remove('primary');
+  stage.querySelector('.pick').focus({ preventScroll: true });
+}
+async function duelPick(side) {
+  if (!duel || duel.picked) return;
+  const win = byId.get((side === 'a' ? duel.a : duel.b).id), lose = byId.get((side === 'a' ? duel.b : duel.a).id);
+  duel.picked = { win: win.id, lose: lose.id };
+  const stage = $('#duel-stage');
+  stage.dataset.win = side;
+  stage.querySelectorAll('.pick').forEach(b => { b.disabled = true; if (b.dataset.pick === side) b.textContent = 'Dipilih'; });
+  try { await saveNode({ ...win, guna_menang: (Number(win.guna_menang) || 0) + 1 }); index(); D = derive(); } catch (err) { failed(err); }
+  const hw = D.home.get(win.id), hl = D.home.get(lose.id);
+  const sejenis = hw && hl && rootCat(hw) === rootCat(hl) && D.comp.get(win.id) !== D.comp.get(lose.id);
+  const after = $('#duel-after');
+  after.innerHTML = `<p class="dres"><b>${esc(win.nama)}</b> naik di urutan Paling berguna.</p>
+    <div class="dlose"><span>Untuk ${esc(lose.nama)}:</span>
+      <button type="button" class="mini" data-dact="endap">Endapkan 3 hari</button>
+      ${sejenis ? '<button type="button" class="mini" data-dact="alt">Jadikan alternatif</button>' : ''}
+    </div>`;
+  after.hidden = false;
+  const skip = $('#duel-skip');
+  skip.textContent = 'Pasangan berikutnya';
+  skip.classList.add('primary');
+  setTimeout(() => skip.focus({ preventScroll: true }), reduceMotion ? 0 : 380);
+}
+$('#duel-btn').addEventListener('click', () => { duel = null; renderDuel(); if (duel) dlgDuel.showModal(); });
+$('#duel-skip').addEventListener('click', renderDuel);
+dlgDuel.addEventListener('click', async e => {
+  const pick = e.target.closest('[data-pick]');
+  if (pick) return duelPick(pick.dataset.pick);
+  const b = e.target.closest('[data-dact]');
+  if (!b || !duel?.picked) return;
+  const lose = byId.get(duel.picked.lose), win = byId.get(duel.picked.win);
+  b.disabled = true;
+  try {
+    if (b.dataset.dact === 'endap') {
+      const until = new Date(Math.max(Date.now(), endapUntil(lose) || 0) + 72 * HOUR);
+      await saveNode({ ...lose, endap_hingga: until.toISOString() });
+      b.textContent = `Diendapkan sampai ${dayFmt.format(until)}`;
+    } else {
+      await syncRelations(win.id, { groups: [...D.memberOf.get(win.id)], alt: new Set([...D.alt.get(win.id), lose.id]), pel: new Set(D.pel.get(win.id).filter(x => x !== lose.id)) });
+      b.textContent = 'Sudah jadi alternatif';
+    }
+    index(); D = derive();
+  } catch (err) { b.disabled = false; failed(err); }
+});
+dlgDuel.addEventListener('keydown', e => {
+  if (duel?.picked || e.target.closest('input')) return;
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); duelPick('a'); }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); duelPick('b'); }
+});
+dlgDuel.addEventListener('close', () => { duel = null; refresh(); });
+
+/* Kartu sedikit miring mengikuti kursor (maks 3°), dengan kilau lembut. Hanya perangkat berkursor. */
+if (canHover && !reduceMotion) {
+  let tf = null, raf = 0, last = null;
+  const untilt = f => { f.classList.remove('tilting'); f.style.transform = ''; };
+  $('main').addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    last = e;
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      const face = last.target.closest?.('.board .item:not(.done):not(.off):not(.pressing) .face') || null;
+      if (tf && tf !== face) { untilt(tf); tf = null; }
+      if (!face) return;
+      const r = face.getBoundingClientRect();
+      const x = Math.min(1, Math.max(0, (last.clientX - r.left) / r.width)), y = Math.min(1, Math.max(0, (last.clientY - r.top) / r.height));
+      face.classList.add('tilting');
+      face.style.transform = `perspective(900px) rotateX(${((.5 - y) * 6).toFixed(2)}deg) rotateY(${((x - .5) * 6).toFixed(2)}deg)`;
+      face.style.setProperty('--gx', `${(x * 100).toFixed(1)}%`);
+      face.style.setProperty('--gy', `${(y * 100).toFixed(1)}%`);
+      tf = face;
+    });
+  });
+  $('main').addEventListener('pointerleave', () => { if (tf) { untilt(tf); tf = null; } });
+}
+
 /* ───────────── Tombol global & papan ketik ───────────── */
 $('#add-btn').addEventListener('click', () => openProductForm(null, scopeId() ? { groupId: scopeId() } : {}));
 /* Placeholder panjang di layar lebar, ringkas di HP */
@@ -2539,7 +3137,7 @@ document.addEventListener('keydown', e => {
   if (e.target.closest('input, textarea, select, [contenteditable]')) return;
   if (e.key === '/') { e.preventDefault(); openSearch(); }
   else if (e.key.toLowerCase() === 'n') { e.preventDefault(); qcIn.focus(); }
-  else if (e.key.toLowerCase() === 'b' && selectedId) { const n = byId.get(selectedId); if (n) changeStatus(n, n.status === 'dibeli' ? 'ingin' : 'dibeli'); }
+  else if (e.key.toLowerCase() === 'b' && selectedId) { const n = byId.get(selectedId); if (n) { if (n.status === 'dibeli') changeStatus(n, 'ingin'); else requestBuy(n); } }
 });
 
 /* ───────────── Mulai ───────────── */

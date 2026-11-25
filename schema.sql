@@ -48,6 +48,15 @@ alter table public.nodes add constraint amplop_batas_check check (
   amplop_batas is null or (amplop_batas >= 0 and kind = 'kategori')
 );
 
+-- v3: meja kurasi (opsional, hanya produk). Aman dijalankan ulang; aplikasi tetap jalan tanpa kolom ini.
+alter table public.nodes add column if not exists kebutuhan text default 'penunjang';
+alter table public.nodes add column if not exists endap_hingga timestamptz;
+alter table public.nodes add column if not exists guna_menang integer default 0;
+alter table public.nodes drop constraint if exists kebutuhan_check;
+alter table public.nodes add constraint kebutuhan_check check (
+  kebutuhan is null or kebutuhan in ('wajib', 'penunjang', 'keinginan')
+);
+
 -- Warna: 8 preset yang ikut tema terang/gelap, atau hex bebas #RRGGBB.
 -- drop + add supaya aman dijalankan ulang di database yang sudah ada.
 alter table public.nodes drop constraint if exists nodes_warna_check;
