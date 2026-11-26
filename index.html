@@ -46,47 +46,29 @@
   /* Teks langsung di atas gradasi: dihitung terhadap titik tergelap (lavender & rose penuh), ≥ 4.6:1 */
   --fg-2-on-mesh: #4B3E4D; --link-on-mesh: #003A9D; --danger-on-mesh: #8B0000;
   --glare: rgba(255, 255, 255, .55);
-  /* ── Thermal Cooling Aura: suhu keputusan dari hangat (impuls) ke sejuk (kepala dingin) ──
-     Pastel = permukaan saja (aura, kerudung, lencana). Garis/cincin memakai --ink-* (≥ 3:1 di --paper & --bg),
-     teks berwarna memakai --ink-*-text (≥ 4.5:1). Titik antara gradasi diambil dari interpolasi OKLCH
-     (bukan sRGB) supaya bagian tengah tidak kusam. */
-  --aura-warm: #E8A6B3;      /* Warm Impulse: baru dicatat, 0–33% masa endap, anggaran terpakai */
-  --aura-petal: #F7C9D3;     /* Soft Pause: transisi, bar simulasi, aura kartu menunggu */
-  --aura-lavender: #B5ABCC;  /* Contemplative Lavender: menimbang, Adu guna, rencana anggaran */
-  --aura-breeze: #B8D7EE;    /* Rational Clarity: masa endap tuntas, siap diputus */
-  --ink-warm: #D25C7B;       --ink-warm-text: #B23F60;
-  --ink-lavender: #8D79B5;   --ink-lavender-text: #725E98;
-  --ink-breeze: #4E89B2;     --ink-breeze-text: #326E95;
-  --grad-cooling: linear-gradient(135deg, #E8A6B3 0%, #F0B7C3 17.5%, #F7C9D3 35%, #D8B8D3 52.5%, #B5ABCC 70%, #B5C1E1 85%, #B8D7EE 100%);
-  --grad-cooling-ink: linear-gradient(135deg, #D25C7B 0%, #B26AA7 27%, #8D79B5 55%, #6F81BA 77%, #4E89B2 100%);
-  --veil-breeze: rgb(184 215 238 / .5); --veil-lavender: rgb(181 171 204 / .5); --veil-petal: rgb(247 201 211 / .5);
-  --badge-ready: #DFECF4;    /* breeze 45% di atas --paper */
-  --grad-duel-left: radial-gradient(circle at 20% 20%, rgb(247 201 211 / .55), rgb(232 166 179 / .18) 70%, transparent 100%);
-  --grad-duel-right: radial-gradient(circle at 80% 20%, rgb(184 215 238 / .55), rgb(181 171 204 / .18) 70%, transparent 100%);
-  /* Teks & tautan di atas kerudung aura hero (kasus terburuk: lavender 50% di atas --bg) */
-  --on-aura-link: #0051B6; --on-aura-danger: #AF0000;
+  /* Tinta suhu keputusan, dari hangat (impuls) ke sejuk (kepala dingin). Garis dan cincin, ≥ 3:1 di --paper & --bg. */
+  --ink-warm: #D25C7B;
+  --ink-lavender: #8D79B5;
+  --ink-breeze: #4E89B2;
+  --veil-breeze: rgb(184 215 238 / .5);
   --accent: #0071E3;
   --accent-hover: #0077ED;
   --accent-ink: #0051B6;   /* 5.0:1 di latar petal */
-  --accent-soft: #F2D4D7;
-  --blush: #F7C9D3;   /* = --aura-petal: DNA soft pink Wishy */
+  --blush: #F7C9D3;
   --blush-ink: #7D3140;
   --on-accent: #FFFFFF;
-  --on-bubble: #1D1D1F;
   --seg-on: #FFFFFF;
   --sel-bg: #F7C9D3; --sel-fg: #1E1B17;
   --ok: #1E7B34;
   --ok-fill: #34C759;
   --stale: #8A3C00;
   --danger: #AF0000;       /* 5.05:1 di latar petal */
-  --tint: 7%;
   --c-pink: #FF2D55; --c-orange: #FF9500; --c-yellow: #FFCC00; --c-green: #34C759; --c-teal: #30B0C7; --c-blue: #007AFF; --c-indigo: #5856D6; --c-purple: #AF52DE; --c-none: #8E8E93;
 
   --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, "Segoe UI", Roboto, sans-serif;
   --spring: cubic-bezier(.2, .8, .2, 1);
   --bounce: cubic-bezier(.3, 1.6, .5, 1);
   --r-sheet: 28px; --r-card: 22px; --r-control: 12px; --r-pill: 9999px;
-  --gap: 14px;
   --gutter-l: max(16px, env(safe-area-inset-left, 0px));
   --gutter-r: max(16px, env(safe-area-inset-right, 0px));
   --safe-b: env(safe-area-inset-bottom, 0px);
@@ -1007,17 +989,9 @@ const CONFIG = {
 const STALE_DAYS = 30;
 const COLORS = ['pink', 'orange', 'yellow', 'green', 'teal', 'blue', 'indigo', 'purple'];
 const HEX = /^#[0-9a-f]{6}$/i;
-/** Warna simpul: nama preset (ikut tema terang/gelap) atau hex bebas #RRGGBB. */
+/** Warna simpul: nama preset atau hex bebas #RRGGBB. */
 const cssColor = c => (HEX.test(c || '') ? c : `var(--c-${COLORS.includes(c) ? c : 'none'})`);
-/** Teks di atas warna bebas: pilih putih atau gelap, mana yang kontrasnya lebih tinggi (WCAG). */
-function inkOf(c) {
-  if (!HEX.test(c || '')) return 'var(--on-bubble)';
-  const [r, g, b] = [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16) / 255)
-    .map(v => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-  const L = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  return 1.05 / (L + 0.05) >= (L + 0.05) / 0.062 ? '#FFFFFF' : '#1C1C1E';
-}
-const ccStyle = c => `--cc: ${cssColor(c)}; --ink: ${inkOf(c)}`;
+const ccStyle = c => `--cc: ${cssColor(c)}`;
 /** Turunan warna untuk subkategori yang warnanya sama dengan induknya: [campuran, persen]. */
 const SHADES = [['white', 32], ['black', 22], ['white', 50], ['black', 36]];
 const TOKO = { shopee: 'Shopee', tiktok: 'TikTok Shop', lainnya: 'Toko lain' };
@@ -1070,18 +1044,6 @@ function agoText(n) {
 }
 const priceText = n => (n.status === 'dibeli' ? 'Dibeli' : n.status === 'batal' ? 'Batal'
   : D?.tergeser?.has(n.id) ? 'Alternatif dibeli' : n.harga == null ? 'Tanpa harga' : 'Rp ' + rpShort(n.harga));
-const initialOf = s => (String(s).match(/[\p{L}\p{N}]/u) || ['?'])[0].toUpperCase();
-/** Pecah teks per kata menjadi baris sepanjang <= max karakter; kata yang lebih panjang tetap utuh. */
-function wrapWords(s, max) {
-  const lines = [];
-  let cur = '';
-  for (const w of String(s).split(/\s+/).filter(Boolean)) {
-    if (cur && (cur + ' ' + w).length > max) { lines.push(cur); cur = w; }
-    else cur = cur ? cur + ' ' + w : w;
-  }
-  if (cur) lines.push(cur);
-  return lines;
-}
 function uuid() {
   if (crypto.randomUUID) return crypto.randomUUID();
   const b = crypto.getRandomValues(new Uint8Array(16));
@@ -1450,7 +1412,6 @@ menuBtn.addEventListener('click', () => toggleMenu());
 document.addEventListener('pointerdown', e => { if (!menuEl.hidden && !e.target.closest('.menu-wrap')) toggleMenu(false); });
 
 /* ───────────── Pill saring ───────────── */
-const warnIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M8 2.2l6.2 11H1.8z"></path><path d="M8 6.6v3.3" stroke-linecap="round"></path><circle cx="8" cy="11.6" r=".5" fill="currentColor"></circle></svg>';
 function activeCount(id) {
   const set = id ? scopeProducts(id) : new Set(nodes.filter(n => n.kind === 'produk').map(n => n.id));
   let k = 0; for (const p of set || []) if (byId.get(p)?.status === 'ingin') k++;
@@ -1719,41 +1680,47 @@ function renderBoard() {
     bd.classList.add('intro');
     setTimeout(() => bd.classList.remove('intro'), 1300);
   }
-  // Laci "Sudah dibeli"
-  const dr = $('#drawer');
-  dr.hidden = fStale || !doneList.length;
-  if (doneList.length) {
-    const nb = doneList.filter(p => p.status === 'dibeli').length, nx = doneList.length - nb;
-    $('#drawer-sum').innerHTML = `Sudah dibeli <span class="n">${nb}${nx ? ` · ${nx} batal` : ''}</span>`;
-    dr.open = drawerOpen;
-    if (drawerOpen) fillBoard($('#board-done'), doneList, null);
-    else $('#board-done').innerHTML = '';
-    dr._list = doneList;
-  }
-  // Kosong
-  const em = $('#empty');
-  const noProducts = !nodes.some(n => n.kind === 'produk');
-  if (!loaded) em.hidden = true;
-  else if (noProducts) {
-    em.innerHTML = `<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="10" width="22" height="30" rx="6" fill="var(--fill-2)"/><rect x="34" y="10" width="22" height="18" rx="6" fill="var(--blush)"/><rect x="34" y="32" width="22" height="22" rx="6" fill="var(--fill-2)"/><rect x="8" y="44" width="22" height="10" rx="5" fill="var(--fill)"/></svg>
-      <h2>Belum ada barang</h2><p>Tempel link Shopee atau TikTok, atau ketik nama dan harganya.</p>
-      <div class="row"><button type="button" class="btn" data-act="new-group">Buat kategori</button><button type="button" class="btn primary" data-act="focus-qc">Catat barang pertama</button></div>`;
-    em.hidden = false;
-  } else if (!active.length) {
-    const g = sid && byId.get(sid);
-    em.innerHTML = fStale ? '<h2>Tidak ada harga basi</h2>'
-      : `<h2>${g ? `Belum ada barang di ${esc(g.nama)}` : 'Semua sudah dibeli'}</h2>`;
-    em.hidden = false;
-  } else em.hidden = true;
-  // Simulasi
-  const sb = $('#sim-bar');
-  sb.hidden = !simPick.size;
-  if (simPick.size) sb.innerHTML = `<span><b>Simulasi</b> · ${simPick.size} pilihan, belum disimpan</span><button type="button" class="btn" data-act="sim-reset">Reset</button>`;
+  renderDrawer(doneList);
+  renderEmpty(active, sid);
+  renderSimBar();
   if (lastAdded) {
     const el = $(`#board .item[data-id="${lastAdded}"]`);
     if (el && !reduceMotion) el.classList.add('fresh-new');
     lastAdded = null;
   }
+}
+function renderDrawer(doneList) {
+  const dr = $('#drawer');
+  dr.hidden = fStale || !doneList.length;
+  if (!doneList.length) return;
+  const nb = doneList.filter(p => p.status === 'dibeli').length, nx = doneList.length - nb;
+  $('#drawer-sum').innerHTML = `Sudah dibeli <span class="n">${nb}${nx ? ` · ${nx} batal` : ''}</span>`;
+  dr.open = drawerOpen;
+  if (drawerOpen) fillBoard($('#board-done'), doneList, null);
+  else $('#board-done').innerHTML = '';
+  dr._list = doneList;
+}
+function emptyStateHTML(active, sid) {
+  if (!nodes.some(n => n.kind === 'produk')) {
+    return `<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="10" width="22" height="30" rx="6" fill="var(--fill-2)"/><rect x="34" y="10" width="22" height="18" rx="6" fill="var(--blush)"/><rect x="34" y="32" width="22" height="22" rx="6" fill="var(--fill-2)"/><rect x="8" y="44" width="22" height="10" rx="5" fill="var(--fill)"/></svg>
+      <h2>Belum ada barang</h2><p>Tempel link Shopee atau TikTok, atau ketik nama dan harganya.</p>
+      <div class="row"><button type="button" class="btn" data-act="new-group">Buat kategori</button><button type="button" class="btn primary" data-act="focus-qc">Catat barang pertama</button></div>`;
+  }
+  if (active.length) return null;
+  if (fStale) return '<h2>Tidak ada harga basi</h2>';
+  const g = sid && byId.get(sid);
+  return `<h2>${g ? `Belum ada barang di ${esc(g.nama)}` : 'Semua sudah dibeli'}</h2>`;
+}
+function renderEmpty(active, sid) {
+  const em = $('#empty');
+  const html = loaded ? emptyStateHTML(active, sid) : null;
+  em.hidden = !html;
+  if (html) em.innerHTML = html;
+}
+function renderSimBar() {
+  const sb = $('#sim-bar');
+  sb.hidden = !simPick.size;
+  if (simPick.size) sb.innerHTML = `<span><b>Simulasi</b> · ${simPick.size} pilihan, belum disimpan</span><button type="button" class="btn" data-act="sim-reset">Reset</button>`;
 }
 $('#drawer').addEventListener('toggle', () => {
   const dr = $('#drawer');
@@ -2010,20 +1977,19 @@ async function swipeDelete(id) {
   const n = byId.get(id);
   if (!n) return;
   const rels = relations.filter(r => r.from_id === id || r.to_id === id).map(r => ({ ...r }));
+  const restore = async () => {
+    try {
+      await saveNode(n);
+      for (const r of rels) relations.push(await store.addRelation({ ...r, id: uuid() }));
+      refresh();
+      toast('Dikembalikan');
+    } catch (err) { failed(err); refresh(); }
+  };
   try {
     await removeNode(id);
     if (selectedId === id) selectedId = null;
     refresh();
-    toast(`“${n.nama}” dihapus`, '', {
-      label: 'Urungkan', run: async () => {
-        try {
-          await saveNode(n);
-          for (const r of rels) relations.push(await store.addRelation({ ...r, id: uuid() }));
-          refresh();
-          toast('Dikembalikan');
-        } catch (err) { failed(err); refresh(); }
-      },
-    });
+    toast(`“${n.nama}” dihapus`, '', { label: 'Urungkan', run: restore });
   } catch (err) { failed(err); refresh(); }
 }
 (() => {
