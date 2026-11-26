@@ -7,8 +7,8 @@
 <meta name="color-scheme" content="light">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Wishy">
-<link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
+<link rel="icon" href="favicon.svg?v=4" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
 <title>Wishy</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
@@ -130,6 +130,15 @@ button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .top-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; min-height: 44px; max-width: 1280px; margin: 0 auto; }
 .brand { display: flex; align-items: center; gap: 9px; flex: none; }
 .brand svg { width: 26px; height: 26px; flex: none; }
+/* Logo: tiap faset punya token sendiri; kelas logo-plum / logo-white membuatnya satu warna */
+.brand { --logo-1: var(--ink-breeze, #4E89B2); --logo-2: var(--ink-lavender, #8D79B5); --logo-3: var(--fg, #241C26); }
+.brand .mark .f1 { fill: var(--logo-1); }
+.brand .mark .f2 { fill: var(--logo-2); }
+.brand .mark .f3 { fill: var(--logo-3); }
+.logo-plum  { --logo-1: #241C26; --logo-2: #241C26; --logo-3: #241C26; }
+.logo-white { --logo-1: #FFFFFF; --logo-2: #FFFFFF; --logo-3: #FFFFFF; }
+@media (prefers-contrast: more) { .brand { --logo-1: var(--fg, #241C26); --logo-2: var(--fg, #241C26); } }
+@media (forced-colors: active) { .brand .mark path { fill: CanvasText; } }
 .brand h1 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -.022em; }
 .tools .add { min-height: 36px; padding: 0 14px 0 11px; font-size: 14px; gap: 4px; }
 .tools .add svg { width: 15px; height: 15px; }
@@ -694,7 +703,8 @@ dialog.duel { width: min(860px, calc(100% - 32px)); background: var(--bg-mesh); 
   .item .bd { padding: 12px 12px 6px; }
   .item.swatch .bd { padding-top: 14px; }
 }@media (max-width: 420px) { .row2 { grid-template-columns: 1fr; } }
-@media (max-width: 359px) { .brand h1 { display: none; } }
+/* Layar sempit: ikon jadi penanda; wordmark tetap terbaca pembaca layar */
+@media (max-width: 359px) { .brand h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } }
 
 /* Desktop: bilah catat cepat di dalam header, detail jadi panel samping */
 @media (min-width: 900px) {
@@ -730,12 +740,11 @@ dialog.duel { width: min(860px, calc(100% - 32px)); background: var(--bg-mesh); 
 <header class="top" id="top">
   <div class="top-row">
     <div class="brand">
-      <svg viewBox="0 0 30 30" aria-hidden="true">
-        <line x1="9" y1="11" x2="20" y2="9" stroke="var(--edge)" stroke-width="1.5"></line>
-        <line x1="9" y1="11" x2="15" y2="22" stroke="var(--edge)" stroke-width="1.5"></line>
-        <circle cx="9" cy="11" r="6.5" fill="#FF2D55"></circle>
-        <circle cx="21" cy="8.5" r="4.5" fill="#5856D6"></circle>
-        <circle cx="16" cy="22" r="5.5" fill="#30B0C7"></circle>
+      <!-- The Counterweight Monolith: tiga faset padat, puncak menanjak kiri ke kanan -->
+      <svg class="mark" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <path class="f1" d="M1.24 13L4.84 13L7.96 26L4.36 26Z"/>
+        <path class="f2" d="M9.86 26L13.82 9.5L17.78 26L15.02 26L13.82 21L12.62 26Z"/>
+        <path class="f3" d="M19.68 26L24.96 4L28.76 4L28.76 26Z"/>
       </svg>
       <h1>Wishy</h1>
     </div>

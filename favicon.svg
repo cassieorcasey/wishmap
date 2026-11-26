@@ -1,5 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="2 1 26 27">
-  <circle cx="9" cy="11" r="6.5" fill="#FF2D55"/>
-  <circle cx="21" cy="8.5" r="4.5" fill="#5856D6"/>
-  <circle cx="16" cy="22" r="5.5" fill="#30B0C7"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="1 3.5 28 23">
+  <!-- Wishy · The Counterweight Monolith.
+       Di tab gelap, monolit plum diganti terang agar tidak tenggelam;
+       dua faset lain sudah cukup kontras di kedua tema. -->
+  <style>
+    .f1 { fill: #4E89B2; } .f2 { fill: #8D79B5; } .f3 { fill: #241C26; }
+    @media (prefers-color-scheme: dark) { .f3 { fill: #F2ECF3; } .f1 { fill: #6FA4CA; } .f2 { fill: #A895CC; } }
+  </style>
+  <path class="f1" d="M1.24 13L4.84 13L7.96 26L4.36 26Z"/>
+  <path class="f2" d="M9.86 26L13.82 9.5L17.78 26L15.02 26L13.82 21L12.62 26Z"/>
+  <path class="f3" d="M19.68 26L24.96 4L28.76 4L28.76 26Z"/>
 </svg>

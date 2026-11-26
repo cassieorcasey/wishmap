@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Wishy · uji logo</title>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<style>
+  :root {
+    --fg: #241C26; --fg-2: #5E5060; --hair: rgba(36, 28, 38, .1);
+    --ink-breeze: #4E89B2; --ink-lavender: #8D79B5;
+    --glass: rgba(255, 255, 255, .5);
+    --bg-mesh:
+      radial-gradient(62% 48% at 0% 0%, rgb(184 215 238 / .95), transparent 70%),
+      radial-gradient(72% 62% at 20% 44%, rgb(232 166 179 / .85), transparent 72%),
+      radial-gradient(58% 48% at 100% 16%, rgb(255 255 255 / .9), transparent 70%),
+      radial-gradient(62% 56% at 88% 78%, rgb(181 171 204 / .8), transparent 72%),
+      radial-gradient(50% 40% at 100% 100%, rgb(184 215 238 / .8), transparent 70%),
+      radial-gradient(48% 42% at 8% 100%, rgb(255 255 255 / .7), transparent 70%),
+      #F7C9D3;
+    font: 15px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    color: var(--fg);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #FBF8FA; }
+  main { max-width: 980px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 22px; letter-spacing: -.02em; margin: 0 0 4px; }
+  h2 { font-size: 15px; font-weight: 600; margin: 40px 0 12px; }
+  p.note { margin: 0; color: var(--fg-2); font-size: 13px; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  figure { margin: 0; }
+  figcaption { font-size: 12.5px; color: var(--fg-2); margin-top: 6px; }
+
+  /* Logo: sama dengan index.html */
+  .mark { display: block; flex: none; }
+  .mark .f1 { fill: var(--logo-1, var(--ink-breeze)); }
+  .mark .f2 { fill: var(--logo-2, var(--ink-lavender)); }
+  .mark .f3 { fill: var(--logo-3, var(--fg)); }
+  .logo-plum  { --logo-1: #241C26; --logo-2: #241C26; --logo-3: #241C26; }
+  .logo-white { --logo-1: #FFFFFF; --logo-2: #FFFFFF; --logo-3: #FFFFFF; }
+
+  /* 1. Lockup di header */
+  .stage { position: relative; height: 112px; border-radius: 16px; overflow: hidden; background: var(--bg-mesh); }
+  .top { position: absolute; inset: 0 0 auto; padding: 4px 16px; }
+  .top::before { content: ""; position: absolute; inset: 0; z-index: 0; background: var(--glass); border-bottom: 1px solid var(--hair);
+                 -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); }
+  .top-row { position: relative; display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
+  .brand { display: flex; align-items: center; gap: 9px; }
+  .brand .mark { width: 26px; height: 26px; }
+  .brand b { font-size: 19px; font-weight: 600; letter-spacing: -.022em; }
+  .stage.m .brand { gap: 7px; } .stage.m .brand b { font-size: 17px; }
+  .stage.xs .brand b { display: none; }
+  .pill { height: 34px; padding: 0 14px; border-radius: 999px; background: #0071E3; color: #fff; font-size: 14px; font-weight: 600; display: grid; place-items: center; }
+
+  /* 2. Favicon di tab */
+  .tabs { border-radius: 12px; padding: 10px 10px 0; display: flex; gap: 6px; align-items: flex-end; }
+  .tab { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 9px 9px 0 0; font-size: 12.5px; flex: 1 1 0; min-width: 0; }
+  .tab .mark { width: 16px; height: 16px; }
+  .tab.big .mark { width: 32px; height: 32px; }
+  .tabs.light { background: #F2F2F7; } .tabs.light .tab { background: #FFFFFF; color: #241C26; }
+  .tabs.dark  { background: #202124; } .tabs.dark .tab { background: #35363A; color: #E8EAED; }
+  .tabs.dark .mark { --logo-1: #6FA4CA; --logo-2: #A895CC; --logo-3: #F2ECF3; }
+  .px { image-rendering: pixelated; }
+
+  /* 3. apple-touch-icon */
+  .touch { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+  .touch canvas { width: 180px; height: 180px; border-radius: 40px; box-shadow: 0 1px 2px rgb(36 28 38 / .08), 0 10px 28px rgb(36 28 38 / .1); }
+  .controls { display: grid; gap: 12px; justify-items: start; max-width: 320px; }
+  .seg { display: inline-flex; padding: 3px; border-radius: 999px; background: rgba(36, 28, 38, .06); }
+  .seg label { position: relative; }
+  .seg input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .seg span { display: block; padding: 7px 14px; border-radius: 999px; font-size: 13.5px; font-weight: 500; }
+  .seg input:checked + span { background: #fff; box-shadow: 0 1px 2px rgb(36 28 38 / .12); }
+  .seg input:focus-visible + span { outline: 2px solid #0071E3; outline-offset: 1px; }
+  button.dl { justify-self: start; font: inherit; font-weight: 600; font-size: 14px; padding: 10px 18px; border-radius: 999px; border: 0; background: var(--fg); color: #fff; cursor: pointer; }
+  button.dl:focus-visible { outline: 2px solid #0071E3; outline-offset: 2px; }
+  .home { width: 64px; text-align: center; font-size: 11px; color: #fff; }
+  .home canvas { width: 60px; height: 60px; border-radius: 13.4px; box-shadow: none; display: block; margin: 0 auto 4px; }
+  .wall { padding: 20px 24px; border-radius: 16px; background: linear-gradient(160deg, #4B5B7A, #2B2433); display: flex; gap: 20px; }
+
+  /* 4. Monokrom */
+  .chip { height: 96px; border-radius: 14px; display: grid; place-items: center; }
+  .chip .mark { width: 52px; height: 52px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Uji logo Wishy</h1>
+  <p class="note">The Counterweight Monolith di ukuran yang benar-benar dipakai. Buka di browser lalu bandingkan.</p>
+
+  <h2>Lockup di header</h2>
+  <div class="grid">
+    <figure><div class="stage"><div class="top"><div class="top-row"><div class="brand" data-mark></div><div class="pill">+ Tambah</div></div></div></div><figcaption>Desktop · ikon 26 px, teks 19 px</figcaption></figure>
+    <figure><div class="stage m"><div class="top"><div class="top-row"><div class="brand"><b>Wishy</b></div><div class="pill">+ Tambah</div></div></div></div><figcaption>Ponsel · teks 17 px, jarak 7 px</figcaption></figure>
+    <figure><div class="stage xs" style="max-width: 340px"><div class="top"><div class="top-row"><div class="brand"><b>Wishy</b></div><div class="pill">+ Tambah</div></div></div></div><figcaption>Di bawah 360 px · ikon saja</figcaption></figure>
+  </div>
+
+  <h2>Favicon di tab browser</h2>
+  <div class="grid">
+    <figure><div class="tabs light"><div class="tab"><i data-mark></i>Wishy</div><div class="tab big"><i data-mark></i>32 px</div></div><figcaption>Tab terang #F2F2F7</figcaption></figure>
+    <figure><div class="tabs dark"><div class="tab"><i data-mark></i>Wishy</div><div class="tab big"><i data-mark></i>32 px</div></div><figcaption>Tab gelap #202124 · monolit berganti terang lewat aturan dark di favicon.svg</figcaption></figure>
+    <figure><div class="tabs light" style="padding:14px;gap:14px;align-items:center"><canvas class="px" id="fav16" width="16" height="16" style="width:64px;height:64px" role="img" aria-label="favicon.svg dirender 16 px, diperbesar 4 kali"></canvas><img src="../favicon.svg" width="32" height="32" alt="favicon.svg 32 px"></div><figcaption>File favicon.svg asli: dirender 16 px lalu diperbesar 4× per piksel, dan 32 px</figcaption></figure>
+  </div>
+
+  <h2>apple-touch-icon.png · 180 × 180</h2>
+  <div class="touch">
+    <canvas id="touch" width="180" height="180" role="img" aria-label="Pratinjau ikon layar utama"></canvas>
+    <div class="controls">
+      <div class="seg" role="radiogroup" aria-label="Latar ikon">
+        <label><input type="radio" name="bg" value="white" checked><span>Putih</span></label>
+        <label><input type="radio" name="bg" value="mesh"><span>Gradasi mesh</span></label>
+      </div>
+      <button type="button" class="dl" id="dl">Unduh apple-touch-icon.png</button>
+      <p class="note">Padding 22% di tiap sisi. Latar selalu penuh karena iOS mengisi bagian transparan dengan hitam.</p>
+    </div>
+    <div class="wall" aria-hidden="true">
+      <div class="home"><canvas data-copy="white" width="180" height="180"></canvas>Putih</div>
+      <div class="home"><canvas data-copy="mesh" width="180" height="180"></canvas>Mesh</div>
+    </div>
+  </div>
+
+  <h2>Monokrom</h2>
+  <div class="grid">
+    <figure><div class="chip" style="background:#FFFFFF;box-shadow:inset 0 0 0 1px var(--hair)"><i class="logo-plum" data-mark></i></div><figcaption>#241C26 di atas putih</figcaption></figure>
+    <figure><div class="chip" style="background:#F7C9D3"><i class="logo-plum" data-mark></i></div><figcaption>#241C26 di atas #F7C9D3</figcaption></figure>
+    <figure><div class="chip" style="background:#241C26"><i class="logo-white" data-mark></i></div><figcaption>#FFFFFF di atas #241C26</figcaption></figure>
+    <figure><div class="chip" style="background:#4E89B2"><i class="logo-white" data-mark></i></div><figcaption>#FFFFFF di atas #4E89B2</figcaption></figure>
+  </div>
+</main>
+
+<script>
+// Geometri logo (viewBox 0 0 30 30), sama persis dengan index.html dan favicon.svg
+const FACETS = [
+  'M1.24 13L4.84 13L7.96 26L4.36 26Z',                          // Prisma Impuls
+  'M9.86 26L13.82 9.5L17.78 26L15.02 26L13.82 21L12.62 26Z',    // Baji Refleksi
+  'M19.68 26L24.96 4L28.76 4L28.76 26Z',                        // Monolit Kendali
+];
+const BOX = { x0: 1.24, y0: 4, x1: 28.76, y1: 26 };
+const INK = ['#4E89B2', '#8D79B5', '#241C26'];
+
+const svg = `<svg class="mark" viewBox="0 0 30 30" aria-hidden="true" focusable="false">${
+  FACETS.map((d, i) => `<path class="f${i + 1}" d="${d}"/>`).join('')}</svg>`;
+document.querySelectorAll('[data-mark]').forEach(el => {
+  const holder = el.tagName === 'I' ? el : null;
+  if (holder) { holder.outerHTML = svg.replace('class="mark"', `class="mark ${holder.className}"`); }
+  else el.insertAdjacentHTML('afterbegin', svg + '<b>Wishy</b>');
+});
+document.querySelectorAll('.brand').forEach(b => {
+  if (!b.querySelector('svg')) b.insertAdjacentHTML('afterbegin', svg);
+});
+
+// --bg-mesh digambar ulang di canvas (urutan CSS: lapisan pertama paling atas)
+const MESH = [
+  [62, 48, 0, 0, [184, 215, 238, .95], .70],
+  [72, 62, 20, 44, [232, 166, 179, .85], .72],
+  [58, 48, 100, 16, [255, 255, 255, .9], .70],
+  [62, 56, 88, 78, [181, 171, 204, .8], .72],
+  [50, 40, 100, 100, [184, 215, 238, .8], .70],
+  [48, 42, 8, 100, [255, 255, 255, .7], .70],
+];
+function paintMesh(g, S) {
+  g.fillStyle = '#F7C9D3'; g.fillRect(0, 0, S, S);
+  for (const [rx, ry, cx, cy, [r, gg, b, a], stop] of [...MESH].reverse()) {
+    g.save();
+    g.translate(cx / 100 * S, cy / 100 * S);
+    g.scale(1, ry / rx);
+    const R = rx / 100 * S;
+    const grad = g.createRadialGradient(0, 0, 0, 0, 0, R);
+    grad.addColorStop(0, `rgba(${r},${gg},${b},${a})`);
+    grad.addColorStop(stop, `rgba(${r},${gg},${b},0)`);
+    g.fillStyle = grad;
+    g.fillRect(-S * 3, -S * 3, S * 6, S * 6);
+    g.restore();
+  }
+}
+function draw(c, bg) {
+  const S = c.width, g = c.getContext('2d');
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  if (bg === 'mesh') paintMesh(g, S); else { g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, S, S); }
+  const inner = S * (1 - 2 * 0.22);
+  const bw = BOX.x1 - BOX.x0, bh = BOX.y1 - BOX.y0, k = inner / Math.max(bw, bh);
+  g.setTransform(k, 0, 0, k, (S - bw * k) / 2 - BOX.x0 * k, (S - bh * k) / 2 - BOX.y0 * k);
+  FACETS.forEach((d, i) => { g.fillStyle = INK[i]; g.fill(new Path2D(d)); });
+}
+const pick = () => document.querySelector('input[name=bg]:checked').value;
+const q = new URLSearchParams(location.search).get('bg');
+if (q === 'mesh') document.querySelector('input[value=mesh]').checked = true;
+function render() {
+  draw(document.getElementById('touch'), pick());
+  document.querySelectorAll('canvas[data-copy]').forEach(c => draw(c, c.dataset.copy || pick()));
+}
+render();
+// Favicon asli dirasterisasi 16 px agar kelihatan apa yang benar-benar sampai ke tab
+const fimg = new Image();
+fimg.onload = () => { const c = document.getElementById('fav16'); c.getContext('2d').drawImage(fimg, 0, 0, 16, 16); };
+fimg.src = '../favicon.svg';
+document.querySelectorAll('input[name=bg]').forEach(r => r.addEventListener('change', render));
+document.getElementById('dl').addEventListener('click', () => {
+  document.getElementById('touch').toBlob(b => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(b); a.download = 'apple-touch-icon.png'; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }, 'image/png');
+});
+</script>
+</body>
+</html>

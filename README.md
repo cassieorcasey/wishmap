@@ -34,3 +34,9 @@ It is built for personal use: one person, one private wishlist. It is not a stor
 Wishy is a single `index.html` with no build step and no libraries to load, so it runs on GitHub Pages. Without any setup it stores data in your browser. To sync between devices, connect it to a Supabase project by running `schema.sql` and filling in `CONFIG` at the top of the script in `index.html`.
 
 If you already ran an older `schema.sql`, run the latest one again: it adds the optional `amplop_batas` column (budget limit) and the curation columns `kebutuhan`, `endap_hingga` and `guna_menang` without touching your data. Until you do, everything else keeps working: saving a budget limit asks you to update the schema, and need tiers, cooling-off changes and Adu guna wins are not stored.
+
+## Logo and icons
+
+The logo is **The Counterweight Monolith**: a W made of three solid facets whose tops rise from left to right. A breeze-blue slab on the left, a lavender wedge in the middle and a plum monolith with a straight back on the right. In the header each facet takes its colour from a token (`--logo-1`, `--logo-2`, `--logo-3`); add `logo-plum` or `logo-white` to `.brand` for a single-colour version. It turns plum by itself when the system asks for more contrast.
+
+`favicon.svg` swaps the plum facet for a light one when the browser is in dark mode, so it doesn't disappear in a dark tab. Open `tools/logo-preview.html` to check the logo in the header, in light and dark tabs, as a home screen icon and in single colours. It also exports `apple-touch-icon.png` (180 × 180, 22% padding) on a white or mesh-gradient background.
