@@ -6,13 +6,13 @@
 <meta name="theme-color" content="#F7C9D3">
 <meta name="color-scheme" content="light">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Wishmap">
+<meta name="apple-mobile-web-app-title" content="Wishy">
 <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
-<title>Wishmap</title>
+<title>Wishy</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
-/* Wishmap · Meja Kurasi Saku
+/* Wishy · Meja Kurasi Saku
    Papan kartu masonry: kartu galeri (berfoto) dan kartu struk-swatch (tanpa foto) berdampingan.
    Kaca hanya untuk lapisan kontrol mengambang (header, bilah catat cepat), tidak pernah untuk kartu isi. */
 :root {
@@ -69,7 +69,7 @@
   --accent-hover: #0077ED;
   --accent-ink: #0051B6;   /* 5.0:1 di latar petal */
   --accent-soft: #F2D4D7;
-  --blush: #F7C9D3;   /* = --aura-petal: DNA soft pink Wishmap */
+  --blush: #F7C9D3;   /* = --aura-petal: DNA soft pink Wishy */
   --blush-ink: #7D3140;
   --on-accent: #FFFFFF;
   --on-bubble: #1D1D1F;
@@ -737,7 +737,7 @@ dialog.duel { width: min(860px, calc(100% - 32px)); background: var(--bg-mesh); 
         <circle cx="21" cy="8.5" r="4.5" fill="#5856D6"></circle>
         <circle cx="16" cy="22" r="5.5" fill="#30B0C7"></circle>
       </svg>
-      <h1>Wishmap</h1>
+      <h1>Wishy</h1>
     </div>
     <div class="tools">
       <button type="button" class="tool" id="search-btn" aria-label="Cari barang atau kategori" title="Cari (⌘K atau /)">
@@ -951,7 +951,7 @@ dialog.duel { width: min(860px, calc(100% - 32px)); background: var(--bg-mesh); 
 <dialog class="sheet" id="dlg-clear" aria-labelledby="fc-title">
   <form id="form-clear" novalidate>
     <header>
-      <h2 id="fc-title">Hapus semua isi Wishmap?</h2>
+      <h2 id="fc-title">Hapus semua isi Wishy?</h2>
       <button type="button" class="icon-btn" data-close aria-label="Tutup"><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
     </header>
     <div class="fields">
@@ -968,7 +968,7 @@ dialog.duel { width: min(860px, calc(100% - 32px)); background: var(--bg-mesh); 
 <!-- Masuk (mode Supabase) -->
 <dialog class="sheet" id="dlg-login" aria-labelledby="fl-title">
   <form id="form-login" novalidate>
-    <header><h2 id="fl-title">Masuk ke Wishmap</h2></header>
+    <header><h2 id="fl-title">Masuk ke Wishy</h2></header>
     <div class="fields">
       <p class="hint">Kami kirim link masuk ke email kamu. Buka link itu di perangkat ini.</p>
       <label class="field"><span>Email</span><input type="email" id="fl-email" autocomplete="email" placeholder="nama@email.com"></label>
@@ -2650,7 +2650,7 @@ $('#form-clear').addEventListener('submit', async e => {
     nodes = []; relations = []; selectedId = null; fCat = null; fSub = null; saveFilter();
     dlgC.close();
     layoutFresh();
-    toast('Semua isi Wishmap dihapus');
+    toast('Semua isi Wishy dihapus');
   } catch (err) { failed(err); }
   finally { btn.disabled = false; btn.removeAttribute('aria-busy'); }
 });

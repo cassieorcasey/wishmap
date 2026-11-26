@@ -1,4 +1,4 @@
--- Wishmap · skema Supabase v1
+-- Wishy · skema Supabase v1
 -- Jalankan sekali di Supabase → SQL Editor (proyek baru, terpisah dari Strata).
 --
 -- Model: graf berlabel.
